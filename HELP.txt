@@ -1,0 +1,30 @@
+res.render('url', {
+  popup: "message" => display a modal with message (works anywhere if include templates/header)
+  error: "message" => display error message at the placement of your code (see alert)
+  warning: "message"
+  success: "message"
+});
+
+// alert
+
+<% if (locals.warning) { %>
+  <div class="alert alert-warning" role="alert">
+    <%= warning %>
+  </div>
+<% } %>
+
+
+<% if (locals.success) { %>
+  <div class="alert alert-success" role="alert">
+    <%= success %>
+  </div>
+<% } %>
+
+
+<% if (locals.error) { %>
+  <div class="alert alert-danger" role="alert">
+    <%= error %>
+  </div>
+<% } %>
+
+// end alert

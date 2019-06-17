@@ -49,7 +49,9 @@ router.post('/signup_validation', function (req, res) {
   // endif error
 
 
-  res.redirect("/");
+  return res.render('login', {
+    popup: 'Signed up with success'
+  });
 });
 
 module.exports = router;
