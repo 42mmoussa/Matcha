@@ -4,7 +4,7 @@
   <h3>Sign up</h3>
   <% if (locals.warning) { %>
     <div class="alert alert-warning" role="alert">
-      <%= warning %>
+      <% warning %>
     </div>
   <% } %>
   <% if (locals.success) { %>
@@ -51,21 +51,21 @@
         <label for="validationTooltip05">E-mail</label>
         <input type="text" class="form-control" id="email" name="email" placeholder="E-mail" required>
         <div class="invalid-tooltip">
-          Please provide a valid zip.
+          Please provide a valid email.
         </div>
       </div>
       <div class="col-md-3 mb-3">
         <label for="validationTooltip04">Code postal</label>
-        <input type="text" class="form-control" id="arr" name="arr" placeholder="Code postal" required>
+        <input type="password" class="form-control" id="passwd" name="passwd" placeholder="Password" required>
         <div class="invalid-tooltip">
-          Please provide a valid state.
+          Please provide a valid password.
         </div>
       </div>
       <div class="col-md-3 mb-3">
-        <label for="validationTooltip03">City</label>
-        <input type="text" class="form-control" id="city" name="city" placeholder="City" required>
+        <label for="validationTooltip03">Confirm Password</label>
+        <input type="password" class="form-control" id="confPasswd" name="confPasswd" placeholder="Confirm Password" required>
         <div class="invalid-tooltip">
-          Please provide a valid city.
+          Please provide a valid password.
         </div>
       </div>
     </div>
