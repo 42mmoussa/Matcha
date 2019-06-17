@@ -50,7 +50,9 @@ router.post('/signup_validation', function (req, res) {
 
 
   return res.render('login', {
-    popup: 'Signed up with success'
+    popupTitle: 'Sign up',
+    popupMsg: 'Signed up with success',
+    popup: true
   });
 });
 

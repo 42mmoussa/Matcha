@@ -46,7 +46,7 @@
 
 <!-- Modal with custom text-->
 
-<% if (locals.popup) { %>
+<% if (locals.popup === true) { %>
   <script type="text/javascript">
     $(window).on('load',function(){
         $('#myModal').modal('show');
@@ -59,13 +59,13 @@
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">Modal Heading</h4>
+        <h4 class="modal-title"><%= popupTitle %></h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
       <!-- Modal body -->
       <div class="modal-body">
-        <%= popup %>
+        <%= popupMsg %>
       </div>
 
       <!-- Modal footer -->

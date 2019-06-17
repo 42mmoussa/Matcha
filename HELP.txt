@@ -1,5 +1,7 @@
 res.render('url', {
-  popup: "message" => display a modal with message (works anywhere if include templates/header)
+  popupTitle: "title" => title of Modal
+  popupMsg: "message" => message of Modal
+  popup: true => display a modal with message (works anywhere if include templates/header)
   error: "message" => display error message at the placement of your code (see alert)
   warning: "message"
   success: "message"
