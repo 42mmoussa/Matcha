@@ -1,20 +1,34 @@
 <% include templates/header.ejs %>
 
-
 <section class="container">
-  <h3><%= title %></h3>
-  <form class="" action="/signup_validation" method="post" novalidate>
+  <h3>Sign up</h3>
+  <% if (locals.warning) { %>
+    <div class="alert alert-warning" role="alert">
+      <%= warning %>
+    </div>
+  <% } %>
+  <% if (locals.success) { %>
+    <div class="alert alert-success" role="alert">
+      <%= success %>
+    </div>
+  <% } %>
+  <% if (locals.error) { %>
+    <div class="alert alert-danger" role="alert">
+      <%= error %>
+    </div>
+  <% } %>
+  <form class="" action="/signup/signup_validation" method="post" novalidate>
     <div class="form-row">
       <div class="col-md-4 mb-3">
         <label for="validationTooltip01">First name</label>
-        <input type="text" class="form-control" id="validationTooltip01" placeholder="First name" value="" required>
+        <input type="text" class="form-control" id="fname" name="fname" placeholder="First name" value="" required>
         <div class="valid-tooltip">
           Looks good!
         </div>
       </div>
       <div class="col-md-4 mb-3">
         <label for="validationTooltip02">Last name</label>
-        <input type="text" class="form-control" id="validationTooltip02" placeholder="Last name" value="" required>
+        <input type="text" class="form-control" id="lname" name="lname" placeholder="Last name" value="" required>
         <div class="valid-tooltip">
           Looks good!
         </div>
@@ -25,7 +39,7 @@
           <div class="input-group-prepend">
             <span class="input-group-text" id="validationTooltipUsernamePrepend">@</span>
           </div>
-          <input type="text" class="form-control" id="validationTooltipUsername" placeholder="Username" aria-describedby="validationTooltipUsernamePrepend" required>
+          <input type="text" class="form-control" id="uname" name="uname" placeholder="Username" aria-describedby="validationTooltipUsernamePrepend" required>
           <div class="invalid-tooltip">
             Please choose a unique and valid username.
           </div>
@@ -34,29 +48,43 @@
     </div>
     <div class="form-row">
       <div class="col-md-6 mb-3">
-        <label for="validationTooltip03">City</label>
-        <input type="text" class="form-control" id="validationTooltip03" placeholder="City" required>
+        <label for="validationTooltip05">E-mail</label>
+        <input type="text" class="form-control" id="email" name="email" placeholder="E-mail" required>
         <div class="invalid-tooltip">
-          Please provide a valid city.
+          Please provide a valid zip.
         </div>
       </div>
       <div class="col-md-3 mb-3">
-        <label for="validationTooltip04">State</label>
-        <input type="text" class="form-control" id="validationTooltip04" placeholder="State" required>
+        <label for="validationTooltip04">Code postal</label>
+        <input type="text" class="form-control" id="arr" name="arr" placeholder="Code postal" required>
         <div class="invalid-tooltip">
           Please provide a valid state.
         </div>
       </div>
       <div class="col-md-3 mb-3">
-        <label for="validationTooltip05">Zip</label>
-        <input type="text" class="form-control" id="validationTooltip05" placeholder="Zip" required>
+        <label for="validationTooltip03">City</label>
+        <input type="text" class="form-control" id="city" name="city" placeholder="City" required>
         <div class="invalid-tooltip">
-          Please provide a valid zip.
+          Please provide a valid city.
         </div>
       </div>
     </div>
     <button class="btn btn-primary" type="submit">Sign up</button>
   </form>
 </section>
+
+<!-- <script type="text/javascript">
+  function signup_validation() {
+    $.ajax({
+      type: 'POST',
+      url: '/signup/signup_validation',
+      dataType: 'json',
+      data: 'lastname=' + $('#lname').val() + '&firstname=' + $('#fname').val() + '&username=' + $('#uname').val() + '&city=' + $('#city').val() + '&arrondissement=' + $('#arrondissement').val() + '&email=' + $('#email').val(),
+      success: (data) => {
+        console.log(data);
+      }
+    });
+  }
+</script> -->
 
 <% include templates/footer.ejs %>
