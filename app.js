@@ -10,6 +10,7 @@ const app = express();
 const about = require('./routes/about');
 const login = require('./routes/login');
 const signup = require('./routes/signup');
+const mod = require('./routes/mod');
 
 // configure app
 

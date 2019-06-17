@@ -15,7 +15,9 @@
     "express": "^4.17.1",
     "express-session": "^1.16.2",
     "mariadb": "^2.0.5",
+    "require-sql": "^1.0.0",
     "serve-favicon": "^2.5.0",
+    "sql-require": "^1.0.0",
     "static-favicon": "^2.0.0-alpha"
   }
 }

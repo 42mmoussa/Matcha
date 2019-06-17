@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var session = require('express-session');
+var mod = require('./mod');
 
 router.get('/', function (req, res) {
-  res.render('signup', {
+  return res.render('signup', {
   });
 });
 
@@ -25,12 +26,18 @@ router.post('/signup_validation', function (req, res) {
     email: email
   };
 
-  console.log(data);
+  console.log(JSON.stringify(mod, null, 4));
 
   if (lastname === "" || firstname === "" || username === "" || city === "" || arrondissement === "" || email === "") {
-    res.render('signup', {
+    return res.render('signup', {
       warning: "Please fill out all required fields"
     });
+  } else {
+    if (mod.checkuid(username) === false) {
+      return res.render('signup', {
+        error: "Your username can only contain letters and numbers"
+      });
+    }
   }
 
   // if error
