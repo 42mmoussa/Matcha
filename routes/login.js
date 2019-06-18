@@ -11,7 +11,7 @@ router.get('/', function (req, res) {
 
 router.post('/login_validation', function(req, res) {
 	var username		= req.body.uname;
-	var pwd			= crypto.SHA512(req.body.passwd).toString();
+	var pwd			    = crypto.SHA512(req.body.pwd).toString();
 
 	if (username === "" || pwd === "") {
 		return res.render('login', {
@@ -26,7 +26,7 @@ router.post('/login_validation', function(req, res) {
 			.then((rows) => {
 			  console.log(rows); //[ {val: 1}, meta: ... ]
 			  //Table must have been created before
-			  return conn.query("SELECT * FROM USERS WHERE username = ? AND passwd = ?", [username, pwd]);
+			  return conn.query("SELECT * FROM USERS WHERE username = ? AND pwd = ?", [username, pwd]);
 			})
 			.then((result) => {
 				console.log(result[0]);

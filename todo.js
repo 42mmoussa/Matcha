@@ -52,8 +52,8 @@ var todoItems = [
                   popup: true
                 });
               } else {
-                conn.query("UPDATE USERS SET confirm = 1 WHERE id_usr = ? AND confirm = 0", [id_usr]);
-                conn.query("UPDATE USERS SET confirmkey = ? WHERE id_usr = ?", [crypto.SHA512(newKey).toString(), id_usr]);
+                conn.query("UPDATE USERS SET confirm = 1 WHERE id_usr = ?", [id_usr]);
+                conn.query("DELETE FROM USERS WHERE id_usr = ?", [id_usr]);
                 conn.end();
                 res.render('index', {
                   title: 'Matcha',

@@ -60,7 +60,7 @@ router.post('/signup_validation', function (req, res) {
         console.log(rows); //[ {val: 1}, meta: ... ]
         //Table must have been created before
         // " CREATE TABLE myTable (id int, val varchar(255)) "
-        conn.query("INSERT INTO USERS(firstname, lastname, username, passwd, email, confirmkey, confirm) VALUES(?, ?, ?, ?, ?, ?, ?)", [firstname, lastname, username, pwdHash, email, crypto.SHA512(confirmKey).toString(), confirm]);
+        conn.query("INSERT INTO USERS(firstname, lastname, username, pwd, email, confirmkey, confirm) VALUES(?, ?, ?, ?, ?, ?, ?)", [firstname, lastname, username, pwdHash, email, crypto.SHA512(confirmKey).toString(), confirm]);
         return conn.query("SELECT id_usr FROM USERS WHERE username = ?", [username]);
       })
       .then((res) => {
