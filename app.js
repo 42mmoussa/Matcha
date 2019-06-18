@@ -1,8 +1,9 @@
-const express = require('express');
-const path = require('path');
-const bodyParser = require('body-parser');
-const favicon = require('serve-favicon');
+const express      = require('express');
+const path         = require('path');
+const bodyParser   = require('body-parser');
+const favicon      = require('serve-favicon');
 const cookieParser = require('cookie-parser');
+const http         = require('http');
 // const mariadb = require('mariadb');
 
 const app = express();
@@ -64,3 +65,10 @@ app.use(require('./todo.js'));
 app.listen(8888, function () {
   console.log('ready on port 8888');
 });
+
+// http.createServer(function (req, res) {
+//   res.writeHead(200, {'Content-Type': 'text/html'});
+//   console.log('ready on port 8888');
+//   res.write();
+//   res.end();
+// }).listen(8888);

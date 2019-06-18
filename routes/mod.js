@@ -1,7 +1,29 @@
-function checkuid($username) {
-  var usernameRegex = /^[a-zA-Z0-9]+$/;
-  
-  return usernameRegex.exec($username);
+const mariadb = require('mariadb');
+
+const pool = mariadb.createPool({
+  host: 'localhost',
+  user:'root',
+  password: '',
+  port: '3306',
+  // connectionLimit: 5
+});
+
+function checkuid(username) {
+  var regex = /^[a-zA-Z0-9]+$/;
+
+  return regex.test(username);
 }
 
-module.exports = {checkuid};
+function checkname(name) {
+  var regex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+
+  return regex.test(name);
+}
+
+function checkpwd(pwd) {
+  var regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
+
+  return regex.test(pwd);
+}
+
+module.exports = {checkuid, checkname, checkpwd, pool};
