@@ -4,6 +4,8 @@ CREATE TABLE USERS(
         lastname  Varchar (50) NOT NULL,
         username     Varchar (50) NOT NULL UNIQUE,
         passwd       Varchar(516) NOT NULL,
-        email     Varchar (50) NOT NULL
+        email     Varchar (50) NOT NULL,
+        confirmkey Varchar(516) NOT NULL,
+        confirm         Int
 	,CONSTRAINT USERS_PK PRIMARY KEY (id_usr)
 );

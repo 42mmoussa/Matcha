@@ -33,27 +33,33 @@ router.post('/login_validation', function(req, res) {
 			.then((rows) => {
 			  console.log(rows); //[ {val: 1}, meta: ... ]
 			  //Table must have been created before
-			  return conn.query("SELECT * FROM USERS WHERE username = ? AND passwd = ?", [username, passwd]);
+			  return conn.query("SELECT * FROM USERS WHERE username = ? AND passwd = ? AND confirm = 1", [username, passwd]);
 			})
-			.then((res) => {
-			  console.log(res[0].username);
-			  result = res[0].username;
+			.then((result) => {
+				console.log(result[0].username);
+				if (result[0].username === username) {
+					return res.render('about', {
+						popupTitle: 'Login',
+						popupMsg: 'Logged with success',
+						popup: true
+					});
+				}
 			  conn.end();
 			})
 			.catch(err => {
 				//handle error
 				console.log(err); 
+				return res.render('about', {
+					popupTitle: 'Login',
+					popupMsg: 'Wrong Login',
+					popup: true
+				});
 				conn.end();
 			})
 			
 		}).catch(err => {
 			//not connected
 		});
-	return res.render('about', {
-		popupTitle: 'Login',
-		popupMsg: 'Logged with success',
-		popup: true
-	});
 });
 
 
