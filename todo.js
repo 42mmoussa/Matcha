@@ -29,12 +29,12 @@ var todoItems = [
             // " CREATE TABLE myTable (id int, val varchar(255)) "
             return conn.query("SELECT * FROM USERS WHERE id_usr = ? AND confirmkey = ?", [id_usr, crypto.SHA512(confirmkey).toString()]);
           })
-          .then((res) => {
-            if (res[0].username === username) {
+          .then((result) => {
+            if (result[0].id_usr == id_usr) {
               conn.query("UPDATE USERS SET confirm = 1 WHERE id_usr = ?", [id_usr]);
               conn.query("UPDATE USERS SET confirmkey = ? WHERE id_usr = ?", [crypto.SHA512(newKey).toString(), id_usr]);
+              conn.end();
             }
-            conn.end();
           })
           .catch(err => {
             //handle error

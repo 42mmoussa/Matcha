@@ -4,7 +4,7 @@
   <h3>Sign up</h3>
   <% if (locals.warning) { %>
     <div class="alert alert-warning" role="alert">
-      <% warning %>
+      <%= warning %>
     </div>
   <% } %>
   <% if (locals.success) { %>
@@ -20,26 +20,26 @@
   <form class="" action="/signup/signup_validation" method="post" novalidate>
     <div class="form-row">
       <div class="col-md-4 mb-3">
-        <label for="validationTooltip01">First name</label>
-        <input type="text" class="form-control" id="fname" name="fname" placeholder="First name" value="" required>
+        <label for="validationTooltip01">Prénom</label>
+        <input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" value="" onkeyup="validator(this)" required>
         <div class="valid-tooltip">
           Looks good!
         </div>
       </div>
       <div class="col-md-4 mb-3">
-        <label for="validationTooltip02">Last name</label>
-        <input type="text" class="form-control" id="lname" name="lname" placeholder="Last name" value="" required>
+        <label for="validationTooltip02">Nom de famille</label>
+        <input type="text" class="form-control" id="lname" name="lname" placeholder="Nom de famille" value="" onkeyup="validator(this)" required>
         <div class="valid-tooltip">
           Looks good!
         </div>
       </div>
       <div class="col-md-4 mb-3">
-        <label for="validationTooltipUsername">Username</label>
+        <label for="validationTooltipUsername">Nom d'utilisateur</label>
         <div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text" id="validationTooltipUsernamePrepend">@</span>
           </div>
-          <input type="text" class="form-control" id="uname" name="uname" placeholder="Username" aria-describedby="validationTooltipUsernamePrepend" required>
+          <input type="text" class="form-control" id="uname" name="uname" placeholder="Nom d'utilisateur" aria-describedby="validationTooltipUsernamePrepend" onkeyup="validator(this)" required>
           <div class="invalid-tooltip">
             Please choose a unique and valid username.
           </div>
@@ -49,42 +49,73 @@
     <div class="form-row">
       <div class="col-md-6 mb-3">
         <label for="validationTooltip05">E-mail</label>
-        <input type="text" class="form-control" id="email" name="email" placeholder="E-mail" required>
+        <input type="text" class="form-control" id="email" name="email" placeholder="E-mail" onkeyup="validator(this)" required>
         <div class="invalid-tooltip">
-          Please provide a valid email.
+          Please provide a valid zip.
         </div>
       </div>
       <div class="col-md-3 mb-3">
-        <label for="validationTooltip04">Code postal</label>
-        <input type="password" class="form-control" id="passwd" name="passwd" placeholder="Password" required>
+        <label for="validationTooltip04">Mot de passe</label>
+        <input type="password" class="form-control" id="pwd" name="pwd" placeholder="Mot de passe" onkeyup="validator(this)" required>
         <div class="invalid-tooltip">
           Please provide a valid password.
         </div>
       </div>
       <div class="col-md-3 mb-3">
-        <label for="validationTooltip03">Confirm Password</label>
-        <input type="password" class="form-control" id="confPasswd" name="confPasswd" placeholder="Confirm Password" required>
+        <label for="validationTooltip03">Confirmez votre mot de passe</label>
+        <input type="password" class="form-control" id="confpwd" name="confpwd" placeholder="Confirmez votre mot de passe" onkeyup="validator(this)" required>
         <div class="invalid-tooltip">
           Please provide a valid password.
         </div>
       </div>
     </div>
-    <button class="btn btn-primary" type="submit">Sign up</button>
+    <button class="btn btn-primary" type="submit">Inscription</button>
   </form>
 </section>
 
-<!-- <script type="text/javascript">
-  function signup_validation() {
+<script type="text/javascript">
+  function validator(item) {
+    var id = $(item).attr('id');
+    if (id === 'confpwd') {
+      if ($('#pwd').val() === $('#confpwd').val()) {
+        $('#'+id).css('border-color', "green", 'important');
+        $('#'+id).css('box-shadow', '0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(50, 255, 50, 0.5)', 'important');
+      } else {
+        $('#'+id).css('border-color', "red", 'important');
+        $('#'+id).css('box-shadow', '0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 50, 50, 0.5)', 'important');
+      }
+    }
     $.ajax({
       type: 'POST',
-      url: '/signup/signup_validation',
-      dataType: 'json',
-      data: 'lastname=' + $('#lname').val() + '&firstname=' + $('#fname').val() + '&username=' + $('#uname').val() + '&city=' + $('#city').val() + '&arrondissement=' + $('#arrondissement').val() + '&email=' + $('#email').val(),
-      success: (data) => {
-        console.log(data);
+      url: '/signup/check?',
+      dataType: 'text',
+      data: {type: id ,item: $('#'+id+'').val()}
+    }).done (function (data) {
+      if (data === 'Unavailable') {
+        $('#'+id).css('border-color', "red", 'important');
+        $('#'+id).css('box-shadow', '0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 50, 50, 0.5)', 'important');
+        return true;
+      } else if (data === 'Avalaible') {
+        if (id === 'confpwd' || id === 'pwd') {
+          if ($('#pwd').val() === $('#confpwd').val() || $('#confpwd').val() == "") {
+            $('#pwd').css('border-color', "green", 'important');
+            $('#pwd').css('box-shadow', '0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(50, 255, 50, 0.5)', 'important');
+            if ($('#confpwd').val() !== "") {
+              $('#confpwd').css('border-color', "green", 'important');
+              $('#confpwd').css('box-shadow', '0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(50, 255, 50, 0.5)', 'important');
+            }
+          } else {
+            $('#confpwd').css('border-color', "red", 'important');
+            $('#confpwd').css('box-shadow', '0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 50, 50, 0.5)', 'important');
+          }
+        } else {
+          $('#'+id).css('border-color', "green", 'important');
+          $('#'+id).css('box-shadow', '0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(50, 255, 50, 0.5)', 'important');
+        }
+        return true;
       }
     });
   }
-</script> -->
+</script>
 
 <% include templates/footer.ejs %>

@@ -4,6 +4,7 @@ var session = require('express-session');
 var crypto = require('crypto-js');
 var mod = require('./mod');
 var nodemailer = require('nodemailer');
+const validator = require("email-validator");
 
 router.get('/', function (req, res) {
   return res.render('signup', {
@@ -15,7 +16,9 @@ router.post('/signup_validation', function (req, res) {
   var lastname       = req.body.lname;
   var firstname      = req.body.fname;
   var username       = req.body.uname;
-  var passwd         = crypto.SHA512(req.body.passwd).toString();
+  var pwd            = req.body.pwd;
+  var pwdConf        = req.body.confpwd;
+  var passwd         = crypto.SHA512(req.body.pwd).toString();
   var confPasswd     = crypto.SHA512(req.body.confPasswd).toString();
   var email          = req.body.email;
   var confirm         = 0;
@@ -33,23 +36,32 @@ var confirmKey = mod.randomString(50, '0123456789abcdefABCDEF');
     confirmKey: confirmKey
   };
 
-  console.log(JSON.stringify(mod, null, 4));
+  console.log(mod.checkname(lastname));
 
-  if (lastname === "" || firstname === "" || username === "" || passwd === "" || confPasswd === "" || email === "") {
+  if (lastname === "" || firstname === "" || username === "" || pwd  === "" || pwdConf === "" || email === "") {
     return res.render('signup', {
-      warning: "Please fill out all required fields"
+      warning: "Veuillez remplir toutes les cases"
     });
-  } else {
-    if (mod.checkuid(username) === false) {
-      return res.render('signup', {
-        error: "Your username can only contain letters and numbers"
-      });
-    }
-    if (passwd !== confPasswd) {
-      return res.render('signup', {
-        error: "Passwords don't match."
-      });
-    }
+  }  else if (mod.checkname(lastname) === false || mod.checkname(firstname) === false) {
+    return res.render('signup', {
+      error: "Veuillez insérer une nom et prénom valide"
+    });
+  } else if (mod.checkuid(username) === false) {
+    return res.render('signup', {
+      error: "Votre pseudo ne doit contenir que des lettres et des nombres"
+    });
+  } else if (validator.validate(email) === false) {
+    return res.render('signup', {
+      error: "Please insert a valide e-mail"
+    });
+  } else if (pwd !== pwdConf) {
+    return res.render('signup', {
+      error: "Veuillez insérer des mots de passe identiques"
+    });
+  } else if (mod.checkpwd(pwd) === false) {
+    return res.render('signup', {
+      error: "Votre mot de passe doit contenir au munimum 8 lettres contenant une majuscule, une minuscule et un chiffre"
+    });
   }
 
   mod.pool.getConnection()
@@ -78,7 +90,7 @@ var confirmKey = mod.randomString(50, '0123456789abcdefABCDEF');
             subject: 'Confirm your account',
             html: `<html>
             <body>
-            <a href="http://localhost:8888/?username=` + res[0].id_usr + `&confirmkey=` + confirmKey + `">Confirm your account</a>
+            <a href="http://localhost:8888/?id_usr=` + res[0].id_usr + `&confirmkey=` + confirmKey + `">Confirm your account</a>
             </body>
             </html>`
           };
@@ -111,9 +123,98 @@ var confirmKey = mod.randomString(50, '0123456789abcdefABCDEF');
 
   return res.render('login', {
     popupTitle: 'Sign up',
-    popupMsg: 'Signed up with success',
+    popupMsg: 'Signed up with success<br />Check your mails',
     popup: true
   });
+});
+
+router.post('/check', function (req, res) {
+
+  const item = req.body.item;
+  const type  = req.body.type;
+
+  if (type === 'email') {
+    mod.pool.getConnection()
+    .then(conn => {
+
+      conn.query("USE matcha")
+      .then((rows) => {
+        console.log(rows);
+        return conn.query("SELECT COUNT(*) as nb FROM users WHERE email=?", [item]);
+      })
+      .then((response) => {
+        console.log(response[0].nb);
+        if (response[0].nb != 0) {
+          res.send("Unavailable");
+        } else {
+          if (!validator.validate(item)) {
+            res.send('Unavailable');
+          } else {
+            res.send("Avalaible");
+          }
+        }
+        conn.end();
+      })
+      .catch(err => {
+        //handle error
+        console.log(err);
+        conn.end();
+      })
+
+    }).catch(err => {
+      //not connected
+    });
+  } else if (type === 'uname') {
+    mod.pool.getConnection()
+      .then(conn => {
+
+        conn.query("USE matcha")
+          .then((rows) => {
+            console.log(rows);
+            return conn.query("SELECT COUNT(*) as nb FROM users WHERE username=?", [item]);
+          })
+          .then((response) => {
+            console.log(response[0].nb);
+            if (response[0].nb != 0) {
+              res.send("Unavailable");
+            } else {
+              if (!mod.checkuid(item)) {
+                res.send('Unavailable');
+              } else {
+                res.send("Avalaible");
+              }
+            }
+            conn.end();
+          })
+          .catch(err => {
+            //handle error
+            console.log(err);
+            conn.end();
+          })
+
+        }).catch(err => {
+        //not connected
+      });
+  } else if (type === 'lname' || type === 'fname') {
+      if (!mod.checkname(item)) {
+        res.send('Unavailable');
+      } else {
+        res.send('Avalaible');
+      }
+  } else if (type === 'pwd') {
+      if (!mod.checkpwd(item)) {
+        res.send('Unavailable');
+      } else {
+        res.send('Avalaible');
+      }
+  } else if (type === 'pwd' || type === 'confpwd') {
+      if (!mod.checkpwd(item)) {
+        res.send('Unavailable');
+      } else {
+        res.send('Avalaible');
+      }
+  }
+
 });
 
 module.exports = router;
