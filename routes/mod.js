@@ -5,7 +5,6 @@ const pool = mariadb.createPool({
   user:'root',
   password: '',
   port: '3306',
-  // connectionLimit: 5
 });
 
 function checkuid(username) {

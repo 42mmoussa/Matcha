@@ -57,9 +57,7 @@ router.post('/signup_validation', function (req, res) {
 
     conn.query("USE matcha")
       .then((rows) => {
-        console.log(rows); //[ {val: 1}, meta: ... ]
-        //Table must have been created before
-        // " CREATE TABLE myTable (id int, val varchar(255)) "
+        console.log(rows);
         conn.query("INSERT INTO USERS(firstname, lastname, username, pwd, email, confirmkey, confirm) VALUES(?, ?, ?, ?, ?, ?, ?)", [firstname, lastname, username, pwdHash, email, crypto.SHA512(confirmKey).toString(), confirm]);
         return conn.query("SELECT id_usr FROM USERS WHERE username = ?", [username]);
       })

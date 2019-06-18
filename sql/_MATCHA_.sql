@@ -7,23 +7,19 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 CREATE DATABASE IF NOT EXISTS `matcha` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `mmoussa`;
+USE `matcha`;
 
 DROP TABLE IF EXISTS `USERS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `USERS` (
-  `id_usr` int(11) NOT NULL AUTO_INCREMENT,
+  `id_usr` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY UNIQUE,
   `firstname` TEXT NOT NULL,
   `lastname` TEXT NOT NULL,
-  `username` TEXT NOT NULL,
+  `username` varchar(50) NOT NULL UNIQUE,
   `pwd` LONGTEXT NOT NULL,
-  `email` TEXT NOT NULL,
-  `confirm` int(1) NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id_usr`),
-  UNIQUE KEY `id_usr` (`id_usr`),
-  UNIQUE KEY `username` (`username`),
-  UNIQUE KEY `email` (`email`)
+  `email` varchar(100) NOT NULL UNIQUE,
+  `confirm` int(1) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
