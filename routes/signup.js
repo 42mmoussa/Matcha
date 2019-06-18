@@ -4,6 +4,7 @@ const session   = require('express-session');
 const mod       = require('./mod');
 const crypto    = require('crypto-js');
 const validator = require("email-validator");
+const nodemailer  = require('nodemailer');
 
 router.get('/', function (req, res) {
   return res.render('signup', {
@@ -18,6 +19,8 @@ router.post('/signup_validation', function (req, res) {
   var pwd            = req.body.pwd;
   var pwdConf        = req.body.confpwd;
   var email          = req.body.email;
+  var confirm        = 0;
+  var confirmKey     = mod.randomString(50, '0123456789abcdefABCDEF');
 
   console.log(mod.checkname(lastname));
 
@@ -49,14 +52,6 @@ router.post('/signup_validation', function (req, res) {
 
   pwdHash = crypto.SHA512(pwd).toString();
 
-  var data = {
-    lastname: lastname,
-    firstname: firstname,
-    username: username,
-    email: email,
-    password: pwdHash
-  };
-
   mod.pool.getConnection()
   .then(conn => {
 
@@ -65,10 +60,37 @@ router.post('/signup_validation', function (req, res) {
         console.log(rows); //[ {val: 1}, meta: ... ]
         //Table must have been created before
         // " CREATE TABLE myTable (id int, val varchar(255)) "
-        return conn.query("INSERT INTO USERS(firstname, lastname, username, passwd, email) VALUES(?, ?, ?, ?, ?)", [firstname, lastname, username, pwdHash, email]);
+        conn.query("INSERT INTO USERS(firstname, lastname, username, passwd, email, confirmkey, confirm) VALUES(?, ?, ?, ?, ?, ?, ?)", [firstname, lastname, username, pwdHash, email, crypto.SHA512(confirmKey).toString(), confirm]);
+        return conn.query("SELECT id_usr FROM USERS WHERE username = ?", [username]);
       })
       .then((res) => {
         console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+              user: 'matcha.mmoussa.atelli@gmail.com',
+              pass: 'compteaminemohamad'
+            }
+          });
+
+          var mailOptions = {
+            from: 'matcha.mmoussa.atelli@gmail.com',
+            to: email,
+            subject: 'Confirm your account',
+            html: `<html>
+            <body>
+            <a href="http://localhost:8888/confirm-acc?id_usr=` + res[0].id_usr + `&confirmkey=` + confirmKey + `">Confirm your account</a>
+            </body>
+            </html>`
+          };
+
+          transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Email sent: ' + info.response);
+            }
+          });
         conn.end();
       })
       .catch(err => {

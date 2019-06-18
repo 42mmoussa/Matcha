@@ -1,6 +1,6 @@
 
 <% include templates/header.ejs %>
-
+<link rel="stylesheet" href="/css/body.css">
 <section class="container">
 	<h3>Login</h3>
 	<% if (locals.warning) { %>
@@ -20,8 +20,8 @@
 	  <% } %>
 	<form class="" action="/login/login_validation" method="post" novalidate>
 		<div class="form-row">
-			<div class="col-md-4 mb-3">
-				<label for="validationTooltipUsername">Username</label>
+			<div class="col-md-6 mb-3">
+				<label for="validationTooltipUsername">Username or E-mail</label>
 				<div class="input-group">
 					<div class="input-group-prepend">
 						<span class="input-group-text" id="validationTooltipUsernamePrepend">@</span>
@@ -29,7 +29,7 @@
 					<input type="text" class="form-control" id="uname" name="uname" placeholder="Username" aria-describedby="validationTooltipUsernamePrepend" required>
 				</div>
 			</div>
-			<div class="col-md-4 mb-3">
+			<div class="col-md-6 mb-3">
 				<label for="validationTooltip01">Password</label>
 				<input type="password" class="form-control" id="passwd" name="passwd" placeholder="Password" value="" required>
 			</div>
@@ -37,6 +37,5 @@
 		<button class="btn btn-primary" type="submit">Sign in</button>
 	</form>
 </section>
-
 
 <% include templates/footer.ejs %>

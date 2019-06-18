@@ -11,16 +11,9 @@ router.get('/', function (req, res) {
 
 router.post('/login_validation', function(req, res) {
 	var username		= req.body.uname;
-	var passwd			= crypto.SHA512(req.body.passwd).toString();
+	var pwd			= crypto.SHA512(req.body.passwd).toString();
 
-	var data = {
-		username:	username,
-		passwd:		passwd
-	};
-
-	console.log(JSON.stringify(mod, null, 4));
-
-	if (username === "" || passwd === "") {
+	if (username === "" || pwd === "") {
 		return res.render('login', {
 			warning: "Please fill out all required fields"
 		});
@@ -33,27 +26,35 @@ router.post('/login_validation', function(req, res) {
 			.then((rows) => {
 			  console.log(rows); //[ {val: 1}, meta: ... ]
 			  //Table must have been created before
-			  return conn.query("SELECT * FROM USERS WHERE username = ? AND passwd = ?", [username, passwd]);
+			  return conn.query("SELECT * FROM USERS WHERE username = ? AND passwd = ?", [username, pwd]);
 			})
-			.then((res) => {
-			  console.log(res[0].username);
-			  result = res[0].username;
+			.then((result) => {
+				console.log(result[0]);
+				if (result[0].confirm === 1) {
+					return res.render('login', {
+						popupTitle: 'Login',
+						popupMsg: 'Logged with success',
+						popup: true
+					});
+				} else {
+          return res.render('login', {
+            error: "Account not confirmed"
+          });
+        }
 			  conn.end();
 			})
 			.catch(err => {
 				//handle error
 				console.log(err);
+				return res.render('login', {
+					error: "User does not exist"
+				});
 				conn.end();
 			})
 
 		}).catch(err => {
 			//not connected
 		});
-	return res.render('about', {
-		popupTitle: 'Login',
-		popupMsg: 'Logged with success',
-		popup: true
-	});
 });
 
 
