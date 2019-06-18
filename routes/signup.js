@@ -89,24 +89,26 @@ router.post('/signup_validation', function (req, res) {
 
 });
 
-router.post('/check_user', function (req, res) {
+router.post('/check', function (req, res) {
 
-  var username       = req.body.username;
+  const item = req.body.item;
+  const type  = req.body.type;
 
-  mod.pool.getConnection()
-  .then(conn => {
+  if (type === 'email') {
+    mod.pool.getConnection()
+    .then(conn => {
 
-    conn.query("USE matcha")
+      conn.query("USE matcha")
       .then((rows) => {
         console.log(rows);
-        return conn.query("SELECT COUNT(*) as nb FROM users WHERE username=?", [username]);
+        return conn.query("SELECT COUNT(*) as nb FROM users WHERE email=?", [item]);
       })
       .then((response) => {
         console.log(response[0].nb);
         if (response[0].nb != 0) {
           res.send("Unavailable");
         } else {
-          if (!mod.checkuid(username)) {
+          if (!validator.validate(item)) {
             res.send('Unavailable');
           } else {
             res.send("Avalaible");
@@ -121,55 +123,59 @@ router.post('/check_user', function (req, res) {
       })
 
     }).catch(err => {
-    //not connected
-  });
-});
+      //not connected
+    });
+  } else if (type === 'uname') {
+    mod.pool.getConnection()
+      .then(conn => {
 
-router.post('/check_email', function (req, res) {
+        conn.query("USE matcha")
+          .then((rows) => {
+            console.log(rows);
+            return conn.query("SELECT COUNT(*) as nb FROM users WHERE username=?", [item]);
+          })
+          .then((response) => {
+            console.log(response[0].nb);
+            if (response[0].nb != 0) {
+              res.send("Unavailable");
+            } else {
+              if (!mod.checkuid(item)) {
+                res.send('Unavailable');
+              } else {
+                res.send("Avalaible");
+              }
+            }
+            conn.end();
+          })
+          .catch(err => {
+            //handle error
+            console.log(err);
+            conn.end();
+          })
 
-  var email = req.body.email;
-
-  mod.pool.getConnection()
-  .then(conn => {
-
-    conn.query("USE matcha")
-      .then((rows) => {
-        console.log(rows);
-        return conn.query("SELECT COUNT(*) as nb FROM users WHERE email=?", [email]);
-      })
-      .then((response) => {
-        console.log(response[0].nb);
-        if (response[0].nb != 0) {
-          res.send("Unavailable");
-        } else {
-          if (!validator.validate(email)) {
-            res.send('Unavailable');
-          } else {
-            res.send("Avalaible");
-          }
-        }
-        conn.end();
-      })
-      .catch(err => {
-        //handle error
-        console.log(err);
-        conn.end();
-      })
-
-    }).catch(err => {
-    //not connected
-  });
-});
-
-router.post('/check_name', function (req, res) {
-
-  var name = req.body.name;
-
-  if (!mod.checkname(name)) {
-    res.send('Unavailable');
-  } else {
-    res.send('Avalaible');
+        }).catch(err => {
+        //not connected
+      });
+  } else if (type === 'lname' || type === 'fname') {
+      if (!mod.checkname(item)) {
+        res.send('Unavailable');
+      } else {
+        res.send('Avalaible');
+      }
+  } else if (type === 'pwd') {
+      if (!mod.checkpwd(item)) {
+        res.send('Unavailable');
+      } else {
+        res.send('Avalaible');
+      }
+  } else if (type === 'pwd' || type === 'confpwd') {
+      if (!mod.checkpwd(item)) {
+        res.send('Unavailable');
+      } else {
+        res.send('Avalaible');
+      }
   }
+
 });
 
 module.exports = router;
