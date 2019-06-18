@@ -1,0 +1,29 @@
+{
+  "name": "glyphicons-only-bootstrap",
+  "version": "0.0.1",
+  "description": "",
+  "homepage": "https://github.com/ohpyupi/glyphicons-only-bootstrap",
+  "authors": [
+    "ohpyupi <ohpyupi@gmail.com>"
+  ],
+  "main": "",
+  "keywords": [
+    "Glyphicons"
+  ],
+  "license": "Bootstrap",
+  "ignore": [
+    ".gitignore",
+    "README.md",
+    "bower.json"
+  ],
+  "_release": "0.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.1",
+    "commit": "fe862f078980abb35b1fc57ff2ae069135668410"
+  },
+  "_source": "https://github.com/ohpyupi/glyphicons-only-bootstrap.git",
+  "_target": "^0.0.1",
+  "_originalSource": "glyphicons-only-bootstrap",
+  "_direct": true
+}

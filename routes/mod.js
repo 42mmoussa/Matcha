@@ -8,12 +8,15 @@ const pool = mariadb.createPool({
   // connectionLimit: 5
 });
 
+<<<<<<< HEAD
 function randomString(length, chars) {
   var result = '';
   for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
   return result;
 }
 
+=======
+>>>>>>> mmoussa
 function checkuid(username) {
   var regex = /^[a-zA-Z0-9]+$/;
 
@@ -30,7 +33,19 @@ function checkpwd(pwd) {
   var regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
 
   return regex.test(pwd);
+<<<<<<< HEAD
 }
 
 module.exports = {checkuid, pool, randomString, checkname, checkpwd};
 
+=======
+}
+
+function randomString(length, chars) {
+  var result = '';
+  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
+}
+
+module.exports = {checkuid, checkname, checkpwd, pool, randomString};
+>>>>>>> mmoussa
