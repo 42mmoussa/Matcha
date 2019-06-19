@@ -47,7 +47,7 @@ router.post('/login_validation', function(req, res) {
 				//handle error
 				console.log(err);
 				return res.render('login', {
-					error: "User does not exist"
+					error: "Bad password or username"
 				});
 				conn.end();
 			})
