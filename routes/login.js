@@ -24,13 +24,13 @@ router.post('/login_validation', function(req, res) {
 
 		  conn.query("USE matcha")
 			.then((rows) => {
-			  console.log(rows); //[ {val: 1}, meta: ... ]
 			  //Table must have been created before
 			  return conn.query("SELECT * FROM USERS WHERE username = ? OR email=? AND pwd = ?", [login, login, pwd]);
 			})
 			.then((result) => {
-				console.log(result[0]);
 				if (result[0].confirm === 1) {
+          req.session.userId = result[0].id_usr;
+          console.log(req.session);
 					return res.render('login', {
 						popupTitle: 'Login',
 						popupMsg: 'Logged with success',

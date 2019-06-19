@@ -75,7 +75,6 @@ router.post('/signup_validation', function (req, res) {
         return conn.query("SELECT id_usr FROM USERS WHERE username = ?", [username]);
       })
       .then((resu) => {
-        console.log(resu); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
         conn.query("INSERT INTO confirm(id_usr, confirmkey) VALUES(?, ?)", [resu[0].id_usr, crypto.SHA512(confirmKey).toString()]);
         var transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -137,11 +136,9 @@ router.post('/check', function (req, res) {
 
       conn.query("USE matcha")
       .then((rows) => {
-        console.log(rows);
         return conn.query("SELECT COUNT(*) as nb FROM users WHERE email=?", [item]);
       })
       .then((response) => {
-        console.log(response[0].nb);
         if (response[0].nb != 0) {
           res.send("Unavailable");
         } else {
@@ -168,11 +165,9 @@ router.post('/check', function (req, res) {
 
         conn.query("USE matcha")
           .then((rows) => {
-            console.log(rows);
             return conn.query("SELECT COUNT(*) as nb FROM users WHERE username=?", [item]);
           })
           .then((response) => {
-            console.log(response[0].nb);
             if (response[0].nb != 0) {
               res.send("Unavailable");
             } else {
