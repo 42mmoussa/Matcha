@@ -57,28 +57,26 @@ router.post('/signup_validation', function (req, res) {
 
     conn.query("USE matcha")
       .then(() => {
-        // let row = conn.query("SELECT COUNT(*) as nb FROM USERS WHERE email=?", [email])
-        // if (row[0].nb != 0) {
-        //   return res.render('signup', {
-        //     error: "Email already taken"
-        //   });
-        //   conn.end();
-        //   return true;
-        // }
-        // row = conn.query("SELECT COUNT(*) as nb FROM USERS WHERE username=?", [username]);
-        // if (row[0].nb != 0) {
-        //   return res.render('signup', {
-        //     error: "Username already taken"
-        //   });
-        //   conn.end();
-        //   return true;
-        // }
-
-        conn.query("INSERT INTO USERS(firstname, lastname, username, pwd, email, confirmkey, confirm) VALUES(?, ?, ?, ?, ?, ?, ?)", [firstname, lastname, username, pwdHash, email, crypto.SHA512(confirmKey).toString(), confirm]);
+        return conn.query("SELECT COUNT(*) as nb FROM USERS WHERE email=?", [email])
+      })
+      .then((row) => {
+        if (row[0].nb != 0) {
+          throw "E-mail already taken";
+        }
+        return conn.query("SELECT COUNT(*) as nb FROM USERS WHERE username=?", [username]);
+      })
+      .then((row) => {
+        if (row[0].nb != 0) {
+          throw "Username already taken";
+        }
+      })
+      .then(() => {
+        conn.query("INSERT INTO USERS(firstname, lastname, username, pwd, email, confirm) VALUES(?, ?, ?, ?, ?, ?)", [firstname, lastname, username, pwdHash, email, confirm]);
         return conn.query("SELECT id_usr FROM USERS WHERE username = ?", [username]);
       })
       .then((resu) => {
         console.log(resu); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
+        conn.query("INSERT INTO confirm(id_usr, confirmkey) VALUES(?, ?)", [resu[0].id_usr, crypto.SHA512(confirmKey).toString()]);
         var transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -106,18 +104,21 @@ router.post('/signup_validation', function (req, res) {
             }
           });
         conn.end();
+        return res.render('login', {
+          popupTitle: 'Sign up',
+          popupMsg: 'Signed up with success<br />Check your mails',
+          popup: true
+        });
       })
       .catch(err => {
         //handle error
         console.log(err);
         conn.end();
+        return res.render('signup', {
+          error: err
+        });
       })
 
-      return res.render('login', {
-        popupTitle: 'Sign up',
-        popupMsg: 'Signed up with success<br />Check your mails',
-        popup: true
-      });
     }).catch(err => {
     //not connected
   });

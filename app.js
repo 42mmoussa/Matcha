@@ -12,6 +12,7 @@ const about = require('./routes/about');
 const login = require('./routes/login');
 const signup = require('./routes/signup');
 const mod = require('./routes/mod');
+const index = require('./routes/index');
 
 // configure app
 
@@ -32,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'bower_components')));
 app.use('/about', about);
 app.use('/login', login);
 app.use('/signup', signup);
-app.use(require('./todo.js'));
+app.use('/', index);
 
 // connect to database
 
