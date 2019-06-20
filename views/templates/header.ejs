@@ -39,15 +39,19 @@
       <input class="form-control mr-sm-2" type="text" placeholder="Search">
       <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
     </form>
-    <a href="/login" class="btn btn-primary btn-default login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
-    <a href="/signup" class="btn btn-primary btn-default"><span class="glyphicon glyphicon-log-in"></span> Sign up</a>
+    <% if (locals.session.userId) { %>
+      <a href="/logout" class="btn btn-primary btn-default login"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+    <% } else { %>
+      <a href="/login" class="btn btn-primary btn-default login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+      <a href="/signup" class="btn btn-primary btn-default"><span class="glyphicon glyphicon-log-in"></span> Sign up</a>
+    <% } %>
   </div>
 </nav>
 
 
 <!-- Modal with custom text-->
 
-<% if (locals.popup === true) { %>
+<% if (locals.session.localVar && locals.session.localVar.popup === true) { %>
   <script type="text/javascript">
     $(window).on('load',function(){
         $('#myModal').modal('show');
@@ -60,13 +64,13 @@
 
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title"><%= popupTitle %></h4>
+        <h4 class="modal-title"><%= locals.session.localVar.popupTitle %></h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
       <!-- Modal body -->
       <div class="modal-body">
-        <%- popupMsg.replace('\n', '<br/>') %>
+        <%- locals.session.localVar.popupMsg.replace('\n', '<br/>') %>
       </div>
 
       <!-- Modal footer -->

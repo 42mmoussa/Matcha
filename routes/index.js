@@ -5,9 +5,17 @@ const crypto = require('crypto-js');
 var router = express.Router();
 
   router.get('/', function (req, res) {
+    if (req.session.userId && req.query.login) {
+      res.render('index', {
+        popupTitle: "Login",
+        popupMsg: "Logged in with success",
+        popup: true
+      });
+    }
     res.render('index', {
-      title: 'Matcha'
     });
+    req.session.localVar.popup = false;
+    return true;
   });
 
   router.get('/confirm-acc', function (req, res) {
@@ -33,7 +41,6 @@ var router = express.Router();
             } else {
               conn.end();
               res.render('index', {
-                title: 'Matcha',
                 popupTitle: "Request",
                 popupMsg: "Your request expired",
                 popup: true
@@ -46,7 +53,6 @@ var router = express.Router();
               if (result[0].id_usr == id_usr) {
                 if (result[0].confirm == 1) {
                   res.render('index', {
-                    title: 'Matcha',
                     popupTitle: "Account",
                     popupMsg: "Your account is already confirmed",
                     popup: true
@@ -56,7 +62,6 @@ var router = express.Router();
                   conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
                   conn.end();
                   res.render('index', {
-                    title: 'Matcha',
                     popupTitle: "Account",
                     popupMsg: "Your account has been confirmed",
                     popup: true
@@ -70,7 +75,6 @@ var router = express.Router();
             console.log(err);
             conn.end();
             res.render('index', {
-              title: 'Matcha',
               popupTitle: "Request",
               popupMsg: "Your request expired",
               popup: true
