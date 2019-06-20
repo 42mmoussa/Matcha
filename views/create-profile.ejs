@@ -1,0 +1,120 @@
+<% include templates/header.ejs %>
+
+<section class="container">
+  <h3>Sign up</h3>
+  <% if (locals.warning) { %>
+    <div class="alert alert-warning" role="alert">
+      <%= warning %>
+    </div>
+  <% } %>
+  <% if (locals.success) { %>
+    <div class="alert alert-success" role="alert">
+      <%= success %>
+    </div>
+  <% } %>
+  <% if (locals.error) { %>
+    <div class="alert alert-danger" role="alert">
+      <%= error %>
+    </div>
+  <% } %>
+  <form>
+    <fieldset class="form-group">
+      <div class="row">
+        <legend class="col-form-label col-sm-2 pt-0">Gender</legend>
+        <div class="col-sm-10">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="gridRadios" id="men" value="option1">
+            <label class="form-check-label" for="man">
+              Man
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="gridRadios" id="women" value="option2">
+            <label class="form-check-label" for="women">
+              Women
+            </label>
+          </div>
+          <div class="form-check disabled">
+            <input class="form-check-input" type="radio" name="gridRadios" id="transgender" value="option3">
+            <label class="form-check-label" for="transgender">
+              Transgender
+            </label>
+          </div>
+          <div class="form-check disabled">
+            <input class="form-check-input" type="radio" name="gridRadios" id="transexual" value="option4">
+            <label class="form-check-label" for="transexual">
+              Transexual
+            </label>
+          </div>
+          <div class="form-check disabled">
+            <input class="form-check-input" type="radio" name="gridRadios" id="queer" value="option5">
+            <label class="form-check-label" for="queer">
+              Queer
+            </label>
+          </div>
+          <div class="form-check disabled">
+            <input class="form-check-input" type="radio" name="gridRadios" id="other" value="option6">
+            <label class="form-check-label" for="other">
+              Other
+            </label>
+          </div>
+
+        </div>
+      </div>
+    </fieldset>
+    <div class="form-group row">
+      <div class="col-sm-2">Sexual Orientation</div>
+      <div class="col-sm-10">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="heterosexual">
+          <label class="form-check-label" for="heterosexual">
+            Heterosexual
+          </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="homosexual">
+            <label class="form-check-label" for="bisexual">
+              Homosexual
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="bisexual">
+            <label class="form-check-label" for="bisexual">
+              Bisexual
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="asexual">
+            <label class="form-check-label" for="asexual">
+              Asexual
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="pansexual">
+            <label class="form-check-label" for="pansexual">
+              Pansexual
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="questioning">
+            <label class="form-check-label" for="questioning">
+              Questioning
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="other">
+            <label class="form-check-label" for="other">
+              Other
+            </label>
+          </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-sm-10">
+        <button type="submit" class="btn btn-primary">Confirm</button>
+      </div>
+    </div>
+  </form>
+</section>
+
+<% include templates/footer.ejs %>

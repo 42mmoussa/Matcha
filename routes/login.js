@@ -6,7 +6,7 @@ const mod = require('./mod');
 
 router.get('/', function (req, res) {
   if (req.session.userId) {
-    return res.resdirect('index');
+    return res.redirect('/');
   }
   else {
     return res.render('login', {
