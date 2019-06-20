@@ -5,17 +5,16 @@ const crypto = require('crypto-js');
 var router = express.Router();
 
   router.get('/', function (req, res) {
-    if (req.session.userId && req.query.login) {
-      res.render('index', {
+    if (req.session.userId && req.query.success === 'login') {
+      return res.render('index', {
         popupTitle: "Login",
         popupMsg: "Logged in with success",
         popup: true
       });
     }
-    res.render('index', {
+    return res.render('index', {
+
     });
-    req.session.localVar.popup = false;
-    return true;
   });
 
   router.get('/confirm-acc', function (req, res) {
