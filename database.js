@@ -1,7 +1,8 @@
 const mariadb = require('mariadb');
 require('require-sql');
 const createDB = require('./createDB.sql');
-
+const confirm = require('./confirm.sql');
+const profiles = require('./profiles.sql');
 
 const pool = mariadb.createPool({
     host: 'localhost',
@@ -24,6 +25,8 @@ pool.getConnection()
        .then((res) => {
          console.log(res); //\
          conn.query(createDB);
+         conn.query(confirm);
+         conn.query(profiles);
          conn.end();
        })
        .catch(err => {

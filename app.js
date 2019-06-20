@@ -26,6 +26,7 @@ const login = require('./routes/login');
 const signup = require('./routes/signup');
 const mod = require('./routes/mod');
 const index = require('./routes/index');
+const user = require('./routes/user');
 
 // configure app
 
@@ -63,6 +64,7 @@ app.use('/about', about);
 app.use('/login', login);
 app.use('/signup', signup);
 app.use('/', index);
+app.use('/user', user);
 
 // connect to database
 

@@ -1,11 +1,12 @@
-CREATE TABLE USERS(
-        id_usr    Int  AUTO_INCREMENT  NOT NULL UNIQUE,
-        firstname Varchar (50) NOT NULL,
-        lastname  Varchar (50) NOT NULL,
-        username     Varchar (50) NOT NULL UNIQUE,
-        passwd       Varchar(516) NOT NULL,
-        email     Varchar (50) NOT NULL,
-        confirmkey Varchar(516) NOT NULL,
-        confirm         Int
-	,CONSTRAINT USERS_PK PRIMARY KEY (id_usr)
+CREATE TABLE `USERS` (
+		`id_usr` int NOT NULL AUTO_INCREMENT,
+		`firstname` text NOT NULL,
+		`lastname` text NOT NULL,
+		`username` varchar(50) NOT NULL,
+		`pwd` longtext NOT NULL,
+		`email` varchar(100) NOT NULL,
+		`confirm` int(1) NOT NULL,
+		CONSTRAINT USERS_PK PRIMARY KEY (`id_usr`),
+		UNIQUE KEY `username` (`username`),
+		UNIQUE KEY `email` (`email`)
 );
