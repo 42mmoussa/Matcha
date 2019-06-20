@@ -18,6 +18,21 @@ var router = express.Router();
     });
   });
 
+  router.get('/logout', function (req, res) {
+    
+    console.log(req.session);
+    if (req.session.userId && req.query.success === 'login') {
+      return res.render('index', {
+        popupTitle: "Login",
+        popupMsg: "Logged in with success",
+        popup: true
+      });
+    }
+    return res.render('index', {
+
+    });
+  });
+
   router.get('/confirm-acc', function (req, res) {
     newKey = mod.randomString(50, '0123456789abcdefABCDEF');
     if (req.query.id_usr !== "") {

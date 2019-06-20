@@ -36,11 +36,9 @@ router.post('/login_validation', function(req, res) {
 				if (result[0].confirm === 1) {
           req.session.userId = result[0].id_usr;
           console.log(req.session);
-          conn.query("SELECT COUNT(*) as nb FROM users WHERE id_usr = ?", result[0].id_usr)
+          conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)
           .then((rows) => {
-            console.log("OKKOKOKOKOKOK");
             console.log(rows);
-            console.log("1231232131132");
             if (rows[0].nb === 0) {
               return res.redirect('/user/create-profile');
             } else {

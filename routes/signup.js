@@ -1,10 +1,11 @@
-const express   = require('express');
-const router    = express.Router();
-const session   = require('express-session');
-const mod       = require('./mod');
-const crypto    = require('crypto-js');
-const validator = require("email-validator");
-const nodemailer  = require('nodemailer');
+const express    = require('express');
+const router     = express.Router();
+const session    = require('express-session');
+const mod        = require('./mod');
+const crypto     = require('crypto-js');
+const validator  = require("email-validator");
+const nodemailer = require('nodemailer');
+const dateFormat = require('dateformat');
 
 router.get('/', function (req, res) {
   return res.render('signup', {
@@ -19,10 +20,10 @@ router.post('/signup_validation', function (req, res) {
   var pwd            = req.body.pwd;
   var pwdConf        = req.body.confpwd;
   var email          = req.body.email;
+  var birthday       = new Date(req.body.date);
+  var today          = new Date();
   var confirm        = 0;
   var confirmKey     = mod.randomString(50, '0123456789abcdefABCDEF');
-
-  console.log(mod.checkname(lastname));
 
   if (lastname === "" || firstname === "" || username === "" || pwd  === "" || pwdConf === "" || email === "") {
     return res.render('signup', {
@@ -48,6 +49,14 @@ router.post('/signup_validation', function (req, res) {
     return res.render('signup', {
       error: "Votre mot de passe doit contenir au munimum 8 lettres contenant une majuscule, une minuscule et un chiffre"
     });
+  } else if (!mod.checkdate(req.body.date)) {
+    return res.render('signup', {
+      error: "You must enter a valid date"
+    });
+  } else if (mod.dateDiff(birthday, today) < 18 || mod.dateDiff(birthday, today) > 90) {
+    return res.render('signup', {
+      error: "You must have atleast 18 years old"
+    });
   }
 
   pwdHash = crypto.SHA512(pwd).toString();
@@ -71,7 +80,7 @@ router.post('/signup_validation', function (req, res) {
         }
       })
       .then(() => {
-        conn.query("INSERT INTO USERS(firstname, lastname, username, pwd, email, confirm) VALUES(?, ?, ?, ?, ?, ?)", [firstname, lastname, username, pwdHash, email, confirm]);
+        conn.query("INSERT INTO USERS(firstname, lastname, username, pwd, email, confirm, birthday) VALUES(?, ?, ?, ?, ?, ?, ?)", [firstname, lastname, username, pwdHash, email, confirm, birthday]);
         return conn.query("SELECT id_usr FROM USERS WHERE username = ?", [username]);
       })
       .then((resu) => {
@@ -145,7 +154,7 @@ router.post('/check', function (req, res) {
           if (!validator.validate(item)) {
             res.send('Unavailable');
           } else {
-            res.send("Avalaible");
+            res.send("Available");
           }
         }
         conn.end();
@@ -174,7 +183,7 @@ router.post('/check', function (req, res) {
               if (!mod.checkuid(item)) {
                 res.send('Unavailable');
               } else {
-                res.send("Avalaible");
+                res.send("Available");
               }
             }
             conn.end();
@@ -189,23 +198,33 @@ router.post('/check', function (req, res) {
         //not connected
       });
   } else if (type === 'lname' || type === 'fname') {
-      if (!mod.checkname(item)) {
-        res.send('Unavailable');
-      } else {
-        res.send('Avalaible');
-      }
+    if (!mod.checkname(item)) {
+      res.send('Unavailable');
+    } else {
+      res.send('Available');
+    }
   } else if (type === 'pwd') {
-      if (!mod.checkpwd(item)) {
-        res.send('Unavailable');
-      } else {
-        res.send('Avalaible');
-      }
+    if (!mod.checkpwd(item)) {
+      res.send('Unavailable');
+    } else {
+      res.send('Available');
+    }
   } else if (type === 'pwd' || type === 'confpwd') {
-      if (!mod.checkpwd(item)) {
-        res.send('Unavailable');
-      } else {
-        res.send('Avalaible');
-      }
+    if (!mod.checkpwd(item)) {
+      res.send('Unavailable');
+    } else {
+      res.send('Available');
+    }
+  } else if (type === 'date') {
+    birthday = new Date(item);
+    today = new Date();
+    if (!mod.checkdate(item)) {
+      res.send('Unavailable');
+    } else if (mod.dateDiff(birthday, today) < 18 || mod.dateDiff(birthday, today) > 90) {
+      res.send('Unavailable');
+    } else {
+      res.send('Available');
+    }
   }
 
 });
