@@ -6,6 +6,9 @@ var router = express.Router();
       title: 'About',
       name: 'mmoussa & atelli'
     });
+    req.session.localVar = undefined;
+    delete(req.session.localVar);
+    return true;
   });
 
   module.exports = router;

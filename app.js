@@ -39,7 +39,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(favicon('favicon.ico'));
 app.use(express.static(path.join(__dirname, 'bower_components')));
-  // session connect
+  // session
 app.use(session({
   name: SESS_NAME,
   resave: false,
@@ -51,6 +51,10 @@ app.use(session({
     secure: IN_PROD
   }
 }));
+app.use(function(req, res, next) {
+  res.locals.session = req.session;
+  next();
+});
 
 
 // define routes
