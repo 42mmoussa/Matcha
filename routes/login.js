@@ -36,7 +36,17 @@ router.post('/login_validation', function(req, res) {
 				if (result[0].confirm === 1) {
           req.session.userId = result[0].id_usr;
           console.log(req.session);
-          return res.redirect('/?success=login');
+          conn.query("SELECT COUNT(*) as nb FROM users WHERE id_usr = ?", result[0].id_usr)
+          .then((rows) => {
+            console.log("OKKOKOKOKOKOK");
+            console.log(rows);
+            console.log("1231232131132");
+            if (rows[0].nb === 0) {
+              return res.redirect('/user/create-profile');
+            } else {
+              return res.redirect('/?success=login');
+            }
+          });
 				} else {
           return res.render('login', {
             error: "Account not confirmed"

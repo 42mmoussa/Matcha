@@ -5,6 +5,7 @@ const crypto = require('crypto-js');
 var router = express.Router();
 
   router.get('/', function (req, res) {
+    console.log(req.session);
     if (req.session.userId && req.query.success === 'login') {
       return res.render('index', {
         popupTitle: "Login",
