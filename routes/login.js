@@ -5,7 +5,7 @@ const crypto = require('crypto-js');
 const mod = require('./mod');
 
 router.get('/', function (req, res) {
-  if (req.session.userId) {
+  if (req.session.connect) {
     return res.redirect('/');
   }
   else {
@@ -34,7 +34,13 @@ router.post('/login_validation', function(req, res) {
 			})
 			.then((result) => {
 				if (result[0].confirm === 1) {
-          req.session.userId = result[0].id_usr;
+					req.session.user = {
+						id: result[0].id_usr,
+						email: result[0].email,
+						firstname: result[0].firstname,
+						lastname: result[0].lastname
+					};
+					req.session.connect = true;
           conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)
           .then((rows) => {
             if (rows[0].nb === 0) {

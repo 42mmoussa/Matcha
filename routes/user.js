@@ -10,13 +10,13 @@ router.get('/', function(req, res) {
 });
 
 router.get('/create-profile', function(req, res) {
-    if (req.session.userId)
+    if (req.session.connect)
     {
         mod.pool.getConnection()
 		.then((conn) => {
 			conn.query("USE matcha")
 			.then(() => {
-				return conn.query("SELECT COUNT(*) as nb FROM profiles WHERE id_usr = ?", req.session.userId)
+				return conn.query("SELECT COUNT(*) as nb FROM profiles WHERE id_usr = ?", req.session.user.id)
 			})
 			.then((rows) => {
 				console.log(rows[0].nb);
