@@ -27,6 +27,7 @@ const login = require('./routes/login');
 const signup = require('./routes/signup');
 const mod = require('./routes/mod');
 const index = require('./routes/index');
+const swipe = require('./routes/swipe');
 
 // configure app
 
@@ -64,6 +65,7 @@ app.use('/user', user);
 app.use('/about', about);
 app.use('/login', login);
 app.use('/signup', signup);
+app.use('/swipe', swipe);
 app.use('/', index);
 
 // start the server
