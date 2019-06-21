@@ -5,7 +5,6 @@ const crypto = require('crypto-js');
 var router = express.Router();
 
   router.get('/', function (req, res) {
-    console.log(req.session);
     if (req.session.userId && req.query.success === 'login') {
       return res.render('index', {
         popupTitle: "Login",
@@ -19,12 +18,12 @@ var router = express.Router();
   });
 
   router.get('/logout', function (req, res) {
-    
-    console.log(req.session);
-    if (req.session.userId && req.query.success === 'login') {
+
+    if (req.session.userId) {
+      req.session.userId = undefined;
       return res.render('index', {
-        popupTitle: "Login",
-        popupMsg: "Logged in with success",
+        popupTitle: "Logout",
+        popupMsg: "Logged out with success",
         popup: true
       });
     }
