@@ -25,6 +25,12 @@ function checkpwd(pwd) {
   return regex.test(pwd);
 }
 
+function checkdate(date) {
+  var regex = /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/;
+ 
+  return regex.test(date);
+ }
+
 function randomString(length, chars) {
   var result = '';
   for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
@@ -51,4 +57,4 @@ function dateDiff(dateold, datenew)
   return diff;
 }
 
-module.exports = {checkuid, checkname, checkpwd, pool, randomString, dateDiff};
+module.exports = {checkuid, checkname, checkpwd, pool, randomString, dateDiff, checkdate};

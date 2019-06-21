@@ -5,10 +5,26 @@ const crypto = require('crypto-js');
 var router = express.Router();
 
   router.get('/', function (req, res) {
-    if (req.session.userId && req.query.success === 'login') {
+    if (req.session.connect && req.query.success === 'login') {
       return res.render('index', {
         popupTitle: "Login",
         popupMsg: "Logged in with success",
+        popup: true
+      });
+    }
+    return res.render('index', {
+
+    });
+  });
+
+  router.get('/logout', function (req, res) {
+
+    if (req.session.connect) {
+      req.session.user = undefined;
+      req.session.connect = undefined;
+      return res.render('index', {
+        popupTitle: "Logout",
+        popupMsg: "Logged out with success",
         popup: true
       });
     }
@@ -36,7 +52,7 @@ var router = express.Router();
           .then((row) => {
             console.log(row[0]);
             if (row[0].nb === 1) {
-              return conn.query("SELECT * FROM USERS WHERE id_usr = ?", [id_usr]);
+              return conn.query("SELECT * FROM users WHERE id_usr = ?", [id_usr]);
             } else {
               conn.end();
               res.render('index', {
@@ -57,7 +73,7 @@ var router = express.Router();
                     popup: true
                   });
                 } else {
-                  conn.query("UPDATE USERS SET confirm = 1 WHERE id_usr = ?", [id_usr]);
+                  conn.query("UPDATE users SET confirm = 1 WHERE id_usr = ?", [id_usr]);
                   conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
                   conn.end();
                   res.render('index', {

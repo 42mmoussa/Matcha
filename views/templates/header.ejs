@@ -26,10 +26,10 @@
       </li>
       <li class="nav-item">
         <span class="sr-only">(current)</span>
-        <a class="nav-link" href="#">Truc</a>
+        <a class="nav-link" href="/swipe">Swipe</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Pricing</a>
+        <a class="nav-link" href="/profile">Your profile</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/about">About</a>
@@ -57,27 +57,22 @@
         $('#myModal').modal('show');
     });
   </script>
-
 <div class="modal fade" id="myModal">
   <div class="modal-dialog">
     <div class="modal-content">
-
       <!-- Modal Header -->
       <div class="modal-header">
         <h4 class="modal-title"><%= popupTitle %></h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
-
       <!-- Modal body -->
       <div class="modal-body">
         <%- popupMsg.replace('\n', '<br/>') %>
       </div>
-
       <!-- Modal footer -->
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
       </div>
-
     </div>
   </div>
 </div>

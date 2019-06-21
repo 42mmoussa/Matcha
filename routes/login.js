@@ -5,8 +5,8 @@ const crypto = require('crypto-js');
 const mod = require('./mod');
 
 router.get('/', function (req, res) {
-  if (req.session.userId) {
-    return res.resdirect('index');
+  if (req.session.connect) {
+    return res.redirect('/');
   }
   else {
     return res.render('login', {
@@ -30,13 +30,26 @@ router.post('/login_validation', function(req, res) {
 		  conn.query("USE matcha")
 			.then((rows) => {
 			  //Table must have been created before
-			  return conn.query("SELECT * FROM USERS WHERE (username = ? OR email=?) AND pwd = ?", [login, login, pwd]);
+			  return conn.query("SELECT * FROM users WHERE (username = ? OR email=?) AND pwd = ?", [login, login, pwd]);
 			})
 			.then((result) => {
 				if (result[0].confirm === 1) {
-          req.session.userId = result[0].id_usr;
-          console.log(req.session);
-          return res.redirect('/?success=login');
+					req.session.user = {
+						id: result[0].id_usr,
+						email: result[0].email,
+						firstname: result[0].firstname,
+						lastname: result[0].lastname,
+						username: result[0].username
+					};
+					req.session.connect = true;
+          conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)
+          .then((rows) => {
+            if (rows[0].nb === 0) {
+              return res.redirect('/user/create-profile');
+            } else {
+              return res.redirect('/?success=login');
+            }
+          });
 				} else {
           return res.render('login', {
             error: "Account not confirmed"
@@ -50,7 +63,6 @@ router.post('/login_validation', function(req, res) {
 				return res.render('login', {
 					error: "Bad password or username"
 				});
-				conn.end();
 			})
 
 		}).catch(err => {

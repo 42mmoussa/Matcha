@@ -1,8 +1,8 @@
 const mariadb = require('mariadb');
 require('require-sql');
-const createDB = require('./createDB.sql');
-const confirm = require('./confirm.sql');
-const profiles = require('./profiles.sql');
+const createDB = require('./sql/createDB.sql');
+const confirm = require('./sql/confirm.sql');
+const profiles = require('./sql/profiles.sql');
 
 const pool = mariadb.createPool({
     host: 'localhost',

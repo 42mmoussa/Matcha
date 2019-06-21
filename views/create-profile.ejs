@@ -31,96 +31,95 @@
       </div>
     </div> -->
     <fieldset class="form-group">
-      <div class="row">
-        <legend class="col-form-label col-sm-2 pt-0">Gender</legend>
+    <div class="form-group row">
+        <label for="staticName" class="col-sm-2 col-form-label">Name</label>
         <div class="col-sm-10">
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="gridRadios" id="men" value="option1">
-            <label class="form-check-label" for="man">
-              Man
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="gridRadios" id="women" value="option2">
-            <label class="form-check-label" for="women">
-              Women
-            </label>
-          </div>
-          <div class="form-check disabled">
-            <input class="form-check-input" type="radio" name="gridRadios" id="transgender" value="option3">
-            <label class="form-check-label" for="transgender">
-              Transgender
-            </label>
-          </div>
-          <div class="form-check disabled">
-            <input class="form-check-input" type="radio" name="gridRadios" id="transexual" value="option4">
-            <label class="form-check-label" for="transexual">
-              Transexual
-            </label>
-          </div>
-          <div class="form-check disabled">
-            <input class="form-check-input" type="radio" name="gridRadios" id="queer" value="option5">
-            <label class="form-check-label" for="queer">
-              Queer
-            </label>
-          </div>
-          <div class="form-check disabled">
-            <input class="form-check-input" type="radio" name="gridRadios" id="other" value="option6">
-            <label class="form-check-label" for="other">
-              Other
-            </label>
-          </div>
-          
+          <input type="text" readonly class="form-control-plaintext" id="staticName" value="<%= locals.session.user.lastname %> <%= locals.session.user.firstname %>">
         </div>
       </div>
-    </fieldset>
-    <div class="form-group row">
-      <div class="col-sm-2">Sexual Orientation</div>
-      <div class="col-sm-10">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="heterosexual">
-          <label class="form-check-label" for="heterosexual">
-            Heterosexual
-          </label>
+      <div class="form-group row">
+          <label for="staticUsername" class="col-sm-2 col-form-label">Username</label>
+          <div class="col-sm-10">
+            <input type="text" readonly class="form-control-plaintext" id="staticUserame" value="<%= locals.session.user.username %>">
+          </div>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="homosexual">
-            <label class="form-check-label" for="bisexual">
-              Homosexual
-            </label>
+      <div class="form-group row">
+          <label for="staticAge" class="col-sm-2 col-form-label">Age</label>
+          <div class="col-sm-10">
+            <input type="text" readonly class="form-control-plaintext" id="staticAge" value="<%= locals.age %>">
           </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="bisexual">
-            <label class="form-check-label" for="bisexual">
-              Bisexual
-            </label>
+        </div>
+        <div class="form-row">
+              <label class="col-sm-2 col-form-label" for="inlineFormCustomSelect">Gender</label>
+              <div class="col-sm-10">
+                <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                  <option selected>Choose...</option>
+                  <option value="man">Man</option>
+                  <option value="woman">Woman</option>
+                  <option value="transgender">Transgender</option>
+                  <option value="transexual">Transexual</option>
+                  <option value="queer">Queer</option>
+                  <option value="other">Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-2">Sexual Orientation</div>
+          <div class="col-sm-10">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="heterosexual">
+              <label class="form-check-label" for="heterosexual">
+                Heterosexual
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="homosexual">
+              <label class="form-check-label" for="bisexual">
+                Homosexual
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="bisexual">
+              <label class="form-check-label" for="bisexual">
+                Bisexual
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="asexual">
+              <label class="form-check-label" for="asexual">
+                Asexual
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="pansexual">
+              <label class="form-check-label" for="pansexual">
+                Pansexual
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="questioning">
+              <label class="form-check-label" for="questioning">
+                Questioning
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="other">
+              <label class="form-check-label" for="other">
+                Other
+              </label>
+            </div>
+      </div>
+      <div class="form-row">
+        <label class="col-sm-2 col-form-label">Photo</label>
+        <div class="col-sm-10">
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="customFile">
+            <label class="custom-file-label" for="customFile">Choose file</label>
           </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="asexual">
-            <label class="form-check-label" for="asexual">
-              Asexual
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="pansexual">
-            <label class="form-check-label" for="pansexual">
-              Pansexual
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="questioning">
-            <label class="form-check-label" for="questioning">
-              Questioning
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="other">
-            <label class="form-check-label" for="other">
-              Other
-            </label>
-          </div>
+        </div>
       </div>
     </div>
+  </fieldset>
     <div class="form-group row">
       <div class="col-sm-10">
         <button type="submit" class="btn btn-primary">Confirm</button>
