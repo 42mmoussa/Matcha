@@ -8,17 +8,16 @@ const pool = mariadb.createPool({
     host: 'localhost',
     user:'root',
     password: '',
-    port: '3306',
-    // connectionLimit: 5
+    port: '3306'
 });
 
 pool.getConnection()
    .then(conn => {
-   
+
      conn.query("CREATE DATABASE IF NOT EXISTS matcha;")
        .then((rows) => {
          console.log(rows); //[ {val: 1}, meta: ... ]
-         //Table must have been created before 
+         //Table must have been created before
          // " CREATE TABLE myTable (id int, val varchar(255)) "
          return conn.query("USE matcha");
        })
@@ -31,10 +30,10 @@ pool.getConnection()
        })
        .catch(err => {
          //handle error
-         console.log(err); 
+         console.log(err);
          conn.end();
        })
-       
+
    }).catch(err => {
      //not connected
    });

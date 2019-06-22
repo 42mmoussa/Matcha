@@ -40,10 +40,10 @@
       <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
     </form>
     <% if (locals.session.connect) { %>
-      <a href="/logout" class="btn btn-primary btn-default login"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+      <a href="/logout" class="btn btn-outline-primary login"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
     <% } else { %>
-      <a href="/login" class="btn btn-primary btn-default login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
-      <a href="/signup" class="btn btn-primary btn-default"><span class="glyphicon glyphicon-log-in"></span> Sign up</a>
+      <a href="/login" class="btn btn-outline-primary login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+      <a href="/signup" class="btn btn-outline-primary"><span class="glyphicon glyphicon-log-in"></span> Sign up</a>
     <% } %>
   </div>
 </nav>
