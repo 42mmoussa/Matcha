@@ -39,7 +39,8 @@ router.post('/login_validation', function(req, res) {
 						email: result[0].email,
 						firstname: result[0].firstname,
 						lastname: result[0].lastname,
-						username: result[0].username
+						username: result[0].username,
+            birthday: result[0].birthday
 					};
 					req.session.connect = true;
           conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)

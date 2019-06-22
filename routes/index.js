@@ -52,7 +52,7 @@ var router = express.Router();
           .then((row) => {
             console.log(row[0]);
             if (row[0].nb === 1) {
-              return conn.query("SELECT * FROM users WHERE id_usr = ?", [id_usr]);
+              return conn.query("SELECT * FROM USERS WHERE id_usr = ?", [id_usr]);
             } else {
               conn.end();
               res.render('index', {
@@ -73,7 +73,7 @@ var router = express.Router();
                     popup: true
                   });
                 } else {
-                  conn.query("UPDATE users SET confirm = 1 WHERE id_usr = ?", [id_usr]);
+                  conn.query("UPDATE USERS SET confirm = 1 WHERE id_usr = ?", [id_usr]);
                   conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
                   conn.end();
                   res.render('index', {
