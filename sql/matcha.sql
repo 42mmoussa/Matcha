@@ -19,13 +19,13 @@ CREATE DATABASE IF NOT EXISTS `matcha` DEFAULT CHARACTER SET utf8 COLLATE utf8_g
 USE `matcha`;
 
 --
--- Table structure for table `USERS`
+-- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `USERS`;
+DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `USERS` (
+CREATE TABLE `users` (
   `id_usr` int(11) NOT NULL AUTO_INCREMENT,
   `firstname` text NOT NULL,
   `lastname` text NOT NULL,
@@ -33,7 +33,6 @@ CREATE TABLE `USERS` (
   `pwd` longtext NOT NULL,
   `email` varchar(100) NOT NULL,
   `confirm` int(1) NOT NULL,
-  `birthday` date NOT NULL,
   PRIMARY KEY (`id_usr`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)

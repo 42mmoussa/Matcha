@@ -30,7 +30,7 @@ router.post('/login_validation', function(req, res) {
 		  conn.query("USE matcha")
 			.then((rows) => {
 			  //Table must have been created before
-			  return conn.query("SELECT * FROM USERS WHERE (username = ? OR email=?) AND pwd = ?", [login, login, pwd]);
+			  return conn.query("SELECT * FROM users WHERE (username = ? OR email=?) AND pwd = ?", [login, login, pwd]);
 			})
 			.then((result) => {
 				if (result[0].confirm === 1) {
