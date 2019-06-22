@@ -17,6 +17,8 @@
     "email-validator": "^2.0.4",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
+    "formidable": "^1.2.1",
+    "fs": "0.0.1-security",
     "http": "0.0.0",
     "mariadb": "^2.0.5",
     "nodemailer": "^6.2.1",
