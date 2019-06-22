@@ -38,12 +38,9 @@ router.post('/login_validation', function(req, res) {
 						id: result[0].id_usr,
 						email: result[0].email,
 						firstname: result[0].firstname,
-<<<<<<< HEAD
 						lastname: result[0].lastname,
-						username: result[0].username
-=======
-						lastname: result[0].lastname
->>>>>>> mmoussa
+            username: result[0].username,
+            birthday: result[0].birthday
 					};
 					req.session.connect = true;
           conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)
@@ -67,6 +64,7 @@ router.post('/login_validation', function(req, res) {
 				return res.render('login', {
 					error: "Bad password or username"
 				});
+				conn.end();
 			})
 
 		}).catch(err => {

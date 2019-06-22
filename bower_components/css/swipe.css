@@ -4,6 +4,12 @@ body {
   background: #252525;
 }
 
+.swipe-container {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .no-transition {
   -webkit-transition: none ! important;
   -o-transition: none ! important;
@@ -39,6 +45,7 @@ body {
 .stackedcards-overlay {
     position: absolute;
     width: 100%; /* set 100% */
+    max-width: 100%; /* set 100% */
     height: 300px; /* set 100% */
     will-change: transform, opacity;
     top: 0;
@@ -84,11 +91,11 @@ body {
 }
 
 .stackedcards-overlay.top {
-    background: #E38568;
+    background: #e0dd59;
 }
 
 .stackedcards-overlay.right {
-    background: #7BB3C5;
+    background: #62d66d;
 }
 
 .stackedcards-overlay.left {
@@ -135,6 +142,7 @@ body {
     display: -ms-inline-flexbox;
     display: inline-flex;
     width: 100%;
+    max-width: 500px;
     margin-top: 10px;
     margin-bottom: 10px;
 }
@@ -160,20 +168,26 @@ body {
 }
 
 .top-action {
-    background: #E38568;
+    background: #e0dd59;
     margin: 0 10px;
 }
 
-.right-action { background: #7BB3C5; }
+.right-action { background: #62d66d; }
 .left-action { background: #E58D93; }
 
 /* elements on stacked cards */
 .card-item { background: #FFFFFF;}
 
+#stacked-cards-block {
+  max-width: 500px;
+}
+
 .image {
   height: 100%;
   width: 100%;
+  border-radius: 10px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
+  background-color: #FFFFFF;
 }

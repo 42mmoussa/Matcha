@@ -60,7 +60,6 @@
         <input type="password" class="form-control" id="confpwd" name="confpwd" placeholder="Confirmez votre mot de passe" onkeyup="validator(this)" required>
         <div class="invalid-tooltip">
           Please provide an identique valid password.
-<<<<<<< HEAD
         </div>
       </div>
     </div>
@@ -76,23 +75,6 @@
         </div>
       </div>
     </div>
-=======
-        </div>
-      </div>
-    </div>
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
-    <div class="form-row">
-      <div class="col-md-3 mb-3">
-        <label class="validationTooltip03" for="date">Birthday</label>
-        <input class="form-control" id="date" name="date" placeholder="MM/DD/YYYY" type="text" autocomplete="off" onkeyup="validator(this)"/>
-        <div class="invalid-tooltip">
-          Minimum 18 years old to registrate
-        </div>
-      </div>
-    </div>
->>>>>>> mmoussa
     <script>
     	$(document).ready(function(){
     		var date_input=$('input[name="date"]'); //our date input has the name "date"
@@ -113,7 +95,9 @@
 
 <script type="text/javascript">
   function validator(item) {
+
     var id = $(item).attr('id');
+
     if (id === 'confpwd') {
       if ($('#pwd').val() === $('#confpwd').val()) {
         $('#'+id).css('border-color', "green", 'important');
@@ -153,6 +137,7 @@
         return true;
       }
     });
+
   }
 </script>
 

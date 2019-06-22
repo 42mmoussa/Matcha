@@ -27,11 +27,7 @@ const login = require('./routes/login');
 const signup = require('./routes/signup');
 const mod = require('./routes/mod');
 const index = require('./routes/index');
-<<<<<<< HEAD
-const user = require('./routes/user');
-=======
 const swipe = require('./routes/swipe');
->>>>>>> mmoussa
 
 // configure app
 
@@ -71,39 +67,8 @@ app.use('/user', user);
 app.use('/about', about);
 app.use('/login', login);
 app.use('/signup', signup);
-<<<<<<< HEAD
-app.use('/', index);
-app.use('/user', user);
-
-// connect to database
-
-// const pool = mariadb.createPool({
-//      host: 'localhost',
-//      user:'root',
-//      password: '',
-//      port: '3306',
-//      // connectionLimit: 5
-// });
-//
-// async function asyncFunction() {
-//   let conn;
-//   try {
-// 	conn = await pool.getConnection();
-// 	const rows = await conn.query("SHOW TABLES");
-// 	console.log(rows); //[ {val: 1}, meta: ... ]
-// 	const res = await conn.query("INSERT INTO myTable value (?, ?)", [1, "mariadb"]);
-// 	console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
-//
-//   } catch (err) {
-// 	throw err;
-//   } finally {
-// 	if (conn) return conn.end();
-//   }
-// }
-=======
 app.use('/swipe', swipe);
 app.use('/', index);
->>>>>>> mmoussa
 
 // start the server
 

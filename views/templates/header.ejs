@@ -39,15 +39,11 @@
       <input class="form-control mr-sm-2" type="text" placeholder="Search">
       <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
     </form>
-<<<<<<< HEAD
-    <% if (locals.session.userId) { %>
-=======
     <% if (locals.session.connect) { %>
->>>>>>> mmoussa
-      <a href="/logout" class="btn btn-primary btn-default login"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+      <a href="/logout" class="btn btn-outline-primary login"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
     <% } else { %>
-      <a href="/login" class="btn btn-primary btn-default login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
-      <a href="/signup" class="btn btn-primary btn-default"><span class="glyphicon glyphicon-log-in"></span> Sign up</a>
+      <a href="/login" class="btn btn-outline-primary login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+      <a href="/signup" class="btn btn-outline-primary"><span class="glyphicon glyphicon-log-in"></span> Sign up</a>
     <% } %>
   </div>
 </nav>
@@ -61,22 +57,27 @@
         $('#myModal').modal('show');
     });
   </script>
+
 <div class="modal fade" id="myModal">
   <div class="modal-dialog">
     <div class="modal-content">
+
       <!-- Modal Header -->
       <div class="modal-header">
         <h4 class="modal-title"><%= popupTitle %></h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
+
       <!-- Modal body -->
       <div class="modal-body">
         <%- popupMsg.replace('\n', '<br/>') %>
       </div>
+
       <!-- Modal footer -->
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
       </div>
+
     </div>
   </div>
 </div>
