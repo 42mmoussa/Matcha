@@ -1,6 +1,6 @@
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
     <title>Matcha</title>
     <link rel='stylesheet' href='/glyphicons-only-bootstrap/css/bootstrap.min.css' />
     <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
@@ -39,7 +39,7 @@
       <input class="form-control mr-sm-2" type="text" placeholder="Search">
       <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
     </form>
-    <% if (locals.session.userId) { %>
+    <% if (locals.session.connect) { %>
       <a href="/logout" class="btn btn-primary btn-default login"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
     <% } else { %>
       <a href="/login" class="btn btn-primary btn-default login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
@@ -57,22 +57,27 @@
         $('#myModal').modal('show');
     });
   </script>
+
 <div class="modal fade" id="myModal">
   <div class="modal-dialog">
     <div class="modal-content">
+
       <!-- Modal Header -->
       <div class="modal-header">
         <h4 class="modal-title"><%= popupTitle %></h4>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
+
       <!-- Modal body -->
       <div class="modal-body">
         <%- popupMsg.replace('\n', '<br/>') %>
       </div>
+
       <!-- Modal footer -->
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
       </div>
+
     </div>
   </div>
 </div>

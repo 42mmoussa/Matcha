@@ -95,7 +95,9 @@
 
 <script type="text/javascript">
   function validator(item) {
+
     var id = $(item).attr('id');
+
     if (id === 'confpwd') {
       if ($('#pwd').val() === $('#confpwd').val()) {
         $('#'+id).css('border-color', "green", 'important');
@@ -135,6 +137,7 @@
         return true;
       }
     });
+
   }
 </script>
 

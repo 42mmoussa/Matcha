@@ -17,11 +17,9 @@
     "email-validator": "^2.0.4",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
-    "formidable": "^1.2.1",
     "http": "0.0.0",
     "mariadb": "^2.0.5",
     "nodemailer": "^6.2.1",
-    "require-sql": "^1.0.0",
     "serve-favicon": "^2.5.0",
     "static-favicon": "^2.0.0-alpha"
   }

@@ -66,13 +66,13 @@ router.post('/signup_validation', function (req, res) {
 
     conn.query("USE matcha")
       .then(() => {
-        return conn.query("SELECT COUNT(*) as nb FROM users WHERE email=?", [email])
+        return conn.query("SELECT COUNT(*) as nb FROM USERS WHERE email=?", [email])
       })
       .then((row) => {
         if (row[0].nb != 0) {
           throw "E-mail already taken";
         }
-        return conn.query("SELECT COUNT(*) as nb FROM users WHERE username=?", [username]);
+        return conn.query("SELECT COUNT(*) as nb FROM USERS WHERE username=?", [username]);
       })
       .then((row) => {
         if (row[0].nb != 0) {
@@ -80,8 +80,8 @@ router.post('/signup_validation', function (req, res) {
         }
       })
       .then(() => {
-        conn.query("INSERT INTO users(firstname, lastname, username, pwd, email, confirm, birthday) VALUES(?, ?, ?, ?, ?, ?, ?)", [firstname, lastname, username, pwdHash, email, confirm, birthday]);
-        return conn.query("SELECT id_usr FROM users WHERE username = ?", [username]);
+        conn.query("INSERT INTO USERS(firstname, lastname, username, pwd, email, confirm, birthday) VALUES(?, ?, ?, ?, ?, ?, ?)", [firstname, lastname, username, pwdHash, email, confirm, birthday]);
+        return conn.query("SELECT id_usr FROM USERS WHERE username = ?", [username]);
       })
       .then((resu) => {
         conn.query("INSERT INTO confirm(id_usr, confirmkey) VALUES(?, ?)", [resu[0].id_usr, crypto.SHA512(confirmKey).toString()]);
