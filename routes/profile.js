@@ -19,7 +19,8 @@ router.get('/', function(req, res) {
       .then((rows) => {
         if (rows[0].id_usr) {
           return res.render('profile', {
-            orientation: rows[0].orientation.substring(0, rows[0].orientation.length - 2)
+            orientation: rows[0].orientation.substring(0, rows[0].orientation.length - 2),
+            gender: rows[0].gender.charAt(0).toUpperCase() + rows[0].gender.slice(1)
           });
         } else {
           return res.render('profile', {
