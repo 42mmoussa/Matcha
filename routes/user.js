@@ -3,6 +3,7 @@ const router = express.Router();
 const session = require('express-session');
 const crypto = require('crypto-js');
 const formidable = require('formidable');
+const util = require('util');
 const fs = require('fs');
 const mod = require('./mod');
 let	  today = new Date();
@@ -57,6 +58,7 @@ router.post('/submit-create', function(req, res) {
     questioning          : req.body.questioning,
     other                : req.body.other
   }
+  console.log(req);
 
   var orientation = '';
 
@@ -76,20 +78,37 @@ router.post('/submit-create', function(req, res) {
       age: mod.dateDiff(birthday, today)
     });
   }
-  else
-    if (req.session.connect) {
-      mod.pool.getConnection()
-        .then((conn) => {
-          conn.query("USE matcha;")
-          .then(() => {
-              let age = mod.dateDiff(birthday, today);
-              conn.query("INSERT INTO profiles(id_usr, firstname, lastname, username, gender, age, bio, orientation) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [req.session.user.id, req.session.user.firstname, req.session.user.lastname, req.session.user.username, gender, age, bio, orientation]);
-              var form = new formidable.IncomingForm();
-              conn.end();
-              res.redirect("/");
-          });
+  else if (req.session.connect) {
+    mod.pool.getConnection()
+      .then((conn) => {
+        conn.query("USE matcha;")
+        .then(() => {
+            let age = mod.dateDiff(birthday, today);
+            conn.query("INSERT INTO profiles(id_usr, firstname, lastname, username, gender, age, bio, orientation) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [req.session.user.id, req.session.user.firstname, req.session.user.lastname, req.session.user.username, gender, age, bio, orientation]);
+            // upload file
+            var form = new formidable.IncomingForm();
+            form.parse(req);
+            form.on('fileBegin', function (name, file){
+                file.path = __dirname + '/img/' + file.name;
+            });
+            // form.uploadDir = "./img"
+            // form.keepExtension = true;
+            // form.maxFieldsSize = 10 * 1024 * 1024;
+            // form.multiples = false;
+            // form.parse(req, function(err, fields, files) {
+            //   if (err) {
+            //     // error
+            //   }
+            //   var arrayOfFiles = files[""];
+            //   if (arrayOfFiles.length > 0) {
+            //     var fileName
+            //   }
+            // });
+            // end upload
+            conn.end();
+            res.redirect("/");
         });
-    }
+      });
   }
 });
 

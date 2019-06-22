@@ -14,7 +14,6 @@
     "crypto-js": "^3.1.9-1",
     "dateformat": "^3.0.3",
     "ejs": "^2.6.1",
-    "email-validator": "^2.0.4",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
     "formidable": "^1.2.1",
@@ -23,6 +22,7 @@
     "mariadb": "^2.0.5",
     "nodemailer": "^6.2.1",
     "serve-favicon": "^2.5.0",
-    "static-favicon": "^2.0.0-alpha"
+    "static-favicon": "^2.0.0-alpha",
+    "util": "^0.12.0"
   }
 }

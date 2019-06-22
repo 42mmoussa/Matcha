@@ -3,7 +3,6 @@ const router     = express.Router();
 const session    = require('express-session');
 const mod        = require('./mod');
 const crypto     = require('crypto-js');
-const validator  = require("email-validator");
 const nodemailer = require('nodemailer');
 const dateFormat = require('dateformat');
 
@@ -37,7 +36,7 @@ router.post('/signup_validation', function (req, res) {
     return res.render('signup', {
       error: "Votre pseudo ne doit contenir que des lettres et des nombres"
     });
-  } else if (validator.validate(email) === false) {
+  } else if (mod.checkemail(email) === false) {
     return res.render('signup', {
       error: "Please insert a valide e-mail"
     });
@@ -151,7 +150,7 @@ router.post('/check', function (req, res) {
         if (response[0].nb != 0) {
           res.send("Unavailable");
         } else {
-          if (!validator.validate(item)) {
+          if (!mod.checkemail(item)) {
             res.send('Unavailable');
           } else {
             res.send("Available");
