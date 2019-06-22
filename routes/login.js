@@ -4,6 +4,7 @@ const session = require('express-session');
 const crypto = require('crypto-js');
 const mod = require('./mod');
 const formidable = require('formidable');
+var today = new Date();
 
 router.get('/', function (req, res) {
   if (req.session.connect) {
@@ -34,6 +35,7 @@ router.post('/login_validation', function(req, res) {
 			  return conn.query("SELECT * FROM users WHERE (username = ? OR email=?) AND pwd = ?", [login, login, pwd]);
 			})
 			.then((result) => {
+        let anniversaire = new Date(result[0].birthday);
 				if (result[0].confirm === 1) {
 					req.session.user = {
 						id: result[0].id_usr,
@@ -41,7 +43,8 @@ router.post('/login_validation', function(req, res) {
 						firstname: result[0].firstname,
 						lastname: result[0].lastname,
             username: result[0].username,
-            birthday: result[0].birthday
+            birthday: result[0].birthday,
+            age: mod.dateDiff(anniversaire, today)
 					};
 					req.session.connect = true;
           conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)
