@@ -42,25 +42,48 @@ router.post('/submit-create', function(req, res) {
   var name           = req.body.staticName;
   var username       = req.body.staticUsername;
   var gender         = req.body.gender;
-  var hetero         = req.body.heterosexual;
-  var homo           = req.body.homosexual;
-  var bi             = req.body.bisexual;
-  var asexual        = req.body.asexual;
-  var pansexual      = req.body.pansexual;
-  var questioning    = req.body.questioning;
-  var other          = req.body.other;
   var bio            = req.body.bio;
   var photo          = req.body.photo;
   var birthday       = new Date(req.session.user.birthday);
 
-  if (name != (req.session.user.lastname + " " + req.session.user.firstname) || username != req.session.user.username || gender == undefined || (hetero == undefined && homo == undefined && bi == undefined && asexual == undefined && pansexual == undefined && questioning == undefined && other == undefined)) {
+  var choice = {
+    heterosexual         : req.body.heterosexual,
+    homosexual           : req.body.homosexual,
+    bisexual             : req.body.bisexual,
+    asexual              : req.body.asexual,
+    pansexual            : req.body.pansexual,
+    questioning          : req.body.questioning,
+    other                : req.body.other
+  }
+
+  var orientation = '';
+  for (var property in choice) {
+    if (choice[property] == 'on') {
+      orientation = orientation + property + ", ";
+      }
+    }
+if (orientation == '') {
+        orientation = 'bisexual';
+}
+  if (name != (req.session.user.lastname + " " + req.session.user.firstname) || username != req.session.user.username || gender == undefined) {
     return res.render('create-profile', {
       warning: "Veuillez remplir toutes les cases",
       age: mod.dateDiff(birthday, today)
     });
   }
   else {
-    res.redirect('/user/create-profile');
+    if (req.session.connect)
+    {
+      mod.pool.getConnection()
+        .then((conn) => {
+          conn.query("USE matcha;")
+          .then(() => {
+              let age = mod.dateDiff(birthday, today);
+              conn.query("INSERT INTO profiles(id_usr, firstname, lastname, username, gender, age, bio, orientation) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [req.session.user.id, req.session.user.firstname, req.session.user.lastname, req.session.user.username, gender, age, bio, orientation]);
+              conn.end();
+          })
+        })
+    }
   }
 });
 
