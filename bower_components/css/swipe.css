@@ -84,11 +84,11 @@ body {
 }
 
 .stackedcards-overlay.top {
-    background: #E38568;
+    background: #e0dd59;
 }
 
 .stackedcards-overlay.right {
-    background: #7BB3C5;
+    background: #62d66d;
 }
 
 .stackedcards-overlay.left {
@@ -160,11 +160,11 @@ body {
 }
 
 .top-action {
-    background: #E38568;
+    background: #e0dd59;
     margin: 0 10px;
 }
 
-.right-action { background: #7BB3C5; }
+.right-action { background: #62d66d; }
 .left-action { background: #E58D93; }
 
 /* elements on stacked cards */
@@ -173,7 +173,9 @@ body {
 .image {
   height: 100%;
   width: 100%;
+  border-radius: 10px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
+  background-color: #FFFFFF;
 }
