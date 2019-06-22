@@ -8,8 +8,35 @@ const mod = require('./mod');
 let	  today = new Date();
 
 router.get('/', function(req, res) {
-    res.render('profile', {
-    });
+  if (req.session.connect) {
+
+    mod.pool.getConnection()
+    .then((conn) => {
+      conn.query("USE matcha")
+      .then(() => {
+        return conn.query("SELECT * FROM profiles WHERE id_usr = ?", req.session.user.id)
+      })
+      .then((rows) => {
+        if (rows[0].id_usr) {
+          return res.render('profile', {
+            orientation: rows[0].orientation.substring(0, rows[0].orientation.length - 2)
+          });
+        } else {
+          return res.render('profile', {
+            popup: true,
+            popupMsg: "This user did not create a profile",
+            popupTitle: 'Informations missing'
+          });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        conn.end();
+      });
+    })
+  } else {
+    res.redirect('/');
+  }
 });
 
 router.get('/create-profile', function(req, res) {
@@ -49,13 +76,13 @@ router.post('/submit-create', function(req, res) {
   var birthday       = new Date(req.session.user.birthday);
 
   var choice = {
-    heterosexual         : req.body.heterosexual,
-    homosexual           : req.body.homosexual,
-    bisexual             : req.body.bisexual,
-    asexual              : req.body.asexual,
-    pansexual            : req.body.pansexual,
-    questioning          : req.body.questioning,
-    other                : req.body.other
+    Heterosexual         : req.body.heterosexual,
+    Homosexual           : req.body.homosexual,
+    Bisexual             : req.body.bisexual,
+    Asexual              : req.body.asexual,
+    Pansexual            : req.body.pansexual,
+    Questioning          : req.body.questioning,
+    Other                : req.body.other
   }
 
   var orientation = '';
