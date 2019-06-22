@@ -3,7 +3,10 @@ const router = express.Router();
 const session = require('express-session');
 const crypto = require('crypto-js');
 const mod = require('./mod');
+<<<<<<< HEAD
 let	  today = new Date();
+=======
+>>>>>>> mmoussa
 
 router.get('/', function(req, res) {
     res.render('user', {
@@ -20,6 +23,7 @@ router.get('/create-profile', function(req, res) {
 				return conn.query("SELECT COUNT(*) as nb FROM profiles WHERE id_usr = ?", req.session.user.id)
 			})
 			.then((rows) => {
+<<<<<<< HEAD
 				if (rows[0].nb !== 0) {
 					return res.redirect('/');
 	    		} else {
@@ -31,6 +35,14 @@ router.get('/create-profile', function(req, res) {
 						});
 					});
 				}
+=======
+				console.log(rows[0].nb);
+				if (rows[0].nb !== 0) {
+					return res.redirect('/');
+	    		} else {
+					return res.render('create-profile', {});
+		    	}
+>>>>>>> mmoussa
             });
         })
 	} else {

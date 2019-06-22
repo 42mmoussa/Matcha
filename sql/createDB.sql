@@ -1,4 +1,4 @@
-CREATE TABLE `users` (
+CREATE TABLE `USERS` (
 		`id_usr` int NOT NULL AUTO_INCREMENT,
 		`firstname` text NOT NULL,
 		`lastname` text NOT NULL,
@@ -6,8 +6,7 @@ CREATE TABLE `users` (
 		`pwd` longtext NOT NULL,
 		`email` varchar(100) NOT NULL,
 		`confirm` int(1) NOT NULL,
-		`birthday` date NOT NULL,
-		CONSTRAINT users_PK PRIMARY KEY (`id_usr`),
+		CONSTRAINT USERS_PK PRIMARY KEY (`id_usr`),
 		UNIQUE KEY `username` (`username`),
 		UNIQUE KEY `email` (`email`)
 );
