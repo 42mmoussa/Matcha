@@ -36,6 +36,8 @@ app.set('views', path.join(__dirname, 'views'));
 
 // use middleware
 
+app.use('/img', express.static('img'));
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());

@@ -1,7 +1,7 @@
 /* Stacked Cards component css */
 body {
   overflow-x: hidden;
-  background: #C0525F;
+  background: #252525;
 }
 
 .no-transition {
@@ -168,4 +168,12 @@ body {
 .left-action { background: #E58D93; }
 
 /* elements on stacked cards */
-.card-item { background: #FFFFFF; }
+.card-item { background: #FFFFFF;}
+
+.image {
+  height: 100%;
+  width: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}

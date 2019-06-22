@@ -6,7 +6,9 @@
 
   <div id="stacked-cards-block" class="stackedcards stackedcards--animatable init">
     <div class="stackedcards-container">
-      <div class="card-item"></div>
+      <div class="card-item" style="background-image: url('/img/flower.jpeg')">
+        <div class="image" style="background-image: url('/img/flower.jpeg')"></div>
+      </div>
       <div class="card-item"></div>
       <div class="card-item"></div>
       <div class="card-item"></div>
@@ -234,10 +236,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				transformUi(-1000, 0, 0, topObj); //Move topOverlay
 				resetOverlayLeft();
 			}
-			currentPosition = currentPosition + 1;
+
+      removeElement();
+			// currentPosition = currentPosition + 1;
 			updateUi();
 			currentElement();
-			setActiveHidden();
+			// setActiveHidden();
 		};
 
 		//Swipe active card to right.
@@ -250,10 +254,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				resetOverlayRight();
 			}
 
-			currentPosition = currentPosition + 1;
+      removeElement();
+			// currentPosition = currentPosition + 1;
 			updateUi();
 			currentElement();
-			setActiveHidden();
+			// setActiveHidden();
 		};
 
 		//Swipe active card to top.
@@ -267,10 +272,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				resetOverlays();
 			}
 
-			currentPosition = currentPosition + 1;
+      removeElement();
+			// currentPosition = currentPosition + 1;
 			updateUi();
 			currentElement();
-			setActiveHidden();
+			// setActiveHidden();
 		};
 
 		//Remove transitions from all elements to be moved in each swipe movement to improve perfomance of stacked cards.
@@ -422,8 +428,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 		function setActiveHidden() {
 			if(!(currentPosition >= maxElements)){
-				listElNodesObj[currentPosition - 1].classList.remove('stackedcards-active');
-				listElNodesObj[currentPosition - 1].classList.add('stackedcards-hidden');
+        listElNodesObj[currentPosition - 1].classList.remove('stackedcards-active');
+        listElNodesObj[currentPosition - 1].classList.add('stackedcards-hidden');
 				listElNodesObj[currentPosition].classList.add('stackedcards-active');
 			}
 		};
