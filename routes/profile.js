@@ -8,7 +8,7 @@ const mod = require('./mod');
 let	  today = new Date();
 
 router.get('/', function(req, res) {
-    res.render('user', {
+    res.render('profile', {
     });
 });
 
@@ -90,7 +90,6 @@ router.post('/submit-create', function(req, res) {
           });
         });
     }
-  }
-});
+  });
 
 module.exports = router;
