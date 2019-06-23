@@ -13,12 +13,6 @@ function checkuid(username) {
   return regex.test(username);
 }
 
-function checkemail(email) {
-  var regex = /^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/;
-
-  return regex.test(email);
-}
-
 function checkname(name) {
   var regex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
 
@@ -63,4 +57,4 @@ function dateDiff(dateold, datenew)
   return diff;
 }
 
-module.exports = {checkemail, checkuid, checkname, checkpwd, pool, randomString, dateDiff, checkdate};
+module.exports = {checkuid, checkname, checkpwd, pool, randomString, dateDiff, checkdate};
