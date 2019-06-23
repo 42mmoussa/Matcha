@@ -12,8 +12,26 @@
 @media screen and (min-width:992px) {
   .user-profile {
     margin-left: 50px;
+    max-width: 300px !important;
   }
   .info .user-profile label {
     font-size: 25px;
   }
+  #edit-profile {
+    float: none !important;
+  }
+}
+
+@media screen and (min-width:1200px) {
+  .user-profile {
+    max-width: calc(100% - 600px) !important;
+  }
+}
+
+.user-profile {
+  max-width: 500px;
+}
+
+#edit-profile {
+  float: right;
 }
