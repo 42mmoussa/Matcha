@@ -6,7 +6,7 @@ CREATE TABLE `profiles` (
 		`username`		varchar(50) NOT NULL,
 		`gender`		text NOT NULL,
 		`age`			Int NOT NULL,
-		`bio`			varchar(256),
+		`bio`			varchar(520),
     `orientation` text,
 		CONSTRAINT profiles_FK PRIMARY KEY (`id_profile`),
 		CONSTRAINT profiles_users_FK FOREIGN KEY (`id_usr`) REFERENCES users(`id_usr`)

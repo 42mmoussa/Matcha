@@ -46,26 +46,45 @@
     </a>
   </div>
   <div class="user-profile">
-    <fieldset class="form-group">
-    <div class="form-group row">
+    <fieldset class="">
+      <div class="row">
         <label for="staticName" class="col-sm-3 col-form-label"><b>Name</b></label>
         <div class="col-sm-10">
-          <input type="text" readonly class="form-control-plaintext" id="staticName" name="staticName" value="<%= locals.session.user.lastname %> <%= locals.session.user.firstname %>">
+          <p class="text-left" id=staticName"><%= locals.session.user.lastname %> <%= locals.session.user.firstname %></p>
         </div>
       </div>
-      <div class="form-group row">
-          <label for="staticUsername" class="col-sm-4 col-form-label"><b>Username</b></label>
-          <div class="col-sm-10">
-            <input type="text" readonly class="form-control-plaintext" id="staticUsername" name="staticUsername" value="<%= locals.session.user.username %>">
-          </div>
+      <div class="row">
+        <label for="staticUsername" class="col-sm-4 col-form-label"><b>Username</b></label>
+        <div class="col-sm-10">
+          <p class="text-left" id="staticUsername"><%= locals.session.user.username %></p>
         </div>
-        <div class="form-group row">
-            <label for="staticAge" class="col-sm-4 col-form-label"><b>Age</b></label>
-            <div class="col-sm-10">
-              <input type="text" readonly class="form-control-plaintext" name="staticAge" id="staticAge" value="<%= locals.session.user.age %>">
-            </div>
-          </div>
+      </div>
+      <div class="row">
+        <label for="staticAge" class="col-sm-4 col-form-label"><b>Age</b></label>
+        <div class="col-sm-10">
+          <p class="text-left" id="staticAge"><%= locals.session.user.age %></p>
+        </div>
+      </div>
+      <div class="row">
+        <label for="gender" class="col-sm-4 col-form-label"><b>Gender</b></label>
+        <div class="col-sm-10">
+          <p class="text-left" id="gender"><%= locals.gender %></p>
+        </div>
+      </div>
+      <div class="row">
+        <label for="orientation" class="col-sm-3 col-form-label"><b>Orientation</b></label>
+        <div class="col-sm-12">
+          <p class="text-left" id="orientation"><%= locals.orientation %></p>
+        </div>
+      </div>
+      <div class="row">
+        <label for="bio" class="col-sm-3 col-form-label"><b>Biography</b></label>
+        <div class="col-sm-12">
+          <p class="text-left" id="bio"><%= locals.bio %></p>
+        </div>
+      </div>
       </fieldset>
+
   </div>
   </div>
 </section>

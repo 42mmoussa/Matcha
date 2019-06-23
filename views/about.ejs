@@ -2,4 +2,11 @@
 
   <h3>About</h3>
 
+  <body>
+    <form id="frmUploader" enctype="multipart/form-data" action="/upload" method="post">
+        <input type="file" name="imgUploader" multiple />
+        <input type="submit" name="submit" id="btnSubmit" value="Upload" />
+    </form>
+  </body>
+
 <% include templates/footer.ejs %>

@@ -102,5 +102,46 @@ var router = express.Router();
     }
   });
 
+//////////////////////////////UPLOAD////////////////////////////////////////////
+  const multer = require('multer');
+  const fs = require('fs');
+
+
+
+  router.post('/upload', function (req, res) {
+    if (req.session.connect) {
+      var path_pp =  "img/" + req.session.user.id;
+
+      // if file does not exist, create it
+      if (!fs.existsSync('img')) {
+        fs.mkdirSync('img');
+      }
+      if (!fs.existsSync(path_pp)) {
+        fs.mkdirSync(path_pp);
+      }
+
+      var Storage = multer.diskStorage({
+        destination: function(req, file, callback) {
+          callback(null, path_pp);
+        },
+        filename: function(req, file, callback) {
+          callback(null, "profile.jpg");
+        }
+      });
+
+      var upload = multer({
+        storage: Storage
+      }).array("imgUploader", 3); //Field name and max count
+    }
+    if (req.session.connect) {
+      upload(req, res, function(err) {
+        if (err) {
+          return res.end("err");
+        }
+        return res.end("File uploaded sucessfully!");
+      });
+    }
+  });
+//////////////////////////END///UPLOAD//////////////////////////////////////////
 
   module.exports = router;
