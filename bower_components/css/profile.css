@@ -35,3 +35,28 @@
 #edit-profile {
   float: right;
 }
+
+.profile-pic {
+	position: relative;
+	display: inline-block;
+}
+
+.profile-pic:hover .edit {
+	display: block;
+}
+
+.edit {
+	/* padding-top: 7px;
+	padding-right: 7px; */
+  padding: 50px;
+	position: absolute;
+	right: calc(50% - 70px);
+	top: calc(50% - 70px);
+  font-size: 30px;
+	display: none;
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.edit a {
+	color: #000;
+}

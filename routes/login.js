@@ -50,12 +50,15 @@ router.post('/login_validation', function(req, res) {
           conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)
           .then((rows) => {
             if (rows[0].nb === 0) {
+              conn.end();
               return res.redirect('/profile/create-profile');
             } else {
+              conn.end();
               return res.redirect('/?success=login');
             }
           });
 				} else {
+          conn.end();
           return res.render('login', {
             error: "Account not confirmed"
           });
@@ -65,6 +68,7 @@ router.post('/login_validation', function(req, res) {
 			.catch(err => {
 				//handle error
 				console.log(err);
+        conn.end();
 				return res.render('login', {
 					error: "Bad password or username"
 				});

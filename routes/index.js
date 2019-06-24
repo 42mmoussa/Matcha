@@ -55,7 +55,7 @@ var router = express.Router();
               return conn.query("SELECT * FROM users WHERE id_usr = ?", [id_usr]);
             } else {
               conn.end();
-              res.render('index', {
+              return res.render('index', {
                 popupTitle: "Request",
                 popupMsg: "Your request expired",
                 popup: true
@@ -67,7 +67,8 @@ var router = express.Router();
             if (result) {
               if (result[0].id_usr == id_usr) {
                 if (result[0].confirm == 1) {
-                  res.render('index', {
+                  conn.end();
+                  return res.render('index', {
                     popupTitle: "Account",
                     popupMsg: "Your account is already confirmed",
                     popup: true
@@ -76,7 +77,7 @@ var router = express.Router();
                   conn.query("UPDATE users SET confirm = 1 WHERE id_usr = ?", [id_usr]);
                   conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
                   conn.end();
-                  res.render('index', {
+                  return res.render('index', {
                     popupTitle: "Account",
                     popupMsg: "Your account has been confirmed",
                     popup: true
@@ -89,7 +90,7 @@ var router = express.Router();
             //handle error
             console.log(err);
             conn.end();
-            res.render('index', {
+            return res.render('index', {
               popupTitle: "Request",
               popupMsg: "Your request expired",
               popup: true
