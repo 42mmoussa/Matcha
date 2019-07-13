@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const session = require('express-session');
 const crypto = require('crypto-js');
+const formidable = require('formidable');
 const fs = require('fs');
 const mod = require('./mod');
 let	  today = new Date();
