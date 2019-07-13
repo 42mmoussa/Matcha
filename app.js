@@ -4,7 +4,6 @@ const bodyParser   = require('body-parser');
 const favicon      = require('serve-favicon');
 const cookieParser = require('cookie-parser');
 const session      = require('express-session');
-const http         = require('http');
 
 const TWO_HOURS    = 1000 * 60 * 60 * 2;
 
