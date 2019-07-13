@@ -20,7 +20,7 @@ const IN_PROD      = NODE_ENV === 'production';
 
 const app = express();
 
-const user = require('./routes/user');
+const profile = require('./routes/profile');
 const about = require('./routes/about');
 const login = require('./routes/login');
 const signup = require('./routes/signup');
@@ -62,7 +62,7 @@ app.use(function(req, res, next) {
 
 // define routes
 
-app.use('/user', user);
+app.use('/profile', profile);
 app.use('/about', about);
 app.use('/login', login);
 app.use('/signup', signup);

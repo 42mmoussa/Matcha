@@ -6,8 +6,8 @@ const profiles = require('./sql/profiles.sql');
 
 const pool = mariadb.createPool({
     host: 'localhost',
-    user:'atelli',
-    password: '123456',
+    user:'root',
+    password: '',
     port: '3306'
 });
 

@@ -67,7 +67,8 @@ var router = express.Router();
             if (result) {
               if (result[0].id_usr == id_usr) {
                 if (result[0].confirm == 1) {
-                  res.render('index', {
+                  conn.end();
+                  return res.render('index', {
                     popupTitle: "Account",
                     popupMsg: "Your account is already confirmed",
                     popup: true
@@ -76,7 +77,7 @@ var router = express.Router();
                   conn.query("UPDATE users SET confirm = 1 WHERE id_usr = ?", [id_usr]);
                   conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
                   conn.end();
-                  res.render('index', {
+                  return res.render('index', {
                     popupTitle: "Account",
                     popupMsg: "Your account has been confirmed",
                     popup: true
@@ -86,7 +87,6 @@ var router = express.Router();
             }
           })
           .catch(err => {
-            //handle error
             console.log(err);
             conn.end();
             res.render('index', {
@@ -97,10 +97,63 @@ var router = express.Router();
           })
 
       }).catch(err => {
-        //not connected
+        conn.end();
+        res.render('index', {
+          popupTitle: "Request",
+          popupMsg: "Your request expired",
+          popup: true
+        });
       });
     }
   });
 
+//////////////////////////////UPLOAD////////////////////////////////////////////
+  const multer = require('multer');
+  const fs = require('fs');
+
+
+
+  router.post('/upload', function (req, res) {
+    if (req.session.connect) {
+      var path_pp =  "img/" + req.session.user.id;
+
+      if (!fs.existsSync('img')) {
+        fs.mkdirSync('img');
+      }
+      if (!fs.existsSync(path_pp)) {
+        fs.mkdirSync(path_pp);
+      }
+
+      var Storage = multer.diskStorage({
+        destination: function(req, file, callback) {
+          callback(null, path_pp);
+        },
+        filename: function(req, file, callback) {
+          callback(null, "profile.jpg");
+        }
+      });
+
+      var upload = multer({
+        storage: Storage
+      }).array("imgUploader", 3);
+    }
+    if (req.session.connect) {
+      upload(req, res, function(err) {
+        if (err) {
+          return res.end("err");
+        }
+        mod.pool.getConnection()
+        .then((conn) => {
+          conn.query("USE matcha;")
+          .then(() => {
+              conn.query("UPDATE profiles SET pictures = pictures + 10 WHERE id_usr = ?;", [req.session.user.id]);
+          });
+        });
+        conn.end();
+        return res.render("profile");
+      });
+    }
+  });
+//////////////////////////END///UPLOAD//////////////////////////////////////////
 
   module.exports = router;
