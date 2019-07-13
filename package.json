@@ -24,6 +24,7 @@
     "mkdirp": "^0.5.1",
     "multer": "^1.4.1",
     "nodemailer": "^6.2.1",
+    "require-sql": "^1.0.0",
     "serve-favicon": "^2.5.0",
     "static-favicon": "^2.0.0-alpha"
   }

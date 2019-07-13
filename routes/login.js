@@ -8,11 +8,11 @@ var today = new Date();
 
 router.get('/', function (req, res) {
   if (req.session.connect) {
-    return res.redirect('/');
+	return res.redirect('/');
   }
   else {
-    return res.render('login', {
-    });
+	return res.render('login', {
+	});
   }
 });
 
@@ -31,48 +31,49 @@ router.post('/login_validation', function(req, res) {
 
 		  conn.query("USE matcha")
 			.then((rows) => {
-			  //Table must have been created before
 			  return conn.query("SELECT * FROM users WHERE (username = ? OR email=?) AND pwd = ?", [login, login, pwd]);
 			})
 			.then((result) => {
-        let anniversaire = new Date(result[0].birthday);
 				if (result[0].confirm === 1) {
+					let anniversaire = new Date(result[0].birthday);
 					req.session.user = {
 						id: result[0].id_usr,
 						email: result[0].email,
 						firstname: result[0].firstname,
 						lastname: result[0].lastname,
-            username: result[0].username,
-            birthday: result[0].birthday,
-            age: mod.dateDiff(anniversaire, today)
+			username: result[0].username,
+			birthday: result[0].birthday,
+			age: mod.dateDiff(anniversaire, today)
 					};
 					req.session.connect = true;
-          conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)
-          .then((rows) => {
-            if (rows[0].nb === 0) {
-              return res.redirect('/profile/create-profile');
-            } else {
-              return res.redirect('/?success=login');
-            }
-          });
+		  conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)
+		  .then((rows) => {
+			if (rows[0].nb === 0) {
+							conn.end();
+							return res.redirect('/profile/create-profile');
+			} else {
+							conn.end();
+							return res.redirect('/?success=login');
+			}
+		  });
 				} else {
-          return res.render('login', {
-            error: "Account not confirmed"
-          });
-        }
+					conn.end();
+					return res.render('login', {
+			error: "Account not confirmed"
+		  });
+		}
 			  conn.end();
 			})
 			.catch(err => {
-				//handle error
 				console.log(err);
+				conn.end();
 				return res.render('login', {
 					error: "Bad password or username"
 				});
-				conn.end();
 			})
 
 		}).catch(err => {
-			//not connected
+			conn.end();
 		});
 });
 

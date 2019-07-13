@@ -67,7 +67,8 @@ var router = express.Router();
             if (result) {
               if (result[0].id_usr == id_usr) {
                 if (result[0].confirm == 1) {
-                  res.render('index', {
+                  conn.end();
+                  return res.render('index', {
                     popupTitle: "Account",
                     popupMsg: "Your account is already confirmed",
                     popup: true
@@ -76,7 +77,7 @@ var router = express.Router();
                   conn.query("UPDATE users SET confirm = 1 WHERE id_usr = ?", [id_usr]);
                   conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
                   conn.end();
-                  res.render('index', {
+                  return res.render('index', {
                     popupTitle: "Account",
                     popupMsg: "Your account has been confirmed",
                     popup: true
@@ -86,7 +87,6 @@ var router = express.Router();
             }
           })
           .catch(err => {
-            //handle error
             console.log(err);
             conn.end();
             res.render('index', {
@@ -97,7 +97,12 @@ var router = express.Router();
           })
 
       }).catch(err => {
-        //not connected
+        conn.end();
+        res.render('index', {
+          popupTitle: "Request",
+          popupMsg: "Your request expired",
+          popup: true
+        });
       });
     }
   });
@@ -112,7 +117,6 @@ var router = express.Router();
     if (req.session.connect) {
       var path_pp =  "img/" + req.session.user.id;
 
-      // if file does not exist, create it
       if (!fs.existsSync('img')) {
         fs.mkdirSync('img');
       }
@@ -131,14 +135,22 @@ var router = express.Router();
 
       var upload = multer({
         storage: Storage
-      }).array("imgUploader", 3); //Field name and max count
+      }).array("imgUploader", 3);
     }
     if (req.session.connect) {
       upload(req, res, function(err) {
         if (err) {
           return res.end("err");
         }
-        return res.end("File uploaded sucessfully!");
+        mod.pool.getConnection()
+        .then((conn) => {
+          conn.query("USE matcha;")
+          .then(() => {
+              conn.query("UPDATE profiles SET pictures = pictures + 10 WHERE id_usr = ?;", [req.session.user.id]);
+          });
+        });
+        conn.end();
+        return res.render("profile");
       });
     }
   });
