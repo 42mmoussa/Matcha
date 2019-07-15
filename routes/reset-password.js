@@ -11,7 +11,7 @@ router.get('/', function (req, res) {
   });
 });
 
-router.post('/reset-password/reset', function(req, res) {
+router.post('/reset', function(req, res) {
 	var username		= req.body.uname;
 	var confirmKey		= mod.randomString(50, '0123456789abcdefABCDEF');
 
@@ -25,7 +25,7 @@ router.post('/reset-password/reset', function(req, res) {
 	.then(conn => {
 		conn.query("USE matcha")
 		.then((rows) => {
-			return conn.query("SELECT * FROM users WHERE (username = ? OR email = ?)", uname);
+			return conn.query("SELECT * FROM users WHERE (username = ? OR email = ?)", [username, username]);
 		})
 		.then((result) => {
 			conn.query("INSERT INTO confirm(id_usr, confirmkey) VALUES(?, ?)", [result[0].id_usr, crypto.SHA512(confirmKey).toString()]);
@@ -43,7 +43,7 @@ router.post('/reset-password/reset', function(req, res) {
 				subject: 'Reset your password',
 				html: `<html>
 				<body>
-				<a href="http://localhost:8888/reset-password/confirm?id_usr` + result[0].id_usr + `&confirmkey=` + confirmKey + `">Reset your password</a>
+				<a href="http://localhost:8888/change-password?id_usr=` + result[0].id_usr + `&confirmkey=` + confirmKey + `">Reset your password</a>
 				<body>
 				</html>` 
 			};
@@ -56,6 +56,11 @@ router.post('/reset-password/reset', function(req, res) {
 				}
 			});
 			conn.end();
+			return res.render('login', {
+				popupTitle: 'Reset your password',
+				popupMsg: 'Check your mails to reset your password',
+				popup: true
+			  });
 		})
 		.catch(err => {
 			console.log(err);
