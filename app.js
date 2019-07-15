@@ -28,6 +28,7 @@ const mod = require('./routes/mod');
 const index = require('./routes/index');
 const swipe = require('./routes/swipe');
 const resetpasswd = require ('./routes/reset-password');
+const changepasswd = require ('./routes/change-password');
 
 // configure app
 
@@ -63,6 +64,7 @@ app.use(function(req, res, next) {
 
 // define routes
 
+app.use('/change-password', changepasswd);
 app.use('/reset-password', resetpasswd);
 app.use('/profile', profile);
 app.use('/about', about);
