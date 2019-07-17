@@ -1,10 +1,10 @@
 const mariadb = require('mariadb');
 
 const pool = mariadb.createPool({
-	host: 'localhost',
-	user:'root',
-	password: '',
-	port: '3306',
+  host: 'localhost',
+  user:'root',
+  password: '',
+  port: '3306',
 });
 
 function checkuid(username) {

@@ -55,7 +55,7 @@ var router = express.Router();
               return conn.query("SELECT * FROM users WHERE id_usr = ?", [id_usr]);
             } else {
               conn.end();
-              res.render('index', {
+              return res.render('index', {
                 popupTitle: "Request",
                 popupMsg: "Your request expired",
                 popup: true
@@ -89,7 +89,7 @@ var router = express.Router();
           .catch(err => {
             console.log(err);
             conn.end();
-            res.render('index', {
+            return res.render('index', {
               popupTitle: "Request",
               popupMsg: "Your request expired",
               popup: true
@@ -148,9 +148,9 @@ var router = express.Router();
           .then(() => {
               conn.query("UPDATE profiles SET pictures = pictures + 10 WHERE id_usr = ?;", [req.session.user.id]);
           });
-		  conn.end();
-		  return res.render("profile");
+          conn.end();
         });
+        return res.render("profile");
       });
     }
   });

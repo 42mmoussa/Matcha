@@ -8,8 +8,8 @@ const lst_profiles = require('./sql/lst_profiles.sql');
 
 const pool = mariadb.createPool({
     host: 'localhost',
-    user:'root',
-    password: '',
+    user:'atelli',
+    password: '123456',
     port: '3306'
 });
 
