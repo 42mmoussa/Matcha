@@ -76,5 +76,5 @@ app.use('/', index);
 // start the server
 
 app.listen(PORT, function () {
-  console.log('ready on port 8888');
+  console.log('ready : http://localhost:8888');
 });
