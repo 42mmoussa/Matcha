@@ -148,9 +148,9 @@ var router = express.Router();
           .then(() => {
               conn.query("UPDATE profiles SET pictures = pictures + 10 WHERE id_usr = ?;", [req.session.user.id]);
           });
+		  conn.end();
+		  return res.render("profile");
         });
-        conn.end();
-        return res.render("profile");
       });
     }
   });
