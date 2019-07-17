@@ -131,6 +131,61 @@ router.post('/submit-create', function(req, res) {
 					});
 				});
 		}
-	});
+});
+
+router.post('/modify', function(req, res) {
+	var lname          = req.body.lname;
+	var fname          = req.body.fname;
+	var uname          = req.body.uname;
+	var bio            = req.body.bio;
+  
+	var choice = {
+	  Heterosexual         : req.body.heterosexual,
+	  Homosexual           : req.body.homosexual,
+	  Bisexual             : req.body.bisexual,
+	  Asexual              : req.body.asexual,
+	  Pansexual            : req.body.pansexual,
+	  Questioning          : req.body.questioning,
+	  Other                : req.body.other
+	}
+  
+	var orientation = '';
+  
+	for (var property in choice) {
+	  if (choice[property] == 'on') {
+		orientation = orientation + property + ", ";
+	  }
+	}
+  
+	if (orientation == '') {
+			orientation = 'bisexual';
+	}
+  
+	if (fname == "") {
+	  fname = req.session.user.firstname;
+	}
+	if (lname == "") {
+	  lname = req.session.user.lastname;
+	}
+	if (uname == "") {
+	  uname = req.session.user.lastname;
+	}
+  
+	else
+	  if (req.session.connect) {
+		mod.pool.getConnection()
+		  .then((conn) => {
+			conn.query("USE matcha;")
+			.then(() => {
+				conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ? WHERE id_usr = ?", [lname, fname, uname, orientation, bio, req.session.user.id]);
+				req.session.user.firstname = fname;
+				req.session.user.lastname = lname;
+				req.session.user.username = uname;
+				conn.end();
+				return res.redirect("/");
+			});
+		  });
+	  }
+});
 
 module.exports = router;
