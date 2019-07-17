@@ -7,13 +7,14 @@ const formidable = require('formidable');
 var today = new Date();
 
 router.get('/', function (req, res) {
-  if (req.session.connect) {
-	return res.redirect('/');
-  }
-  else {
-	return res.render('login', {
-	});
-  }
+	if (req.session.connect) {
+		return res.redirect('/');
+	}
+	else {
+		return res.render('login', {
+			
+		});
+	}
 });
 
 router.post('/login_validation', function(req, res) {
@@ -33,6 +34,8 @@ router.post('/login_validation', function(req, res) {
 			return conn.query("SELECT * FROM users WHERE (username = ? OR email=?) AND pwd = ?", [login, login, pwd]);
 		})
 		.then((result) => {
+			if (result[0] === undefined)
+				throw "bad password or username";
 			if (result[0].confirm === 1) {
 				let anniversaire = new Date(result[0].birthday);
 				req.session.user = {

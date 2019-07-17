@@ -2,97 +2,177 @@
 <link rel="stylesheet" href="/css/profile.css">
 
 <section class="container">
-  <h3>Your Profile</h3>
-  <% if (locals.warning) { %>
-    <div class="alert alert-warning" role="alert">
-      <%= warning %>
-    </div>
-  <% } %>
-  <% if (locals.success) { %>
-    <div class="alert alert-success" role="alert">
-      <%= success %>
-    </div>
-  <% } %>
-  <% if (locals.error) { %>
-    <div class="alert alert-danger" role="alert">
-      <%= error %>
-    </div>
-  <% } %>
-  <div class="info">
-  <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-    <ol class="carousel-indicators">
-      <% if (locals.pic >= 10 ) {%>
-        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-      <% } 
-      var i = -1;
-      while (++i < locals.pic % 10) { %>
-        <li data-target="#carouselExampleIndicators" data-slide-to="<%= i %>" class="active"></li>
-      <% } %>
-    </ol>
-    <div class="carousel-inner">
-    <% if (locals.pic >= 10 ) {%>
-      <div class="carousel-item active">
-        <img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
-      </div>
-    <% }
-    var i = -1;
-    while (++i < locals.pic % 10) { %>
-      <div class="carousel-item active">
-        <img class="d-block w-100" src="/img/<%= locals.id %>/image<%= i + 1 %>.jpg" alt="First slide">
-      </div>
-    <% } %>
-    </div>
-    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="sr-only">Previous</span>
-    </a>
-    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="sr-only">Next</span>
-    </a>
-  </div>
-  <div class="user-profile">
-    <fieldset class="">
-      <div class="row">
-        <label for="staticName" class="col-sm-3 col-form-label"><b>Name</b></label>
-        <div class="col-sm-10">
-          <p class="text-left" id="staticName"><%= locals.lastname %> <%= locals.firstname %></p>
-        </div>
-      </div>
-      <div class="row">
-        <label for="staticUsername" class="col-sm-4 col-form-label"><b>Username</b></label>
-        <div class="col-sm-10">
-          <p class="text-left" id="staticUsername"><%= locals.username %></p>
-        </div>
-      </div>
-      <div class="row">
-        <label for="staticAge" class="col-sm-4 col-form-label"><b>Age</b></label>
-        <div class="col-sm-10">
-          <p class="text-left" id="staticAge"><%= locals.age %></p>
-        </div>
-      </div>
-      <div class="row">
-        <label for="gender" class="col-sm-4 col-form-label"><b>Gender</b></label>
-        <div class="col-sm-10">
-          <p class="text-left" id="gender"><%= locals.gender %></p>
-        </div>
-      </div>
-      <div class="row">
-        <label for="orientation" class="col-sm-3 col-form-label"><b>Orientation</b></label>
-        <div class="col-sm-12">
-          <p class="text-left" id="orientation"><%= locals.orientation %></p>
-        </div>
-      </div>
-      <div class="row">
-        <label for="bio" class="col-sm-3 col-form-label"><b>Biography</b></label>
-        <div class="col-sm-12">
-          <p class="text-left" id="bio"><%= locals.bio %></p>
-        </div>
-      </div>
-      </fieldset>
-
-  </div>
-  </div>
+	<h3>Your Profile <a href="#" id="edit-profile"><span class="glyphicon glyphicon-edit"></span></a></h3>
+	<% if (locals.warning) { %>
+		<div class="alert alert-warning" role="alert">
+			<%= warning %>
+		</div>
+	<% } %>
+	<% if (locals.success) { %>
+		<div class="alert alert-success" role="alert">
+			<%= success %>
+		</div>
+	<% } %>
+	<% if (locals.error) { %>
+		<div class="alert alert-danger" role="alert">
+			<%= error %>
+		</div>
+	<% } %>
+	<div class="info">
+			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+					<ol class="carousel-indicators">
+						<% if (locals.pic >= 10 ) {%>
+						  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+						<% }
+						var i = -1;
+						while (++i < locals.pic % 10) { %>
+						  <li data-target="#carouselExampleIndicators" data-slide-to="<%= i %>" class="active"></li>
+						<% } %>
+					  </ol>
+					  <div class="carousel-inner">
+					  <% if (locals.pic >= 10 ) {%>
+						<div class="carousel-item active profile-pic">
+						  <img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
+						  <div class="edit"><a href="/about"><i class="glyphicon glyphicon-pencil"></i></a></div>
+						</div>
+					  <% }
+					  var i = -1;
+					  while (++i < locals.pic % 10) { %>
+						<div class="carousel-item active">
+							<img class="d-block w-100" src="/img/<%= locals.id %>/image<%= i + 1 %>.jpg" alt="First slide">
+						</div>
+						<% } %>
+					</div>
+					<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						<span class="sr-only">Previous</span>
+					</a>
+					<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="sr-only">Next</span>
+					</a>
+				</div>
+				<div class="user-profile">
+					<fieldset>
+						<form method="post" action="/profile/modify" id="form-profile">
+							<div class="row">
+								<label for="staticName" class="col-sm-3 col-form-label"><b>Name</b></label>
+								<div class="col-sm-10">
+									<p class="text-left" id="staticName"><%= locals.lastname %> <%= locals.firstname %></p>
+								</div>
+							</div>
+							<div class="row">
+								<label for="staticUsername" class="col-sm-4 col-form-label"><b>Username</b></label>
+								<div class="col-sm-10">
+									<p class="text-left" id="staticUsername"><%= locals.username %></p>
+								</div>
+							</div>
+							<div class="row">
+								<label for="staticAge" class="col-sm-4 col-form-label"><b>Age</b></label>
+								<div class="col-sm-10">
+							<p class="text-left" id="staticAge"><%= locals.age %></p>
+						</div>
+					</div>
+					<div class="row">
+						<label for="gender" class="col-sm-4 col-form-label"><b>Gender</b></label>
+						<div class="col-sm-10">
+							<p class="text-left" id="gender"><%= locals.gender %></p>
+						</div>
+					</div>
+					<div class="row">
+						<label for="orientation" class="col-sm-3 col-form-label"><b>Orientation</b></label>
+						<div class="col-sm-12">
+							<p class="text-left" id="orientation"><%= locals.orientation %></p>
+						</div>
+					</div>
+					<div class="row">
+						<label for="bio" class="col-sm-3 col-form-label"><b>Biography</b></label>
+						<div class="col-sm-12">
+							<p class="text-left" id="bio"><%= locals.bio %></p>
+						</div>
+					</div>
+				</form>
+			</fieldset>
+		</div>
+	</div>
 </section>
+
+<script>
+	$(document).ready(function(){
+			editProfile = $("#edit-profile");
+			staticName = $("#staticName");
+			username = $("#staticUsername");
+			orientation = $("#orientation");
+			bio = $("#bio");
+			userProfile = $("#user-profile");
+			var i = 0;
+
+			editProfile.click(function () {
+					editProfile.remove();
+					staticName.replaceWith('<input type="text" class="form-control" id="lname" name="lname" placeholder="Nom de famille" value="<%= locals.lastname %>" onkeyup="validator(this)"><input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" value="<%= locals.session.user.firstname %>" onkeyup="validator(this)">');
+					username.replaceWith('<input type="text" class="form-control" id="uname" name="uname" value="<%= locals.username %>" placeholder="<%= locals.username %>" aria-describedby="validationTooltipUsernamePrepend" onkeyup="validator(this)" required>');
+					orientationSplit = "<%= locals.orientation %>".toLowerCase().split(', ');
+					orientation.replaceWith(`<div class="col-sm-10" id="precheck">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="heterosexual" name="heterosexual">
+							<label class="form-check-label" for="heterosexual">
+								Heterosexual
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="homosexual" name="homosexual">
+							<label class="form-check-label" for="bisexual">
+								Homosexual
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="bisexual" name="bisexual">
+							<label class="form-check-label" for="bisexual">
+								Bisexual
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="asexual" name="asexual">
+							<label class="form-check-label" for="asexual">
+								Asexual
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="pansexual" name="pansexual">
+							<label class="form-check-label" for="pansexual">
+								Pansexual
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="questioning" name="questioning">
+							<label class="form-check-label" for="questioning">
+								Questioning
+							</label>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="other" name="other">
+							<label class="form-check-label" for="other">
+								Other
+							</label>
+						</div>`);
+					bio.replaceWith('<textarea class="form-control" id="bio" name="bio" rows="3" maxlength="500"><%= locals.bio %></textarea>');
+
+					itemPrecheck = $("#precheck");
+					inputPrecheck = itemPrecheck.find("input");
+					inputPrecheck.each(function(element) {
+						if (jQuery.inArray(inputPrecheck[element].id, orientationSplit) >= 0) {
+							idToCheck = inputPrecheck[element].id;
+							itemToCheck = $('#' + idToCheck).prop('checked', true);
+						}
+					})
+					$('#form-profile').append(`<div class="row">
+						<div class="col-sm-3 col-form-label">
+							<button type="submit" class="btn btn-outline-success">Modify</button>
+						</div>
+					</div>`)
+				});
+		})
+</script>
+
 
 <% include templates/footer.ejs %>

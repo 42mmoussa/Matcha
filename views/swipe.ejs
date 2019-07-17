@@ -8,15 +8,14 @@
 
     <div id="stacked-cards-block" class="stackedcards stackedcards--animatable init">
       <div class="stackedcards-container">
-        <div class="card-item" style="background-image: url('/img/flower.jpeg')">
-          <div class="image" style="background-image: url('/img/flower.jpeg')"></div>
-        </div>
-        <div class="card-item"></div>
-        <div class="card-item"></div>
-        <div class="card-item"></div>
-        <div class="card-item"></div>
-        <div class="card-item"></div>
-        <div class="card-item"></div>
+			<%
+			var iUsers = -1;
+			while (++iUsers < locals.nb_usr && iUsers < 5) {%>
+				<div class="card-item">
+					<div class="image" style="background-image: url('/img/<%= locals.users[iUsers].id_usr %>/profile.jpg')"></div>
+				</div>
+			<%console.log(locals.users[iUsers].id_usr);
+			}%>
       </div>
       <div class="stackedcards--animatable stackedcards-overlay top"><span class="glyphicon glyphicon-star" aria-hidden="true"></div>
         <div class="stackedcards--animatable stackedcards-overlay right"><span class="glyphicon glyphicon-heart" aria-hidden="true"></div>
@@ -56,7 +55,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		var isFirstTime = true;
 		var elementHeight;
 		var obj;
-		var elTrans;
+    var elTrans;
+    var iUsers = <%= iUsers %>;
 
 		obj = document.getElementById('stacked-cards-block');
 		stackedCardsObj = obj.querySelector('.stackedcards-container');
@@ -448,8 +448,23 @@ document.addEventListener("DOMContentLoaded", function(event) {
     //On the actions onSwipeLeft, onSwipeRight and onSwipeTop you need to remove the currentPosition variable (currentPosition = currentPosition + 1) and the function setActiveHidden
 
 		function removeElement() {
-      currentElementObj.remove();
-      if(!(currentPosition >= maxElements)){
+
+			currentElementObj.remove();
+      var matchUser = <%- JSON.stringify(locals.users) %>;
+			var nextUser = document.createElement("div");
+			var imageUser = document.createElement("div");
+			nextUser.setAttribute("class", "card-item stackedcards-top stackedcards--animatable stackedcards-origin-top");
+			nextUser.setAttribute("style", "z-index: 0; opacity: 0; transform: scale(0.88) translateX(0px) translateY(20px) translateZ(0px);");
+			imageUser.setAttribute("class", "image");
+      if (iUsers >= <%- locals.nb_usr %>) {
+        imageUser.setAttribute("style", "background-image: url('/img/Nothing.jpg')");
+      } else {
+        imageUser.setAttribute("style", "background-image: url('/img/" + matchUser[iUsers].id_usr + "/profile.jpg')");
+      }
+			nextUser.append(imageUser);
+			stackedCardsObj.append(nextUser);
+      ++iUsers;
+			if(!(currentPosition >= maxElements)){
 				listElNodesObj[currentPosition].classList.add('stackedcards-active');
 			}
 		};
