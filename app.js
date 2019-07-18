@@ -44,7 +44,7 @@ app.use('/img', express.static('img'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(favicon('favicon.ico'));
+app.use(favicon('img/favicon.ico'));
 app.use(express.static(path.join(__dirname, 'bower_components')));
   // session
 app.use(session({
@@ -82,6 +82,6 @@ socket = require('./routes/socket')(server);
 
 // start the server
 
-app.listen(PORT, function () {
+server.listen(PORT, function () {
   console.log('ready : http://localhost:8888');
 });
