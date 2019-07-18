@@ -14,11 +14,24 @@
 			enteredTags.forEach(function (t) {
 				let filteredTag = filterTag(t);
 				if (filteredTag.length > 0)
-					addTag(filteredTag);
+				{
+					tagOk = insert(filteredTag, "#");
+					addTag(tagOk);
+				}
 			});
 			mainInput.value = '';
 		}
 	});
+
+	insert = function insert(main_string, ins_string, pos) {
+		if(typeof(pos) == "undefined") {
+			pos = 0;
+		}
+		if(typeof(ins_string) == "undefined") {
+			ins_string = '';
+		}
+		return main_string.slice(0, pos) + ins_string + main_string.slice(pos);
+	}
 
 	mainInput.addEventListener('keydown', function (e) {
 		let keyCode = e.which || e.keyCode;
