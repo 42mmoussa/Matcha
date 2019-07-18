@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const session = require('express-session');
 const crypto = require('crypto-js');
-const formidable = require('formidable');
 const fs = require('fs');
 const mod = require('./mod');
 let	  today = new Date();
@@ -30,7 +29,8 @@ router.get('/', function(req, res) {
 						orientation: rows[0].orientation.substring(0, rows[0].orientation.length - 2),
 						gender: rows[0].gender.charAt(0).toUpperCase() + rows[0].gender.slice(1),
 						bio: rows[0].bio,
-						pic: rows[0].pictures
+						pic: rows[0].pictures,
+						tags: rows[0].tags
 					});
 				} else {
 					conn.end();
@@ -76,18 +76,20 @@ router.get('/create-profile', function(req, res) {
 					}
 				});
 			})
-	} else {
-		return res.redirect('/');
-	}
-});
-
-router.post('/submit-create', function(req, res) {
-	var name           = req.body.staticName;
-	var username       = req.body.staticUsername;
-	var gender         = req.body.gender;
-	var bio            = req.body.bio;
-	var photo          = req.body.photo;
-	var birthday       = new Date(req.session.user.birthday);
+		} else {
+			return res.redirect('/');
+		}
+	});
+	
+	router.post('/submit-create', function(req, res) {
+		var name           = req.body.staticName;
+		var username       = req.body.staticUsername;
+		var gender         = req.body.gender;
+		var bio            = req.body.bio;
+		var photo          = req.body.photo;
+		var birthday       = new Date(req.session.user.birthday);
+		var tags           = req.body.tags;
+		tagexist = tags.split(',');
 
 	var choice = {
 		Heterosexual         : req.body.heterosexual,
@@ -123,11 +125,23 @@ router.post('/submit-create', function(req, res) {
 				.then((conn) => {
 					conn.query("USE matcha;")
 					.then(() => {
-							let age = mod.dateDiff(birthday, today);
-							conn.query("INSERT INTO profiles(id_usr, firstname, lastname, username, gender, age, bio, orientation, pictures) VALUES(?, ?, ?, ?, ?, ?, ?, ?, 0)", [req.session.user.id, req.session.user.firstname, req.session.user.lastname, req.session.user.username, gender, age, bio, orientation]);
-							var form = new formidable.IncomingForm();
-							conn.end();
-							res.redirect("/");
+						if (tags) {
+							tagexist.forEach(function(element) {
+								conn.query("SELECT COUNT(*) as nb from tags where name_tag = ?", [element])
+								.then((rows) => {
+									if (rows[0].nb === 0) {
+										conn.query("INSERT INTO tags(name_tag, nb_tag) VALUES(?, 1)", [element]);
+									}
+									else {
+										conn.query("UPDATE tags SET nb_tag = nb_tag + 1 WHERE name_tag = ?", [element]);
+									}
+								})
+							});
+						}
+						let age = mod.dateDiff(birthday, today);
+						conn.query("INSERT INTO profiles(id_usr, firstname, lastname, username, gender, age, bio, orientation, pictures, tags) VALUES(?, ?, ?, ?, ?, ?, ?, ?, 0, ?)", [req.session.user.id, req.session.user.firstname, req.session.user.lastname, req.session.user.username, gender, age, bio, orientation, tags]);
+						conn.end();
+						res.redirect("/");
 					});
 				});
 		}
