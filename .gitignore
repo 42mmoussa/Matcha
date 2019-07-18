@@ -57,4 +57,7 @@ typings/
 # next.js build output
 .next
 
+node_modules/
+bower_components/
+
 .DS_Store

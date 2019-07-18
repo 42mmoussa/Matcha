@@ -1,11 +1,14 @@
 const express      = require('express');
+const app          = express();
 const path         = require('path');
 const bodyParser   = require('body-parser');
 const favicon      = require('serve-favicon');
 const cookieParser = require('cookie-parser');
 const session      = require('express-session');
+const server       = require('http').createServer(app);
 
 const TWO_HOURS    = 1000 * 60 * 60 * 2;
+const TWO_DAYS    = 1000 * 60 * 60 * 48;
 
 const {
   PORT             = 8888,
@@ -13,22 +16,21 @@ const {
 
   SESS_SECRET      = 'ssh!quiet,it\'sasecret',
   SESS_NAME        = 'sid',
-  SESS_LIFETIME    = TWO_HOURS
+  SESS_LIFETIME    = TWO_DAYS
 } = process.env
 
 const IN_PROD      = NODE_ENV === 'production';
 
-const app = express();
-
-const profile = require('./routes/profile');
-const about = require('./routes/about');
-const login = require('./routes/login');
-const signup = require('./routes/signup');
-const mod = require('./routes/mod');
-const index = require('./routes/index');
-const swipe = require('./routes/swipe');
-const resetpasswd = require ('./routes/reset-password');
-const changepasswd = require ('./routes/change-password');
+const profile      = require('./routes/profile');
+const about        = require('./routes/about');
+const login        = require('./routes/login');
+const signup       = require('./routes/signup');
+const mod          = require('./routes/mod');
+const index        = require('./routes/index');
+const swipe        = require('./routes/swipe');
+const matchat      = require('./routes/matchat');
+const resetpasswd  = require('./routes/reset-password');
+const changepasswd = require('./routes/change-password');
 
 // configure app
 
@@ -71,7 +73,12 @@ app.use('/about', about);
 app.use('/login', login);
 app.use('/signup', signup);
 app.use('/swipe', swipe);
+app.use('/matchat', matchat);
 app.use('/', index);
+
+// start socket
+
+socket = require('./routes/socket')(server);
 
 // start the server
 
