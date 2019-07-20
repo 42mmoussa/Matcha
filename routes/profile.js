@@ -152,7 +152,9 @@ router.post('/modify', function(req, res) {
 	var fname          = req.body.fname;
 	var uname          = req.body.uname;
 	var bio            = req.body.bio;
-  
+	var tags           = req.body.tags;
+	tagexist = tags.split(',');
+
 	var choice = {
 	  Heterosexual         : req.body.heterosexual,
 	  Homosexual           : req.body.homosexual,
@@ -191,7 +193,20 @@ router.post('/modify', function(req, res) {
 		  .then((conn) => {
 			conn.query("USE matcha;")
 			.then(() => {
-				conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ? WHERE id_usr = ?", [lname, fname, uname, orientation, bio, req.session.user.id]);
+				if (tags) {
+					tagexist.forEach(function(element) {
+						conn.query("SELECT COUNT(*) as nb from tags where name_tag = ?", [element])
+						.then((rows) => {
+							if (rows[0].nb === 0) {
+								conn.query("INSERT INTO tags(name_tag, nb_tag) VALUES(?, 1)", [element]);
+							}
+							else {
+								conn.query("UPDATE tags SET nb_tag = nb_tag + 1 WHERE name_tag = ?", [element]);
+							}
+						})
+					});
+				}
+				conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ?, tags = ? WHERE id_usr = ?", [lname, fname, uname, orientation, bio, tags, req.session.user.id]);
 				req.session.user.firstname = fname;
 				req.session.user.lastname = lname;
 				req.session.user.username = uname;

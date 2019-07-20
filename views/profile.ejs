@@ -112,6 +112,8 @@
 			username = $("#staticUsername");
 			orientation = $("#orientation");
 			bio = $("#bio");
+			tags = $("#tags");
+			tagsSplit =	"<%= locals.tags %>".split(',');
 			userProfile = $("#user-profile");
 			var i = 0;
 
@@ -164,6 +166,12 @@
 							</label>
 						</div>`);
 					bio.replaceWith('<textarea class="form-control" id="bio" name="bio" rows="3" maxlength="500"><%= locals.bio %></textarea>');
+					tags.replaceWith('<div class="tags-input" data-name="tags" id="tags"></div>');
+					tags = $("#tags");
+					$.getScript("/js/tag.js");
+					// for(var i = 0; i < tagsSplit.length; i++) {
+					// 	tags.append('<span class="tag">"' + tagsSplit[i] +'"</span>');
+					// }
 
 					itemPrecheck = $("#precheck");
 					inputPrecheck = itemPrecheck.find("input");

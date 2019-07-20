@@ -9,7 +9,7 @@ const tags = require('./sql/tags.sql');
 
 const pool = mariadb.createPool({
     host: 'localhost',
-    user:'root',
+    user:'atelli',
     password: '123456',
     port: '3306'
 });
