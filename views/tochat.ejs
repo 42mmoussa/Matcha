@@ -1,0 +1,10 @@
+<section>
+	<%
+		var i = -1;
+		while (++i < locals.nb_users) {
+			%>
+			<p><a href="/matchat/<%= locals.users[i].id_usr %>"><%= locals.users[i].username %></a></p>
+			<%
+		}
+	%>
+</section>

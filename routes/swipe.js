@@ -3,8 +3,7 @@ const router = express.Router();
 const session = require('express-session');
 const crypto = require('crypto-js');
 const mod = require('./mod');
-
-var userSuggest = [];
+const uniqid = require('uniqid');
 
 router.get('/', function(req, res) {
   if (req.session.connect) {
@@ -103,6 +102,7 @@ router.post('/like', function(req, res) {
             }).then((row) => {
                 conn.end();
                 if (row[0].count === 1) {
+					conn.query("INSERT INTO matchat(`id_usr1`, `id_usr2`, `key`) VALUES(?, ?, ?)", [req.session.user.id, id, uniqid()]);
                     res.send('match');
                 } else {
                     res.send('liked');

@@ -1,56 +1,70 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <title>Super Chat temps réel !</title>
-        <style>
-            #zone_chat strong {
-                color: white;
-                background-color: black;
-                padding: 2px;
-            }
-        </style>
-    </head>
+<% include templates/header.ejs %>
+	<section>
+		<link rel="stylesheet" href="/css/chat.css">
+        <h1><span class="glyphicon glyphicon-comment"></span><%= locals.user.username %></h1>
 
-    <body>
-        <h1>Le super Chat temps réel !</h1>
+        <section id="zone_chat">
+
+        </section>
 
         <form action="" method="get" onSubmit="return formulaire_chat()">
             <input type="text" name="message" id="message" placeholder="Votre message..." size="50" autofocus />
             <input type="submit" id="envoi_message" value="Envoyer" />
         </form>
 
-        <section id="zone_chat">
-
-        </section>
-
-
-        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script>
 
             // Connexion à socket.io
-            var socket = io.connect('http://localhost:8888');
+            var socket = io.connect();
+
+			key = '<%- locals.key %>';
+
+			// join room
+
+			socket.emit('joinRoom', key);
 
             // Quand on reçoit un message, on l'insère dans la page
             socket.on('message', function(data) {
-                insereMessage(data.pseudo, data.message)
-            })
+                insertMessage(data.pseudo, data.message)
+			});
 
             // Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page
             function formulaire_chat() {
                 var pseudo = '<%= locals.session.user.username %>';
-                var message = $('#message').val();
-                socket.emit('message', pseudo, message); // Transmet le message aux autres
-                insereMessage(pseudo, message); // Affiche le message aussi sur notre page
-                $('#message').val('').focus(); // Vide la zone de Chat et remet le focus dessus
+				var message = $('#message').val();
+				socket.emit('message',
+				{
+					message: message,
+					key: key,
+					fromid: '<%= locals.session.user.id %>',
+					fromuid: pseudo,
+					to: '<%= locals.idToChat %>'
+				});
+                insertMyMessage(pseudo, message); // Affiche le message aussi sur notre page
+				$('#message').val('').focus(); // Vide la zone de Chat et remet le focus dessus
+				 $("#zone_chat").animate({ scrollTop: 20000000 }, "slow");
                 return false; // Permet de bloquer l'envoi "classique" du formulaire
-            };
+			};
 
             // Ajoute un message dans la page
-            function insereMessage(pseudo, message) {
-                $('#zone_chat').prepend('<p><strong>' + pseudo + '</strong> ' + message + '</p>');
+            function insertMessage(pseudo, message) {
+				$('#zone_chat').append(
+					"<div class='container'>\
+					<img src='/img/" + <%= locals.idToChat %> + "/profile.jpg' alt='Avatar'>\
+					<p>" + message + "</p>\
+					<span class='time-right'>11:05</span></div>");
+                // $('#zone_chat').append('<p class="him"><strong>' + pseudo + '</strong> ' + message + '</p>');
+			}
+
+			function insertMyMessage(pseudo, message) {
+				$('#zone_chat').append(
+					"<div class='container darker'>\
+					<img src='/img/" + <%= locals.session.user.id %> + "/profile.jpg' alt='Avatar' class='right'>\
+					<p>" + message + "</p>\
+					<span class='time-left'>11:05</span>\
+					</div>");
             }
         </script>
-    </body>
-</html>
+    </section>
+<% include templates/footer.ejs %>
