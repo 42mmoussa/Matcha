@@ -1,0 +1,193 @@
+/* Stacked Cards component css */
+body {
+  overflow-x: hidden;
+  background: #252525;
+}
+
+.swipe-container {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.no-transition {
+  -webkit-transition: none ! important;
+  -o-transition: none ! important;
+  transition: none ! important;
+}
+
+.stackedcards-overflow {
+    overflow-y: hidden !important;
+}
+
+.stackedcards.init {
+    opacity: 0;/* set the opacity to 0 if you want a fade-in effect to stacked cards on page load */
+}
+
+.stackedcards {
+    position: relative;
+}
+
+.stackedcards * {
+    -webkit-user-select: none;
+            -moz-user-select: none;
+             -ms-user-select: none;
+         user-select: none;
+}
+
+.stackedcards--animatable {
+    -webkit-transition: all 400ms ease;
+    -o-transition: all 400ms ease;
+    transition: all 400ms ease;
+}
+
+.stackedcards .stackedcards-container > *,
+.stackedcards-overlay {
+    position: absolute;
+    width: 100%; /* set 100% */
+    max-width: 100%; /* set 100% */
+    height: 300px; /* set 100% */
+    will-change: transform, opacity;
+    top: 0;
+    border-radius: 10px;
+}
+
+.stackedcards-overlay.left > div,
+.stackedcards-overlay.right > div,
+.stackedcards-overlay.top > div {
+    width: 100%;
+    height: 100%;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+}
+
+.stackedcards-overlay.left,
+.stackedcards-overlay.right,
+.stackedcards-overlay.top {
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    left: 0;
+    opacity: 0;
+    top: 0;
+    height: 100%;
+    font-size: 24px; /* this style was added only for better preview */
+    text-transform: uppercase; /* this style was added only for better preview */
+    font-weight: 500; /* this style was added only for better preview */
+    color: #fff; /* this style was added only for better preview */
+}
+
+.stackedcards-overlay.top {
+    background: #e0dd59;
+}
+
+.stackedcards-overlay.right {
+    background: #62d66d;
+}
+
+.stackedcards-overlay.left {
+    background: #E58D93;
+}
+
+.stackedcards-overlay.left:empty,
+.stackedcards-overlay.right:empty,
+.stackedcards-overlay.top:empty {
+  display: none !important;
+}
+
+.stackedcards-overlay-hidden {
+    display: none;
+}
+
+.stackedcards-origin-bottom {
+    -webkit-transform-origin: bottom;
+            -ms-transform-origin: bottom;
+        transform-origin: bottom;
+}
+
+.stackedcards-origin-top {
+    -webkit-transform-origin: top;
+            -ms-transform-origin: top;
+        transform-origin: top;
+}
+
+.stackedcards-bottom,
+.stackedcards-top,
+.stackedcards-none {
+    background: #fff; /* set card background background */
+    height: 100%;
+}
+
+.stackedcards .stackedcards-container > :nth-child(1) {
+    position: relative;
+    display: block;
+}
+
+/* global actions buttons*/
+.global-actions {
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    width: 100%;
+    max-width: 500px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.top-action,
+.right-action,
+.left-action {
+    width: 100%;
+    height: 50px;
+    border-radius: 10px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: #fff;
+}
+
+.top-action {
+    background: #e0dd59;
+    margin: 0 10px;
+}
+
+.right-action { background: #62d66d; }
+.left-action { background: #E58D93; }
+
+/* elements on stacked cards */
+.card-item { background: #FFFFFF;}
+
+#stacked-cards-block {
+  max-width: 500px;
+}
+
+.image {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-color: #FFFFFF;
+}
