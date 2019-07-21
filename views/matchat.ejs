@@ -1,35 +1,42 @@
-<% include templates/header.ejs %>
-	<section>
+<html lang="en" dir="ltr">
+  <head>
+	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<link rel='stylesheet' href='/glyphicons-only-bootstrap/css/bootstrap.min.css' />
+	<link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
+	<link rel="stylesheet" href="/css/header.css">
+	<link rel="stylesheet" href="/css/footer.css">
+	<script type="text/javascript" src='/jquery/dist/jquery.js'></script>
+	<script type="text/javascript" src='/bootstrap/dist/js/bootstrap.js'></script>
+	<script type="module" src="https://unpkg.com/ionicons@4.5.9-1/dist/ionicons/ionicons.esm.js"></script>
+	<script nomodule="" src="https://unpkg.com/ionicons@4.5.9-1/dist/ionicons/ionicons.js"></script>
+  </head>
+  <body>
+	<section id="chat">
 		<link rel="stylesheet" href="/css/chat.css">
-        <h1><span class="glyphicon glyphicon-comment"></span><%= locals.user.username %></h1>
-
         <section id="zone_chat">
 
         </section>
 
-        <form action="" method="get" onSubmit="return formulaire_chat()">
-            <input type="text" name="message" id="message" placeholder="Votre message..." size="50" autofocus />
-            <input type="submit" id="envoi_message" value="Envoyer" />
+        <form action="" method="get" onSubmit="return formulaire_chat()" id="formmsg" class="input-group mb-3">
+			<input type="text" class="form-control" name="message" id="message" placeholder="Votre message..." autofocus autocomplete="off"/>
+			<div class="input-group-append">
+				<button id="envoi_message" class="btn btn-outline-secondary" type="submit">Send</button>
+			</div>
         </form>
 
         <script src="/socket.io/socket.io.js"></script>
         <script>
 
-            // Connexion à socket.io
             var socket = io.connect();
 
 			key = '<%- locals.key %>';
 
-			// join room
-
 			socket.emit('joinRoom', key);
 
-            // Quand on reçoit un message, on l'insère dans la page
             socket.on('message', function(data) {
                 insertMessage(data.pseudo, data.message)
 			});
 
-            // Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page
             function formulaire_chat() {
                 var pseudo = '<%= locals.session.user.username %>';
 				var message = $('#message').val();
@@ -41,20 +48,18 @@
 					fromuid: pseudo,
 					to: '<%= locals.idToChat %>'
 				});
-                insertMyMessage(pseudo, message); // Affiche le message aussi sur notre page
-				$('#message').val('').focus(); // Vide la zone de Chat et remet le focus dessus
+                insertMyMessage(pseudo, message);
+				$('#message').val('').focus();
 				 $("#zone_chat").animate({ scrollTop: 20000000 }, "slow");
-                return false; // Permet de bloquer l'envoi "classique" du formulaire
+                return false;
 			};
 
-            // Ajoute un message dans la page
             function insertMessage(pseudo, message) {
 				$('#zone_chat').append(
 					"<div class='container'>\
 					<img src='/img/" + <%= locals.idToChat %> + "/profile.jpg' alt='Avatar'>\
 					<p>" + message + "</p>\
 					<span class='time-right'>11:05</span></div>");
-                // $('#zone_chat').append('<p class="him"><strong>' + pseudo + '</strong> ' + message + '</p>');
 			}
 
 			function insertMyMessage(pseudo, message) {
@@ -67,4 +72,3 @@
             }
         </script>
     </section>
-<% include templates/footer.ejs %>

@@ -13,6 +13,7 @@ router.get('/', function (req, res) {
 						OR (id_usr IN (SELECT id_usr1 FROM matchat WHERE id_usr2=?))",
 						[req.session.user.id, req.session.user.id]));
 				}).then (row => {
+					conn.end();
 					return res.render('tochat', {
 						nb_users: row.length,
 						users: row

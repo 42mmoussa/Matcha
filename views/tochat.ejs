@@ -1,10 +1,76 @@
+<html lang="en" dir="ltr">
+  <head>
+	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<title>Matchat</title>
+	<link rel='stylesheet' href='/glyphicons-only-bootstrap/css/bootstrap.min.css' />
+	<link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
+	<link rel="stylesheet" href="/css/header.css">
+	<link rel="stylesheet" href="/css/footer.css">
+	<link rel="stylesheet" href="/css/chat.css">
+	<script type="text/javascript" src='/jquery/dist/jquery.js'></script>
+	<script type="text/javascript" src='/bootstrap/dist/js/bootstrap.js'></script>
+	<script type="module" src="https://unpkg.com/ionicons@4.5.9-1/dist/ionicons/ionicons.esm.js"></script>
+	<script nomodule="" src="https://unpkg.com/ionicons@4.5.9-1/dist/ionicons/ionicons.js"></script>
+  </head>
+  <body>
 <section>
-	<%
-		var i = -1;
-		while (++i < locals.nb_users) {
-			%>
-			<p><a href="/matchat/<%= locals.users[i].id_usr %>"><%= locals.users[i].username %></a></p>
-			<%
-		}
-	%>
+	<div class="wrapper">
+
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <h3><a href="/">Matchat</a></h3>
+        </div>
+		<ul class="list-unstyled components">
+            <li class="active">
+                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Your Matchas</a>
+                <ul class="collapse list-unstyled" id="homeSubmenu">
+						<%
+							var i = -1;
+							while (++i < locals.nb_users) {
+								%>
+								<li><a id="<%= locals.users[i].id_usr %>" class="menuToggle userChoice" onClick='document.getElementById("ifr").src="/matchat/<%= locals.users[i].id_usr %>";'><%= locals.users[i].username %></a></li>
+								<%
+							}
+						%>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Page Content -->
+    <div id="content">
+		<nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding: 0;">
+			<div>
+				<button type="button" id="sidebarCollapse" class="btn btn-info menuToggle">
+					<i class="fas fa-align-left"></i>
+					<span class="glyphicon glyphicon-menu-left" id="menubtn"></span>
+				</button>
+
+			</div>
+				<span id="userinfo" style="margin: 0 auto;"> <span id='username'></span></span>
+		</nav>
+		<iframe frameborder="0" id='ifr'></iframe>
+</div>
+
+
+</div>  
 </section>
+<script>
+$(document).ready(function () {
+    $('.menuToggle').on('click', function () {
+        $('#sidebar').toggleClass('active');
+        $('#menubtn').toggleClass('glyphicon glyphicon-menu-right');
+		$('#menubtn').toggleClass('glyphicon glyphicon-menu-left');
+	});
+	
+	$('.userChoice').on('click', function () {
+		let value = this.text;
+		let id = this.id;
+		$('#userImage').remove();
+		$('#userinfo').prepend("<img id='userImage' src='/img/" + id + "/profile.jpg'/>");
+		$('#username').html(value);
+    });
+
+});
+</script>
