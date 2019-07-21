@@ -2,8 +2,8 @@ const mariadb = require('mariadb');
 
 const pool = mariadb.createPool({
   host: 'localhost',
-  user:'root',
-  password: '',
+  user:'atelli',
+  password: '123456',
   port: '3306',
 });
 
@@ -63,4 +63,14 @@ function dateDiff(dateold, datenew)
 	return diff;
 }
 
-module.exports = {checkemail, checkuid, checkname, checkpwd, pool, randomString, dateDiff, checkdate};
+function insert(main_string, ins_string, pos) {
+	if(typeof(pos) == "undefined") {
+		pos = 0;
+	}
+	if(typeof(ins_string) == "undefined") {
+		ins_string = '';
+	}
+	return main_string.slice(0, pos) + ins_string + main_string.slice(pos);
+}
+
+module.exports = {checkemail, checkuid, checkname, checkpwd, pool, randomString, dateDiff, checkdate, insert};
