@@ -22,6 +22,7 @@
 			mainInput.value = '';
 		}
 	});
+	refreshTags();
 
 	insert = function insert(main_string, ins_string, pos) {
 		if(typeof(pos) == "undefined") {
@@ -31,6 +32,24 @@
 			ins_string = '';
 		}
 		return main_string.slice(0, pos) + ins_string + main_string.slice(pos);
+	}
+
+	saveT = document.getElementsByClassName("save");
+	for(var i = 0; i < saveT.length; i++){
+		let test = {
+			text: saveT[i].innerHTML,
+			element: document.getElementsByClassName("tag")[i],
+		};
+
+		console.log(test.element);
+		let closeBtn = document.createElement('span');
+		closeBtn.classList.add('close');
+		closeBtn.addEventListener('click', function () {
+			removeTag(tags.indexOf(test));
+		});
+		test.element.appendChild(closeBtn);
+		tags.push(test);
+		refreshTags();
 	}
 
 	mainInput.addEventListener('keydown', function (e) {

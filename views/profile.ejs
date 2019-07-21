@@ -95,9 +95,10 @@
 					<div class="row">
 						<label for="tags" class="col-sm-3 col-form-label"><b>Tags</b></label>
 						<div class="col-sm-12">
-							<p class="text-left" id="tags"><%= locals.tags %></p>
+							<p class="text-left" id="tags"></p>
 						</div>
 					</div>
+					<span style="display: none;" id="save"></span>
 				</form>
 			</fieldset>
 		</div>
@@ -115,7 +116,18 @@
 			tags = $("#tags");
 			tagsSplit =	"<%= locals.tags %>".split(',');
 			userProfile = $("#user-profile");
-			var i = 0;
+			save = $("#save");
+
+			for(var i = 0; i < tagsSplit.length; i++) {
+				if (i < tagsSplit.length - 1) {
+					tags.append('<a class="tag" href="#">' + tagsSplit[i] + '</a>, ');
+					save.append('<p class="save" style="display:none;">' + tagsSplit[i] + '</p>')
+				}
+				else {
+					tags.append('<a class="tag" href="#">' + tagsSplit[i] + '</a>');
+					save.append('<p class="save" style="display:none;">' + tagsSplit[i] + '</p>')
+				}
+			}
 
 			editProfile.click(function () {
 					editProfile.remove();
@@ -169,9 +181,9 @@
 					tags.replaceWith('<div class="tags-input" data-name="tags" id="tags"></div>');
 					tags = $("#tags");
 					$.getScript("/js/tag.js");
-					// for(var i = 0; i < tagsSplit.length; i++) {
-					// 	tags.append('<span class="tag">"' + tagsSplit[i] +'"</span>');
-					// }
+					for(var i = 0; i < tagsSplit.length; i++) {
+						tags.append('<span class="tag">' + tagsSplit[i] +'</span>');
+					}
 
 					itemPrecheck = $("#precheck");
 					inputPrecheck = itemPrecheck.find("input");
