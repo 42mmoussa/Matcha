@@ -88,8 +88,16 @@ router.get('/create-profile', function(req, res) {
 		var bio            = req.body.bio;
 		var photo          = req.body.photo;
 		var birthday       = new Date(req.session.user.birthday);
-		var tags           = req.body.tags;
-		tagexist = tags.split(',');
+		tagexist = req.body.tags.split(',');
+		for(var i = 0; i < tagexist.length - 1; i++) {
+			for(var j = i + 1; j < tagexist.length; j++) {
+				if (tagexist[i] == tagexist[j]) {
+					tagexist.splice(i, 1);
+					i--;
+				}
+			}
+		}
+		var tags = tagexist.join(',');
 
 	var choice = {
 		Heterosexual         : req.body.heterosexual,
@@ -110,7 +118,7 @@ router.get('/create-profile', function(req, res) {
 	}
 
 	if (orientation == '') {
-					orientation = 'bisexual';
+		orientation = 'bisexual';
 	}
 
 	if (name != (req.session.user.lastname + " " + req.session.user.firstname) || username != req.session.user.username || gender == undefined) {
@@ -152,8 +160,16 @@ router.post('/modify', function(req, res) {
 	var fname          = req.body.fname;
 	var uname          = req.body.uname;
 	var bio            = req.body.bio;
-	var tags           = req.body.tags;
-	tagexist = tags.split(',');
+	tagexist = req.body.tags.split(',');
+	for(var i = 0; i < tagexist.length - 1; i++) {
+		for(var j = i + 1; j < tagexist.length; j++) {
+			if (tagexist[i] == tagexist[j]) {
+				tagexist.splice(i, 1);
+				i--;
+			}
+		}
+	}
+	var tags = tagexist.join(',');
 
 	var choice = {
 	  Heterosexual         : req.body.heterosexual,
@@ -194,15 +210,42 @@ router.post('/modify', function(req, res) {
 			conn.query("USE matcha;")
 			.then(() => {
 				if (tags) {
-					tagexist.forEach(function(element) {
-						conn.query("SELECT COUNT(*) as nb from tags where name_tag = ?", [element])
-						.then((rows) => {
-							if (rows[0].nb === 0) {
-								conn.query("INSERT INTO tags(name_tag, nb_tag) VALUES(?, 1)", [element]);
+					conn.query("SELECT tags FROM profiles WHERE id_usr = ?", [req.session.user.id])
+					.then((resu) => {
+						tagsUser = resu[0].tags.split(',');
+						for(var i = 0; i < tagsUser.length; i++) {
+							k = 0;
+							for(var j = 0; j < tagexist.length; j++) {
+								if (tagsUser[i] == tagexist[j]) {
+									k = 1;
+									break;
+								}
 							}
-							else {
-								conn.query("UPDATE tags SET nb_tag = nb_tag + 1 WHERE name_tag = ?", [element]);
-							}
+							if (k == 0)
+								conn.query("UPDATE tags SET nb_tag = nb_tag - 1 WHERE name_tag = ?", [tagsUser[i]]);
+						}
+					})
+					conn.query("SELECT tags FROM profiles WHERE id_usr = ?", [req.session.user.id])
+					.then((result) => {
+						tagexist.forEach(function(element) {
+							conn.query("SELECT COUNT(*) as nb from tags where name_tag = ?", [element])
+							.then((rows) => {
+								if (rows[0].nb === 0) {
+									conn.query("INSERT INTO tags(name_tag, nb_tag) VALUES(?, 1)", [element]);
+								}
+								else {
+									tagsUser = result[0].tags.split(',');
+									e = 0;
+									for(var i = 0; i < tagsUser.length; i++) {
+										if (tagsUser[i] == element) {
+											e = 1;
+										}
+									}
+									if (e === 0) {
+										conn.query("UPDATE tags SET nb_tag = nb_tag + 1 WHERE name_tag = ?", [element])
+									}
+								}
+							})
 						})
 					});
 				}
@@ -212,7 +255,7 @@ router.post('/modify', function(req, res) {
 				req.session.user.username = uname;
 				conn.end();
 				return res.redirect("/");
-			});
+				})
 		  });
 	  }
 });

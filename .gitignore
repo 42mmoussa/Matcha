@@ -57,6 +57,6 @@ typings/
 # next.js build output
 .next
 
-./node_modules/
+node_modules
 
 .DS_Store
