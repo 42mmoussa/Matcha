@@ -47,7 +47,8 @@ router.get('/:id_usr', function (req, res) {
 									user: row2[0],
 									idToChat: id_usr,
 									key: key,
-									msg: row3
+									msg: row3,
+									nb_msg: row3.length,
 								});
 							});
 						});

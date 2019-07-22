@@ -15,7 +15,7 @@
 		<link rel="stylesheet" href="/css/chat.css">
         <section id="zone_chat">
 			<%	var i = -1; %>
-			<%	while (++i < locals.msg.length) { %>
+			<%	while (++i < locals.nb_msg) { %>
 					<% if (i == 0) { %>
 						<p><%= locals.msg[i].date %></p>
 					<%}%>
