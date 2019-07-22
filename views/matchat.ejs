@@ -14,29 +14,40 @@
 	<section id="chat">
 		<link rel="stylesheet" href="/css/chat.css">
         <section id="zone_chat">
+
+			<ul class="list-unstyled chat">
 			<%	var i = -1; %>
 			<%	while (++i < locals.nb_msg) { %>
-					<% if (i == 0) { %>
-						<p><%= locals.msg[i].date %></p>
+					<% if (i == 0 || locals.msg[i].day != locals.msg[i - 1].day) { %>
+						<p class="date"><%= locals.msg[i].day %></p>
 					<%}%>
 					<%if (locals.msg[i].id_usr == locals.idToChat) {%>
-						<div class='container'>
-						<img src='/img/<%= locals.msg[i].id_usr %>/profile.jpg' alt='Avatar'>
-						<p><%= locals.msg[i].message %></p>
-						<% if (i = 0) { %>
-						<span class='time-right'>
-						<%= locals.msg[i].time %>
-							
-						</span></div>
-						<%}%>
+						<li class="d-flex justify-content-between mb-4">
+							<img src='/img/<%= locals.msg[i].id_usr %>/profile.jpg' alt="avatar" class="avatar rounded-circle mr-2 ml-lg-3 ml-0 z-depth-1">
+							<div class="chat-body left white p-3 ml-2 shadow-sm">
+								<div class="header">
+								<strong class="primary-font"><%= locals.user.username %></strong>
+								<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> <%= locals.msg[i].time %></small>
+								</div>
+								<hr class="w-100">
+								<p class="wordwrap mb-0"><%= locals.msg[i].message %></p>
+							</div>
+						</li>
 					<%} else {%>
-						<div class='container darker'>
-						<img src='/img/<%= locals.msg[i].id_usr %>/profile.jpg' alt='Avatar' class='right'>
-						<p><%= locals.msg[i].message %></p>
-						<span class='time-left'><%= locals.msg[i].time %></span>
-						</div>
+						<li class="d-flex justify-content-between mb-4">
+							<div class="chat-body right white p-3 shadow-sm">
+								<div class="header">
+								<strong class="primary-font"><%= locals.session.user.username %></strong>
+								<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> <%= locals.msg[i].time %></small>
+								</div>
+								<hr class="w-100">
+								<p class="wordwrap mb-0"><%= locals.msg[i].message %></p>
+							</div>
+							<img src='/img/<%= locals.msg[i].id_usr %>/profile.jpg' alt="avatar" class="avatar rounded-circle mr-0 ml-3 z-depth-1">
+						</li>
 					<%}%>
 				<%}%>
+					</ul>
         </section>
 
         <form action="" method="get" onSubmit="return formulaire_chat()" id="formmsg" class="input-group mb-3">
@@ -56,8 +67,12 @@
 			socket.emit('joinRoom', key);
 
             socket.on('message', function(data) {
-                insertMessage(data.pseudo, data.message)
+				var dt = new Date();
+				var time = dt.getHours() + ":" + dt.getMinutes();
+                insertMessage(data.pseudo, data.message, time);
 			});
+
+			document.getElementById('zone_chat').scrollTop = document.getElementById('zone_chat').scrollHeight;
 
             function formulaire_chat() {
                 var pseudo = '<%= locals.session.user.username %>';
@@ -70,27 +85,42 @@
 					fromuid: pseudo,
 					to: '<%= locals.idToChat %>'
 				});
-                insertMyMessage(pseudo, message);
+				var dt = new Date();
+				var time = dt.getHours() + ":" + dt.getMinutes();
+                insertMyMessage(pseudo, message, time);
 				$('#message').val('').focus();
 				 $("#zone_chat").animate({ scrollTop: 20000000 }, "slow");
                 return false;
 			};
 
-            function insertMessage(pseudo, message) {
+            function insertMessage(pseudo, message, time) {
 				$('#zone_chat').append(
-					"<div class='container'>\
-					<img src='/img/" + <%= locals.idToChat %> + "/profile.jpg' alt='Avatar'>\
-					<p>" + message + "</p>\
-					<span class='time-right'>11:05</span></div>");
+					'<li class="d-flex justify-content-between mb-4">\
+							<img src="/img/' + <%= locals.idToChat %> + '/profile.jpg" alt="avatar" class="avatar rounded-circle mr-2 ml-lg-3 ml-0 z-depth-1">\
+							<div class="chat-body left white p-3 ml-2 shadow-sm">\
+								<div class="header">\
+								<strong class="primary-font">' + pseudo + '</strong>\
+								<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i>' + time +'</small>\
+								</div>\
+								<hr class="w-100">\
+								<p class="wordwrap mb-0">' + message + '</p>\
+							</div>\
+						</li>');
 			}
 
-			function insertMyMessage(pseudo, message) {
+			function insertMyMessage(pseudo, message, time) {
 				$('#zone_chat').append(
-					"<div class='container darker'>\
-					<img src='/img/" + <%= locals.session.user.id %> + "/profile.jpg' alt='Avatar' class='right'>\
-					<p>" + message + "</p>\
-					<span class='time-left'>11:05</span>\
-					</div>");
+					'<li class="d-flex justify-content-between mb-4">\
+						<div class="chat-body right white p-3 shadow-sm">\
+							<div class="header">\
+							<strong class="primary-font">' + pseudo + '</strong>\
+							<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i>' + time +'</small>\
+							</div>\
+							<hr class="w-100">\
+							<p class="wordwrap mb-0">' + message + '</p>\
+						</div>\
+						<img src="/img/' + <%= locals.session.user.id %> + '/profile.jpg" alt="avatar" class="avatar rounded-circle mr-0 ml-3 z-depth-1">\
+					</li>');
             }
         </script>
     </section>

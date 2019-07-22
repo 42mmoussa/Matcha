@@ -39,10 +39,9 @@ router.get('/:id_usr', function (req, res) {
 						let key = row[0].key;
 						conn.query("SELECT * FROM users WHERE id_usr=?;", [id_usr])
 						.then(row2 => {
-							conn.query("SELECT message, DATE_FORMAT(date, '%D %M %Y') as date, DATE_FORMAT(date, '%H:%i:%s') as time, id_usr FROM messages WHERE `key`=? ORDER BY date ASC LIMIT 50;", [key])
+							conn.query("(SELECT message, DATE_FORMAT(date, '%D %M %Y') as day, DATE_FORMAT(date, '%H:%i') as time, id_usr FROM messages WHERE `key`=? ORDER BY date DESC LIMIT 50) ORDER BY day ASC, time ASC;", [key])
 							.then(row3 => {
 								conn.end();
-								console.log(key);
 								return res.render('matchat', {
 									user: row2[0],
 									idToChat: id_usr,
