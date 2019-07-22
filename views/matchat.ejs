@@ -14,7 +14,29 @@
 	<section id="chat">
 		<link rel="stylesheet" href="/css/chat.css">
         <section id="zone_chat">
-
+			<%	var i = -1; %>
+			<%	while (++i < locals.msg.length) { %>
+					<% if (i == 0) { %>
+						<p><%= locals.msg[i].date %></p>
+					<%}%>
+					<%if (locals.msg[i].id_usr == locals.idToChat) {%>
+						<div class='container'>
+						<img src='/img/<%= locals.msg[i].id_usr %>/profile.jpg' alt='Avatar'>
+						<p><%= locals.msg[i].message %></p>
+						<% if (i = 0) { %>
+						<span class='time-right'>
+						<%= locals.msg[i].time %>
+							
+						</span></div>
+						<%}%>
+					<%} else {%>
+						<div class='container darker'>
+						<img src='/img/<%= locals.msg[i].id_usr %>/profile.jpg' alt='Avatar' class='right'>
+						<p><%= locals.msg[i].message %></p>
+						<span class='time-left'><%= locals.msg[i].time %></span>
+						</div>
+					<%}%>
+				<%}%>
         </section>
 
         <form action="" method="get" onSubmit="return formulaire_chat()" id="formmsg" class="input-group mb-3">

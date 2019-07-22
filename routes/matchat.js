@@ -39,12 +39,16 @@ router.get('/:id_usr', function (req, res) {
 						let key = row[0].key;
 						conn.query("SELECT * FROM users WHERE id_usr=?;", [id_usr])
 						.then(row2 => {
-							conn.end();
-							console.log(key);
-							return res.render('matchat', {
-								user: row2[0],
-								idToChat: id_usr,
-								key: key
+							conn.query("SELECT message, DATE_FORMAT(date, '%D %M %Y') as date, DATE_FORMAT(date, '%H:%i:%s') as time, id_usr FROM messages WHERE `key`=? ORDER BY date ASC LIMIT 50;", [key])
+							.then(row3 => {
+								conn.end();
+								console.log(key);
+								return res.render('matchat', {
+									user: row2[0],
+									idToChat: id_usr,
+									key: key,
+									msg: row3
+								});
 							});
 						});
 					} else {
