@@ -8,6 +8,8 @@ const lst_profiles = require('./sql/lst_profiles.sql');
 const likes = require('./sql/likes.sql');
 const dislikes = require('./sql/dislikes.sql');
 const favorites = require('./sql/favorites.sql');
+const messages = require('./sql/messages.sql');
+const matchat = require('./sql/matchat.sql');
 
 const pool = mariadb.createPool({
     host: 'localhost',
@@ -34,6 +36,8 @@ pool.getConnection()
          conn.query(likes);
          conn.query(dislikes);
          conn.query(favorites);
+         conn.query(messages);
+         conn.query(matchat);
          conn.end();
        })
        .catch(err => {

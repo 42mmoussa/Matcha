@@ -3,5 +3,6 @@ CREATE TABLE `messages` (
 		`key`			LONGTEXT NOT NULL,
 		`message`		LONGTEXT NOT NULL,
 		`date`          DATETIME NOT NULL,
+		`id_usr`        INT NOT NULL,
 		CONSTRAINT messages_FK PRIMARY KEY (`id_messages`)
 );
