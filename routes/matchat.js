@@ -39,7 +39,7 @@ router.get('/:id_usr', function (req, res) {
 						let key = row[0].key;
 						conn.query("SELECT * FROM users WHERE id_usr=?;", [id_usr])
 						.then(row2 => {
-							conn.query("(SELECT message, DATE_FORMAT(date, '%D %M %Y') as day, DATE_FORMAT(date, '%H:%i') as time, id_usr FROM messages WHERE `key`=? ORDER BY date DESC LIMIT 50) ORDER BY day ASC, time ASC;", [key])
+							conn.query("(SELECT id_messages as id, message, DATE_FORMAT(date, '%D %M %Y') as day, DATE_FORMAT(date, '%H:%i') as time, id_usr FROM messages WHERE `key`=? ORDER BY id_messages DESC LIMIT 50) ORDER BY id ASC;", [key])
 							.then(row3 => {
 								conn.end();
 								return res.render('matchat', {
@@ -56,6 +56,34 @@ router.get('/:id_usr', function (req, res) {
 						conn.end();
 						return res.redirect('/');
 					}
+				})
+			});
+    } else {
+        return res.redirect('/login');
+    }
+});
+
+router.post('/loadmore', function (req, res) {
+	if (req.session.connect) {
+		let nbscroll = req.body.nbscroll * 50;
+		let key = req.body.room;
+		mod.pool.getConnection()
+			.then(conn => {
+				conn.query("USE matcha")
+				.then(() => {
+					return (
+						conn.query(
+							"(SELECT id_messages as id, message, DATE_FORMAT(date, '%D %M %Y') as day,\n\
+							DATE_FORMAT(date, '%H:%i') as time, id_usr\n\
+							FROM messages WHERE `key`=?\n\
+							ORDER BY id_messages DESC LIMIT ?, 50)\n\
+							ORDER BY id DESC;",
+							[key, nbscroll]));
+				})
+				.then (row => {
+					res.send({
+						nb: row.length,
+						msg: row});
 				})
 			});
     } else {
