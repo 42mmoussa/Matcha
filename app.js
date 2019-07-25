@@ -21,7 +21,7 @@ const IN_PROD      = NODE_ENV === 'production';
 const app = express();
 
 const profile = require('./routes/profile');
-const about = require('./routes/about');
+const settings = require('./routes/settings');
 const login = require('./routes/login');
 const signup = require('./routes/signup');
 const mod = require('./routes/mod');
@@ -67,7 +67,7 @@ app.use(function(req, res, next) {
 app.use('/change-password', changepasswd);
 app.use('/reset-password', resetpasswd);
 app.use('/profile', profile);
-app.use('/about', about);
+app.use('/settings', settings);
 app.use('/login', login);
 app.use('/signup', signup);
 app.use('/swipe', swipe);
