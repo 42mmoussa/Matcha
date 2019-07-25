@@ -172,26 +172,27 @@
 							data: {nbscroll: nbscroll, room: key}
 						}).done(function(data) {
 							i = -1;
-							console.log(data);
+							beforeHeight = document.getElementById('zone_chat').scrollHeight;
 							while (++i < data.nb) {
 								loadMessage(data.msg, data.nb, i);
 							}
+							afterHeight = document.getElementById('zone_chat').scrollHeight;
+							document.getElementById('zone_chat').scrollTop = afterHeight - beforeHeight;
 							nbscroll++;
 						});
-
 					}
 				});
 
 				$('#loadingDiv').attr('style','display:none !important');
 
 				jQuery.ajaxSetup({
-				beforeSend: function() {
-					$('#loadingDiv').attr('style','display:flex !important');
-				},
-				complete: function(){
-					$('#loadingDiv').attr('style','display:none !important');
-				},
-				success: function() {}
+					beforeSend: function() {
+						$('#loadingDiv').attr('style','display:flex !important');
+					},
+					complete: function(){
+						$('#loadingDiv').attr('style','display:none !important');
+					},
+					success: function() {}
 				});
 				
 			});

@@ -65,8 +65,10 @@ router.get('/:id_usr', function (req, res) {
 
 router.post('/loadmore', function (req, res) {
 	if (req.session.connect) {
+
 		let nbscroll = req.body.nbscroll * 50;
 		let key = req.body.room;
+		
 		mod.pool.getConnection()
 			.then(conn => {
 				conn.query("USE matcha")
