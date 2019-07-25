@@ -150,7 +150,7 @@ var router = express.Router();
           });
           conn.end();
         });
-        return res.render("profile");
+        return res.redirect("profile");
       });
     }
   });
