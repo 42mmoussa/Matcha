@@ -29,7 +29,10 @@
 
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
+
+    var socket = io.connect();
 
   // JavaScript Document
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -288,17 +291,50 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
     function match(type) {
       var id = matchUser[iUser].id_usr;
+	  var username = matchUser[iUser].username;
+	  console.log(username);
       $.ajax({
         type: 'POST',
         url: '/swipe/'+type,
         dataType: 'text',
         data: {id: id}
       }).done(function(data) {
-        console.log(data);
-        if (data === 'match') {
-          console.log("YOU MATCHED (+notif)");
+		if (data === 'match') {
+			console.log("You matched (+notif to match person)");
+			data = {
+				url: "/matchat/",
+				msg: "You just matched !",
+				title: "Match with: ",
+			 	from: {
+					username: username,
+					id: id
+				}
+			};
+			insertnotif(data);
+			data = {
+				id: id,
+				url: "/matchat/",
+				msg: "You just matched !",
+				title: "Match with: ",
+			 	from: {
+					username: "<%- locals.session.user.username %>",
+					id: "<%- locals.session.user.id %>"
+				}
+			};
+          	socket.emit("send_notif", data);
         } else if (data === 'liked') {
-          console.log("You liked (+notif to liked person)");
+		    console.log("You liked (+notif to liked person)");
+		    socket.emit("send_notif",
+			{
+				id: id,
+				url: "/profile?id=",
+				msg: "This user liked you",
+				title: "Like from: ",
+			 	from: {
+					username: "<%- locals.session.user.username %>",
+					id: "<%- locals.session.user.id %>"
+				}
+		  	});
         }
       });
 

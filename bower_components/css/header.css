@@ -1,4 +1,15 @@
 .login {
-  margin-left: 5px;
-  margin-right: 5px;
+  margin-right: 10px;
+  padding-left: 0;
+}
+
+.dropdown-menu{
+  right: 0!important;
+  left: auto!important;
+}
+
+.toast {
+  max-width: 200px;
+  word-break: break-word;
+  background-color: white;
 }

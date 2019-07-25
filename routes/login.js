@@ -18,7 +18,7 @@ router.get('/', function (req, res) {
 });
 
 router.post('/login_validation', function(req, res) {
-	var login		= req.body.uname;
+	var login		= req.body.uname.trim();
 	var pwd			= crypto.SHA512(req.body.pwd).toString();
 
 	if (login === "" || pwd === "") {

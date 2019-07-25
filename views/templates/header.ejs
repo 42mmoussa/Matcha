@@ -18,7 +18,7 @@ Mohamad MOUSSA : mmoussa@student.42.fr or (+33) 07.81.78.82.38 -->
   </head>
   <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light" id="headerMenu">
   <a class="navbar-brand" href="#">Matcha</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
 	<span class="navbar-toggler-icon"></span>
@@ -43,19 +43,22 @@ Mohamad MOUSSA : mmoussa@student.42.fr or (+33) 07.81.78.82.38 -->
 		<a class="nav-link" href="/about">About</a>
 	  </li>
 	</ul>
-	<form class="form-inline my-2 my-lg-0">
-	  <input class="form-control mr-sm-2" type="text" placeholder="Search">
-	  <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-	</form>
+	<div class="dropdown login">
+		<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<span class="glyphicon glyphicon-bell"></span>
+		</button>
+		<div id="notificationMenu" class="dropdown-menu" aria-labelledby="dropdownMenu2"></div>
+	</div>
 	<% if (locals.session.connect) { %>
-	  <a href="/logout" class="btn btn-outline-primary login"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+	  <a href="/logout" class="nav-link login"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
 	<% } else { %>
-	  <a href="/login" class="btn btn-outline-primary login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
-	  <a href="/signup" class="btn btn-outline-primary"><span class="glyphicon glyphicon-log-in"></span> Sign up</a>
+	  <a href="/login" class="nav-link login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+	  <a href="/signup" class="nav-link"><span class="glyphicon glyphicon-log-in"></span> Sign up</a>
 	<% } %>
   </div>
 </nav>
 
+<div id="notif-toaster" style="position: absolute; top: 60px; right: 0; z-index: 10;"></div>
 
 <!-- Modal with custom text-->
 
