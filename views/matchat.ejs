@@ -77,7 +77,9 @@
 
             function formulaire_chat() {
                 var pseudo = '<%= locals.session.user.username %>';
-				var message = $('#message').val();
+				var message = $('#message').val().trim();
+				if (message.length == 0)
+					return false;
 				socket.emit('message',
 				{
 					message: message,

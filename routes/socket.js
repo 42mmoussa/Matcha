@@ -12,6 +12,10 @@ module.exports = function (server) {
 			socket.join(room);
 		});
 
+		socket.on('send_notif', (data) => {
+			socket.in(data.id).emit('notifMsg', data);
+		});
+
 		socket.on('message', function (data) {
 			let message = ent.encode(data.message);
 			let key = ent.encode(data.key);
@@ -42,6 +46,14 @@ module.exports = function (server) {
 				});
 			})
             socket.in(key).emit('message', {pseudo: from.username, message: message});
+			socket.in(to).emit('notifMsg',
+				{
+					from: from,
+					msg: message,
+					url: "/matchat/",
+					title: "New message: "
+
+				});
         });
     });
 }
