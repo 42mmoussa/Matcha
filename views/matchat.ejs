@@ -1,0 +1,201 @@
+<html lang="en" dir="ltr">
+  <head>
+	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<link rel='stylesheet' href='/glyphicons-only-bootstrap/css/bootstrap.min.css' />
+	<link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
+	<link rel="stylesheet" href="/css/header.css">
+	<link rel="stylesheet" href="/css/footer.css">
+	<script type="text/javascript" src='/jquery/dist/jquery.js'></script>
+	<script type="text/javascript" src='/bootstrap/dist/js/bootstrap.js'></script>
+	<script type="module" src="https://unpkg.com/ionicons@4.5.9-1/dist/ionicons/ionicons.esm.js"></script>
+	<script nomodule="" src="https://unpkg.com/ionicons@4.5.9-1/dist/ionicons/ionicons.js"></script>
+  </head>
+  <body>
+	<section id="chat">
+		<link rel="stylesheet" href="/css/chat.css">
+        <section id="zone_chat">
+			<div class="d-flex justify-content-center" id="loadingDiv">
+				<div class="spinner-border d-flex justify-content-center text-secondary" role="status" id="loading"></div>
+			</div>
+			<ul class="list-unstyled chat">
+			<%	var i = -1; %>
+			<%	while (++i < locals.nb_msg) { %>
+					<% if (i == 0 || locals.msg[i].day != locals.msg[i - 1].day) { %>
+						<p class="date"><%= locals.msg[i].day %></p>
+					<%}%>
+					<%if (locals.msg[i].id_usr == locals.idToChat) {%>
+						<li class="d-flex justify-content-between mb-4">
+							<img src='/img/<%= locals.msg[i].id_usr %>/profile.jpg' alt="avatar" class="avatar rounded-circle mr-2 ml-lg-3 ml-0 z-depth-1">
+							<div class="chat-body left white p-3 ml-2 shadow-sm">
+								<div class="header">
+								<strong class="primary-font"><%= locals.user.username %></strong>
+								<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> <%= locals.msg[i].time %></small>
+								</div>
+								<hr class="w-100">
+								<p class="wordwrap mb-0"><%= locals.msg[i].message %></p>
+							</div>
+						</li>
+					<%} else {%>
+						<li class="d-flex justify-content-between mb-4">
+							<div class="chat-body right white p-3 shadow-sm">
+								<div class="header">
+								<strong class="primary-font"><%= locals.session.user.username %></strong>
+								<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> <%= locals.msg[i].time %></small>
+								</div>
+								<hr class="w-100">
+								<p class="wordwrap mb-0"><%= locals.msg[i].message %></p>
+							</div>
+							<img src='/img/<%= locals.msg[i].id_usr %>/profile.jpg' alt="avatar" class="avatar rounded-circle mr-0 ml-3 z-depth-1">
+						</li>
+					<%}%>
+				<%}%>
+					</ul>
+        </section>
+
+        <form action="" method="get" onSubmit="return formulaire_chat()" id="formmsg" class="input-group mb-3">
+			<input type="text" class="form-control" name="message" id="message" placeholder="Votre message..." autofocus autocomplete="off"/>
+			<div class="input-group-append">
+				<button id="envoi_message" class="btn btn-outline-secondary" type="submit">Send</button>
+			</div>
+        </form>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io.connect();
+
+			key = '<%- locals.key %>';
+
+			socket.emit('joinRoom', key);
+
+            socket.on('message', function(data) {
+				var dt = new Date();
+				var time = dt.getHours() + ":" + dt.getMinutes();
+                insertMessage(data.pseudo, data.message, time);
+			});
+
+			document.getElementById('zone_chat').scrollTop = document.getElementById('zone_chat').scrollHeight;
+
+            function formulaire_chat() {
+                var pseudo = '<%= locals.session.user.username %>';
+				var message = $('#message').val();
+				socket.emit('message',
+				{
+					message: message,
+					key: key,
+					fromid: '<%= locals.session.user.id %>',
+					fromuid: pseudo,
+					to: '<%= locals.idToChat %>'
+				});
+				var dt = new Date();
+				var time = dt.getHours() + ":" + dt.getMinutes();
+                insertMyMessage(pseudo, message, time);
+				$('#message').val('').focus();
+				 $("#zone_chat").animate({ scrollTop: 20000000 }, "slow");
+                return false;
+			};
+
+            function insertMessage(pseudo, message, time) {
+				$('#zone_chat').append(
+					'<li class="d-flex justify-content-between mb-4">\
+							<img src="/img/' + <%= locals.idToChat %> + '/profile.jpg" alt="avatar" class="avatar rounded-circle mr-2 ml-lg-3 ml-0 z-depth-1">\
+							<div class="chat-body left white p-3 ml-2 shadow-sm">\
+								<div class="header">\
+								<strong class="primary-font">' + pseudo + '</strong>\
+								<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> ' + time +'</small>\
+								</div>\
+								<hr class="w-100">\
+								<p class="wordwrap mb-0">' + message + '</p>\
+							</div>\
+						</li>');
+			}
+
+			function insertMyMessage(pseudo, message, time) {
+				$('#zone_chat').append(
+					'<li class="d-flex justify-content-between mb-4">\
+						<div class="chat-body right white p-3 shadow-sm">\
+							<div class="header">\
+							<strong class="primary-font">' + pseudo + '</strong>\
+							<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> ' + time +'</small>\
+							</div>\
+							<hr class="w-100">\
+							<p class="wordwrap mb-0">' + message + '</p>\
+						</div>\
+						<img src="/img/' + <%= locals.session.user.id %> + '/profile.jpg" alt="avatar" class="avatar rounded-circle mr-0 ml-3 z-depth-1">\
+					</li>');
+			}
+			
+			function loadMessage(data, nb, i) {
+				if (data[i].id_usr == <%= locals.session.user.id %>) {
+					pseudo = '<%= locals.session.user.username %>';
+					$('#loadingDiv').after(
+						'<li class="d-flex justify-content-between mb-4">\
+							<div class="chat-body right white p-3 shadow-sm">\
+								<div class="header">\
+								<strong class="primary-font">' + pseudo + '</strong>\
+								<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> ' + data[i].time +'</small>\
+								</div>\
+								<hr class="w-100">\
+								<p class="wordwrap mb-0">' + data[i].message + '</p>\
+							</div>\
+							<img src="/img/' + data[i].id_usr + '/profile.jpg" alt="avatar" class="avatar rounded-circle mr-0 ml-3 z-depth-1">\
+						</li>');
+				} else {
+					pseudo = '<%= locals.user.username %>';
+					$('#loadingDiv').after(
+						'<li class="d-flex justify-content-between mb-4">\
+							<img src="/img/' + data[i].id_usr + '/profile.jpg" alt="avatar" class="avatar rounded-circle mr-2 ml-lg-3 ml-0 z-depth-1">\
+							<div class="chat-body left white p-3 ml-2 shadow-sm">\
+								<div class="header">\
+								<strong class="primary-font">' + pseudo + '</strong>\
+								<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> ' + data[i].time +'</small>\
+								</div>\
+								<hr class="w-100">\
+								<p class="wordwrap mb-0">' + data[i].message + '</p>\
+							</div>\
+						</li>');
+				}
+				if (i == nb - 1 || ( i != 0 && data[i].day != data[i - 1].day)) {
+					$('#loadingDiv').after('<p class="date">' + data[i].day + '</p>');
+				}
+			}
+			
+			$( document ).ready(function() {
+
+				var nbscroll = 1;
+
+				$("#zone_chat").scroll(function() {
+					if($("#zone_chat").scrollTop() == 0) {
+						$.ajax({
+							type: 'POST',
+							url: '/matchat/loadmore',
+							dataType: 'json',
+							data: {nbscroll: nbscroll, room: key}
+						}).done(function(data) {
+							i = -1;
+							beforeHeight = document.getElementById('zone_chat').scrollHeight;
+							while (++i < data.nb) {
+								loadMessage(data.msg, data.nb, i);
+							}
+							afterHeight = document.getElementById('zone_chat').scrollHeight;
+							document.getElementById('zone_chat').scrollTop = afterHeight - beforeHeight;
+							nbscroll++;
+						});
+					}
+				});
+
+				$('#loadingDiv').attr('style','display:none !important');
+
+				jQuery.ajaxSetup({
+					beforeSend: function() {
+						$('#loadingDiv').attr('style','display:flex !important');
+					},
+					complete: function(){
+						$('#loadingDiv').attr('style','display:none !important');
+					},
+					success: function() {}
+				});
+				
+			});
+
+        </script>
+    </section>

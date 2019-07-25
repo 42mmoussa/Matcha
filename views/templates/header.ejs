@@ -5,51 +5,54 @@ Mohamad MOUSSA : mmoussa@student.42.fr or (+33) 07.81.78.82.38 -->
 
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
-    <title>Matcha</title>
-    <link rel='stylesheet' href='/glyphicons-only-bootstrap/css/bootstrap.min.css' />
-    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="/css/header.css">
-    <link rel="stylesheet" href="/css/footer.css">
-    <script type="text/javascript" src='/jquery/dist/jquery.js'></script>
-    <script type="text/javascript" src='/bootstrap/dist/js/bootstrap.js'></script>
-    <script type="module" src="https://unpkg.com/ionicons@4.5.9-1/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule="" src="https://unpkg.com/ionicons@4.5.9-1/dist/ionicons/ionicons.js"></script>
+	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+	<title>Matcha</title>
+	<link rel='stylesheet' href='/glyphicons-only-bootstrap/css/bootstrap.min.css' />
+	<link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
+	<link rel="stylesheet" href="/css/header.css">
+	<link rel="stylesheet" href="/css/footer.css">
+	<script type="text/javascript" src='/jquery/dist/jquery.js'></script>
+	<script type="text/javascript" src='/bootstrap/dist/js/bootstrap.js'></script>
+	<script type="module" src="https://unpkg.com/ionicons@4.5.9-1/dist/ionicons/ionicons.esm.js"></script>
+	<script nomodule="" src="https://unpkg.com/ionicons@4.5.9-1/dist/ionicons/ionicons.js"></script>
   </head>
   <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <a class="navbar-brand" href="#">Matcha</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
+	<span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse" id="navbarColor03">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="/">Home</a>
-      </li>
-      <li class="nav-item">
-        <span class="sr-only">(current)</span>
-        <a class="nav-link" href="/swipe">Swipe</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/profile">Your profile</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/about">About</a>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Search">
-      <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-    </form>
-    <% if (locals.session.connect) { %>
-      <a href="/logout" class="btn btn-outline-primary login"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
-    <% } else { %>
-      <a href="/login" class="btn btn-outline-primary login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
-      <a href="/signup" class="btn btn-outline-primary"><span class="glyphicon glyphicon-log-in"></span> Sign up</a>
-    <% } %>
+	<ul class="navbar-nav mr-auto">
+	  <li class="nav-item active">
+		<a class="nav-link" href="/">Home</a>
+	  </li>
+	  <li class="nav-item">
+		<span class="sr-only">(current)</span>
+		<a class="nav-link" href="/swipe">Swipe</a>
+	  </li>
+	  <li class="nav-item">
+		<a class="nav-link" href="/profile">Your profile</a>
+	  </li>
+	  <li class="nav-item">
+		<a class="nav-link" href="/matchat"><span class="glyphicon glyphicon-comment"></a>
+	  </li>
+	  <li class="nav-item">
+		<a class="nav-link" href="/about">About</a>
+	  </li>
+	</ul>
+	<form class="form-inline my-2 my-lg-0">
+	  <input class="form-control mr-sm-2" type="text" placeholder="Search">
+	  <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+	</form>
+	<% if (locals.session.connect) { %>
+	  <a href="/logout" class="btn btn-outline-primary login"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+	<% } else { %>
+	  <a href="/login" class="btn btn-outline-primary login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+	  <a href="/signup" class="btn btn-outline-primary"><span class="glyphicon glyphicon-log-in"></span> Sign up</a>
+	<% } %>
   </div>
 </nav>
 
@@ -58,32 +61,32 @@ Mohamad MOUSSA : mmoussa@student.42.fr or (+33) 07.81.78.82.38 -->
 
 <% if (locals.popup === true) { %>
   <script type="text/javascript">
-    $(window).on('load',function(){
-        $('#myModal').modal('show');
-    });
+	$(window).on('load',function(){
+		$('#myModal').modal('show');
+	});
   </script>
 
 <div class="modal fade" id="myModal">
   <div class="modal-dialog">
-    <div class="modal-content">
+	<div class="modal-content">
 
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title"><%= popupTitle %></h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
+	  <!-- Modal Header -->
+	  <div class="modal-header">
+		<h4 class="modal-title"><%= popupTitle %></h4>
+		<button type="button" class="close" data-dismiss="modal">&times;</button>
+	  </div>
 
-      <!-- Modal body -->
-      <div class="modal-body">
-        <%- popupMsg.replace('\n', '<br/>') %>
-      </div>
+	  <!-- Modal body -->
+	  <div class="modal-body">
+		<%- popupMsg.replace('\n', '<br/>') %>
+	  </div>
 
-      <!-- Modal footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-      </div>
+	  <!-- Modal footer -->
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+	  </div>
 
-    </div>
+	</div>
   </div>
 </div>
 <% } %>
