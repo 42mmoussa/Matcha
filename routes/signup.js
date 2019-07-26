@@ -13,13 +13,13 @@ router.get('/', function (req, res) {
 
 router.post('/signup_validation', function (req, res) {
 
-	var lastname       = req.body.lname;
-	var firstname      = req.body.fname;
-	var username       = req.body.uname;
-	var pwd            = req.body.pwd;
-	var pwdConf        = req.body.confpwd;
-	var email          = req.body.email;
-	var birthday       = new Date(req.body.date);
+	var lastname       = req.body.lname.trim();
+	var firstname      = req.body.fname.trim();
+	var username       = req.body.uname.trim();
+	var pwd            = req.body.pwd.trim();
+	var pwdConf        = req.body.confpwd.trim();
+	var email          = req.body.email.trim();
+	var birthday       = new Date(req.body.date.trim());
 	var today          = new Date();
 	var confirm        = 0;
 	var confirmKey     = mod.randomString(50, '0123456789abcdefABCDEF');

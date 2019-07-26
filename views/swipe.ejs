@@ -14,8 +14,7 @@
 				<div class="card-item">
 					<div class="image" style="background-image: url('/img/<%= locals.users[iUsers].id_usr %>/profile.jpg')"></div>
 				</div>
-			<%console.log(locals.users[iUsers].id_usr);
-			}%>
+			<%}%>
       </div>
       <div class="stackedcards--animatable stackedcards-overlay top"><span class="glyphicon glyphicon-star" aria-hidden="true"></div>
         <div class="stackedcards--animatable stackedcards-overlay right"><span class="glyphicon glyphicon-heart" aria-hidden="true"></div>
@@ -30,7 +29,10 @@
 
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
+
+    var socket = io.connect();
 
   // JavaScript Document
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -57,6 +59,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		var obj;
     var elTrans;
     var iUsers = <%= iUsers %>;
+    var matchUser = <%- JSON.stringify(locals.users) %>;
+    var iUser = 0;
 
 		obj = document.getElementById('stacked-cards-block');
 		stackedCardsObj = obj.querySelector('.stackedcards-container');
@@ -240,11 +244,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				resetOverlayLeft();
 			}
 
+      if (iUser < <%- locals.nb_usr %>) {
+        match("dislike");
+      }
       removeElement();
-			// currentPosition = currentPosition + 1;
 			updateUi();
 			currentElement();
-			// setActiveHidden();
 		};
 
 		//Swipe active card to right.
@@ -257,11 +262,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				resetOverlayRight();
 			}
 
+      if (iUser < <%- locals.nb_usr %>) {
+        match("like");
+      }
       removeElement();
-			// currentPosition = currentPosition + 1;
 			updateUi();
 			currentElement();
-			// setActiveHidden();
 		};
 
 		//Swipe active card to top.
@@ -275,12 +281,64 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				resetOverlays();
 			}
 
+      if (iUser < <%- locals.nb_usr %>) {
+        match("fav");
+      }
       removeElement();
-			// currentPosition = currentPosition + 1;
 			updateUi();
 			currentElement();
-			// setActiveHidden();
 		};
+
+    function match(type) {
+      var id = matchUser[iUser].id_usr;
+	  var username = matchUser[iUser].username;
+	  console.log(username);
+      $.ajax({
+        type: 'POST',
+        url: '/swipe/'+type,
+        dataType: 'text',
+        data: {id: id}
+      }).done(function(data) {
+		if (data === 'match') {
+			console.log("You matched (+notif to match person)");
+			data = {
+				url: "/matchat/",
+				msg: "You just matched !",
+				title: "Match with: ",
+			 	from: {
+					username: username,
+					id: id
+				}
+			};
+			insertnotif(data);
+			data = {
+				id: id,
+				url: "/matchat/",
+				msg: "You just matched !",
+				title: "Match with: ",
+			 	from: {
+					username: "<%- locals.session.user.username %>",
+					id: "<%- locals.session.user.id %>"
+				}
+			};
+          	socket.emit("send_notif", data);
+        } else if (data === 'liked') {
+		    console.log("You liked (+notif to liked person)");
+		    socket.emit("send_notif",
+			{
+				id: id,
+				url: "/profile?id=",
+				msg: "This user liked you",
+				title: "Like from: ",
+			 	from: {
+					username: "<%- locals.session.user.username %>",
+					id: "<%- locals.session.user.id %>"
+				}
+		  	});
+        }
+      });
+
+    }
 
 		//Remove transitions from all elements to be moved in each swipe movement to improve perfomance of stacked cards.
 		function removeNoTransition() {
@@ -450,7 +508,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		function removeElement() {
 
 			currentElementObj.remove();
-      var matchUser = <%- JSON.stringify(locals.users) %>;
 			var nextUser = document.createElement("div");
 			var imageUser = document.createElement("div");
 			nextUser.setAttribute("class", "card-item stackedcards-top stackedcards--animatable stackedcards-origin-top");
@@ -464,6 +521,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			nextUser.append(imageUser);
 			stackedCardsObj.append(nextUser);
       ++iUsers;
+      ++iUser;
 			if(!(currentPosition >= maxElements)){
 				listElNodesObj[currentPosition].classList.add('stackedcards-active');
 			}
@@ -699,7 +757,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				} else {
 
 					if(translateX < 0){
-						if(translateX < ((listElNodesWidth / 2) * -1) || (Math.abs(translateX) / timeTaken > velocity)){ // Did It Move To Left?
+						if(translateX < ((listElNodesWidth / 2) * -1) && (Math.abs(translateX) / timeTaken > velocity)){ // Did It Move To Left?
 							onSwipeLeft();
 						} else {
 							backToMiddle();
@@ -735,6 +793,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	stackedCards();
 
 });
+
 </script>
 
 <% include templates/footer.ejs %>

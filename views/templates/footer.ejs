@@ -1,5 +1,4 @@
 </body>
-
 <div class="footer-clean">
     <footer>
         <div class="container">
@@ -37,3 +36,59 @@
 </div>
 
 </html>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+    <% if (locals.session.connect) { %>
+        var nbtoast = 0;
+
+        var socket = io.connect();
+        
+        socket.emit('joinRoom', '<%= locals.session.user.id %>');
+        
+        socket.on('notifMsg', function(data) {
+            insertnotif(data);
+        });
+
+        function insertnotif(data) {
+            var dt = new Date();
+            var time = dt.getHours() + ":" + dt.getMinutes();
+            allNotif = [];
+            if (data.msg.length >= 50) {
+                showMsg = data.msg.substring(0,50) + '...';
+            } else {
+                 showMsg = data.msg;
+            }
+            $('#notificationMenu a').each(function () {
+                allNotif.push($(this).attr('href'));
+            });
+            if (allNotif.includes(data.url + data.from.id) == false) {
+                $("#notificationMenu").append(
+                    '<button class="dropdown-item" type="button">\
+                        <a target="_blank" rel="noopener noreferrer" href="' + data.url + data.from.id +'">'
+                            + data.title +  data.from.username + 
+                        '</a>\
+                    </button>'
+                );            
+            }
+            $("#notif-toaster").append(
+                '<div class="toast" id="toast' + nbtoast + '">\
+                    <div class="toast-header">\
+                        ' + data.title + ' <a target="_blank" rel="noopener noreferrer" href="' + data.url + data.from.id +'"> ' + data.from.username +'</a>\
+                    </div>\
+                    <div class="toast-body">\
+                        ' + showMsg + '\
+                    </div>\
+                </div>'
+            );
+            $('#toast' + nbtoast).toast({
+                delay: 5000
+            });
+            $('#toast' + nbtoast).toast("show");
+            nbtoast++;
+        }
+    <% } %>
+
+
+</script>
