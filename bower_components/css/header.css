@@ -8,6 +8,13 @@
   left: auto!important;
 }
 
+@media screen and (max-width:992px) {
+  .dropdown-menu{
+    right: auto!important;
+    left: 0!important;
+  }
+}
+
 .toast {
   max-width: 200px;
   word-break: break-word;

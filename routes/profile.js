@@ -18,7 +18,15 @@ router.get('/', function(req, res) {
 				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", id)
 			})
 			.then((rows) => {
-				if (rows[0]) {
+				if (rows[0]) {					
+					conn.query("DELETE FROM notifications WHERE id_usr=? AND (link = ? OR (id = ? AND msg = ?));",
+					[req.session.user.id, "/profile?id=" + id, id, "You just matched !"]);
+					for (let index = 0; index < req.session.notif.length; index++) {
+						const element = req.session.notif[index];
+						if (element.link == "/profile?id=" + id || (element.id == id && element.msg == "You just matched !")) {
+							req.session.notif.splice(index, 1);
+						}
+					}
 					conn.end();
 					return res.render('profile', {
 						firstname: rows[0].firstname,

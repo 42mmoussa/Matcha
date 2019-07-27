@@ -1,20 +1,21 @@
 const mariadb = require('mariadb');
 require('require-sql');
-const createDB = require('./sql/createDB.sql');
-const confirm = require('./sql/confirm.sql');
-const profiles = require('./sql/profiles.sql');
-const lst_users = require('./sql/lst_users.sql');
-const lst_profiles = require('./sql/lst_profiles.sql');
-const tags = require('./sql/tags.sql');
-const likes = require('./sql/likes.sql');
-const dislikes = require('./sql/dislikes.sql');
-const favorites = require('./sql/favorites.sql');
-const messages = require('./sql/messages.sql');
-const matchat = require('./sql/matchat.sql');
+const createDB      = require('./sql/createDB.sql');
+const confirm       = require('./sql/confirm.sql');
+const profiles      = require('./sql/profiles.sql');
+const lst_users     = require('./sql/lst_users.sql');
+const lst_profiles  = require('./sql/lst_profiles.sql');
+const tags          = require('./sql/tags.sql');
+const likes         = require('./sql/likes.sql');
+const dislikes      = require('./sql/dislikes.sql');
+const favorites     = require('./sql/favorites.sql');
+const messages      = require('./sql/messages.sql');
+const matchat       = require('./sql/matchat.sql');
+const notifications = require('./sql/notifications.sql');
 
 const pool = mariadb.createPool({
     host: 'localhost',
-    user:'root',
+    user:'mmoussa',
     password: '123456',
     port: '3306'
 });
@@ -28,7 +29,7 @@ pool.getConnection()
          return conn.query("USE matcha");
        })
        .then((res) => {
-         console.log(res); //\
+         console.log(res);
          conn.query(createDB);
          conn.query(confirm);
          conn.query(profiles);
@@ -40,6 +41,7 @@ pool.getConnection()
          conn.query(favorites);
          conn.query(messages);
          conn.query(matchat);
+         conn.query(notifications);
          conn.end();
        })
        .catch(err => {

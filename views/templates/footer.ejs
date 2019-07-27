@@ -27,7 +27,11 @@
                         <li><a href="#">Benefits</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-3 item social"><a href="#"><ion-icon name="logo-facebook"></ion-icon></a><a href="#"><ion-icon name="logo-twitter"></ion-icon></a><a href="#"><ion-icon name="logo-snapchat"></ion-icon></a><a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
+                <div class="col-lg-3 item social">
+                    <a href="#"><ion-icon name="logo-facebook"></ion-icon></a>
+                    <a href="#"><ion-icon name="logo-twitter"></ion-icon></a>
+                    <a href="#"><ion-icon name="logo-snapchat"></ion-icon></a>
+                    <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
                     <p class="copyright">mmoussa & atelli © 2019</p>
                 </div>
             </div>
@@ -48,47 +52,67 @@
         socket.emit('joinRoom', '<%= locals.session.user.id %>');
         
         socket.on('notifMsg', function(data) {
+            
             insertnotif(data);
+
+            $.ajax({
+                type: 'POST',
+                url: '/add-notif',
+                data: data,
+            });
         });
 
         function insertnotif(data) {
-            var dt = new Date();
-            var time = dt.getHours() + ":" + dt.getMinutes();
-            allNotif = [];
+
+            var allNotif = [];
+
             if (data.msg.length >= 50) {
                 showMsg = data.msg.substring(0,50) + '...';
             } else {
                  showMsg = data.msg;
             }
+
             $('#notificationMenu a').each(function () {
                 allNotif.push($(this).attr('href'));
             });
-            if (allNotif.includes(data.url + data.from.id) == false) {
+
+            if (allNotif.includes(data.title +  data.from.username) == false) {
                 $("#notificationMenu").append(
                     '<button class="dropdown-item" type="button">\
-                        <a target="_blank" rel="noopener noreferrer" href="' + data.url + data.from.id +'">'
+                        <a target="_blank" rel="noopener noreferrer" href="' + data.link + data.from.id +'">'
                             + data.title +  data.from.username + 
                         '</a>\
                     </button>'
-                );            
+                );
             }
+
             $("#notif-toaster").append(
                 '<div class="toast" id="toast' + nbtoast + '">\
                     <div class="toast-header">\
-                        ' + data.title + ' <a target="_blank" rel="noopener noreferrer" href="' + data.url + data.from.id +'"> ' + data.from.username +'</a>\
+                        ' + data.title + ' <a target="_blank" rel="noopener noreferrer" href="' + data.link + data.from.id +'"> ' + data.from.username +'</a>\
                     </div>\
                     <div class="toast-body">\
                         ' + showMsg + '\
                     </div>\
                 </div>'
             );
-            $('#toast' + nbtoast).toast({
-                delay: 5000
-            });
+
+            $('#toast' + nbtoast).toast({delay: 10000});
             $('#toast' + nbtoast).toast("show");
+
             nbtoast++;
         }
+        var notif = <%- JSON.stringify(locals.session.notif) %>;
+        var i = -1;
+        console.log(notif);
+        
+        while (++i < notif.length) {
+            $("#notificationMenu").append(
+                '<button class="dropdown-item" type="button">\
+                    <a target="_blank" rel="noopener noreferrer" href="' + notif[i].link + '">\
+                    ' + notif[i].title + notif[i].username + '</a>\
+                </button>'
+            );
+        }
     <% } %>
-
-
 </script>

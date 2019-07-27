@@ -6,9 +6,7 @@ module.exports = function (server) {
 
     io.sockets.on('connection', function (socket) {
 
-		socket.on('joinRoom', (room) => {
-			console.log("JOINED ROOM " + room);
-			
+		socket.on('joinRoom', (room) => {			
 			socket.join(room);
 		});
 
@@ -38,11 +36,18 @@ module.exports = function (server) {
 					}
 					conn.query("INSERT INTO messages(`id_usr`, `key`, `message`, `date`) VALUES(?, ?, ?, ?)",
 					[from.id, key, message, now]);
-					conn.end();
+					return (conn.query("SELECT COUNT(*) as nb FROM notifications where id_usr = ? AND id = ? and title = ?",
+						[to, from.id, "Message from: "]));
+				}).then(row => {
+					if (row[0].nb === 0) {
+						conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)",
+						[to, from.id, from.username, "/matchat/" + from.id, "You recevied a message", "Message from: "]);
+						conn.end();
+					}
 				})
 				.catch(err => {
+					console.log(err);
 					conn.end();
-					console.log("\n\n" + err);
 				});
 			})
             socket.in(key).emit('message', {pseudo: from.username, message: message});
@@ -50,8 +55,8 @@ module.exports = function (server) {
 				{
 					from: from,
 					msg: message,
-					url: "/matchat/",
-					title: "New message: "
+					link: "/matchat/",
+					title: "Message from: "
 
 				});
         });

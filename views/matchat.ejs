@@ -64,13 +64,13 @@
             var socket = io.connect();
 
 			key = '<%- locals.key %>';
-
+			var nbscroll = 1;
 			socket.emit('joinRoom', key);
 
             socket.on('message', function(data) {
 				var dt = new Date();
 				var time = dt.getHours() + ":" + dt.getMinutes();
-                insertMessage(data.pseudo, data.message, time);
+				insertMessage(data.pseudo, data.message, time);
 			});
 
 			document.getElementById('zone_chat').scrollTop = document.getElementById('zone_chat').scrollHeight;
@@ -92,11 +92,12 @@
 				var time = dt.getHours() + ":" + dt.getMinutes();
                 insertMyMessage(pseudo, message, time);
 				$('#message').val('').focus();
-				 $("#zone_chat").animate({ scrollTop: 20000000 }, "slow");
+				$("#zone_chat").animate({ scrollTop: 20000000 }, "slow");
                 return false;
 			};
 
             function insertMessage(pseudo, message, time) {
+				nbscroll += 0.02;
 				$('#zone_chat').append(
 					'<li class="d-flex justify-content-between mb-4">\
 							<img src="/img/' + <%= locals.idToChat %> + '/profile.jpg" alt="avatar" class="avatar rounded-circle mr-2 ml-lg-3 ml-0 z-depth-1">\
@@ -112,6 +113,7 @@
 			}
 
 			function insertMyMessage(pseudo, message, time) {
+				nbscroll += 0.02;
 				$('#zone_chat').append(
 					'<li class="d-flex justify-content-between mb-4">\
 						<div class="chat-body right white p-3 shadow-sm">\
@@ -162,8 +164,6 @@
 			}
 			
 			$( document ).ready(function() {
-
-				var nbscroll = 1;
 
 				$("#zone_chat").scroll(function() {
 					if($("#zone_chat").scrollTop() == 0) {

@@ -297,12 +297,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
         type: 'POST',
         url: '/swipe/'+type,
         dataType: 'text',
-        data: {id: id}
+        data: {id: id, username: username}
       }).done(function(data) {
 		if (data === 'match') {
 			console.log("You matched (+notif to match person)");
 			data = {
-				url: "/matchat/",
+				link: "/matchat/",
 				msg: "You just matched !",
 				title: "Match with: ",
 			 	from: {
@@ -313,7 +313,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			insertnotif(data);
 			data = {
 				id: id,
-				url: "/matchat/",
+				link: "/matchat/",
 				msg: "You just matched !",
 				title: "Match with: ",
 			 	from: {
@@ -327,7 +327,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		    socket.emit("send_notif",
 			{
 				id: id,
-				url: "/profile?id=",
+				link: "/profile?id=",
 				msg: "This user liked you",
 				title: "Like from: ",
 			 	from: {

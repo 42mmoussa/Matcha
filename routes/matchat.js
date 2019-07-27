@@ -37,6 +37,18 @@ router.get('/:id_usr', function (req, res) {
 				.then (row => {
 					if (row.length === 1) {
 						let key = row[0].key;
+						conn.query("DELETE FROM notifications WHERE id_usr= ? AND link = ?;", [req.session.user.id, "/matchat/" + id_usr]);
+						let i = 1;
+						while (i == 1) {
+							i = 0;
+							for (let index = 0; index < req.session.notif.length; index++) {
+								const element = req.session.notif[index];
+								if (element.link == "/matchat/" + id_usr) {
+									req.session.notif.splice(index, 1);
+									i = 1;
+								}
+							}
+						}
 						conn.query("SELECT * FROM users WHERE id_usr=?;", [id_usr])
 						.then(row2 => {
 							conn.query("(SELECT id_messages as id, message, DATE_FORMAT(date, '%D %M %Y') as day, DATE_FORMAT(date, '%H:%i') as time, id_usr FROM messages WHERE `key`=? ORDER BY id_messages DESC LIMIT 50) ORDER BY id ASC;", [key])
@@ -47,7 +59,7 @@ router.get('/:id_usr', function (req, res) {
 									idToChat: id_usr,
 									key: key,
 									msg: row3,
-									nb_msg: row3.length,
+									nb_msg: row3.length
 								});
 							});
 						});

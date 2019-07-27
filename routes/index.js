@@ -5,13 +5,6 @@ const crypto = require('crypto-js');
 var router = express.Router();
 
   router.get('/', function (req, res) {
-    if (req.session.connect && req.query.success === 'login') {
-      return res.render('index', {
-        popupTitle: "Login",
-        popupMsg: "Logged in with success",
-        popup: true
-      });
-    }
     return res.render('index', {
 
     });
@@ -20,17 +13,23 @@ var router = express.Router();
   router.get('/logout', function (req, res) {
 
     if (req.session.connect) {
-      req.session.user = undefined;
-      req.session.connect = undefined;
-      return res.render('index', {
-        popupTitle: "Logout",
-        popupMsg: "Logged out with success",
-        popup: true
-      });
+      req.session.destroy();
+      return res.redirect('/login');
     }
-    return res.render('index', {
+    return res.redirect('/');
+  });
 
-    });
+  router.post('/add-notif', function (req, res) {
+      data = req.body;
+      req.session.notif.push({
+        id_usr: req.session.user.id,
+        id: parseInt(data.from.id, 10),
+        username: data.from.username,
+        link: data.link + data.from.id,
+        msg: data.msg,
+        title: data.title
+      });
+      res.send(true);
   });
 
   router.get('/confirm-acc', function (req, res) {
@@ -50,7 +49,6 @@ var router = express.Router();
             return conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ? AND confirmkey = ?", [id_usr, crypto.SHA512(confirmkey).toString()]);
           })
           .then((row) => {
-            console.log(row[0]);
             if (row[0].nb === 1) {
               return conn.query("SELECT * FROM users WHERE id_usr = ?", [id_usr]);
             } else {
