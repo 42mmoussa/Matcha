@@ -41,7 +41,7 @@ router.post('/login_validation', function(req, res) {
 				conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)
 				.then((rows) => {
 					if (rows.nb === 0)
-						firstConnection = true;
+						req.session.firstConnection = true;
 					let anniversaire = new Date(result[0].birthday);
 					req.session.user = {
 						id: result[0].id_usr,
@@ -60,7 +60,7 @@ router.post('/login_validation', function(req, res) {
 					while (++i < row2.length) {					
 						req.session.notif.push(row2[i]);
 					}
-					if (firstConnection) {
+					if (req.session.firstConnection) {
 						conn.end();
 						return res.redirect('/profile/create-profile');
 					} else {
