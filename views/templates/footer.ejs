@@ -104,8 +104,6 @@
         }
         var notif = <%- JSON.stringify(locals.session.notif) %>;
         var i = -1;
-        console.log(notif);
-        
         while (++i < notif.length) {
             $("#notificationMenu").append(
                 '<button class="dropdown-item" type="button">\

@@ -21,10 +21,15 @@ router.get('/', function(req, res) {
 				if (rows[0]) {					
 					conn.query("DELETE FROM notifications WHERE id_usr=? AND (link = ? OR (id = ? AND msg = ?));",
 					[req.session.user.id, "/profile?id=" + id, id, "You just matched !"]);
-					for (let index = 0; index < req.session.notif.length; index++) {
-						const element = req.session.notif[index];
-						if (element.link == "/profile?id=" + id || (element.id == id && element.msg == "You just matched !")) {
-							req.session.notif.splice(index, 1);
+					let i = 1;
+					while (i == 1) {
+						i = 0;
+						for (let index = 0; index < req.session.notif.length; index++) {
+							const element = req.session.notif[index];
+							if (element.link == "/profile?id=" + id || (element.id == id && element.msg == "You just matched !")) {
+								req.session.notif.splice(index, 1);
+								i = 1;
+							}
 						}
 					}
 					conn.end();

@@ -40,7 +40,7 @@ router.post('/login_validation', function(req, res) {
 				firstConnection = false;
 				conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)
 				.then((rows) => {
-					if (rows.nb === 0)
+					if (rows[0].nb === 0)
 						req.session.firstConnection = true;
 					let anniversaire = new Date(result[0].birthday);
 					req.session.user = {
