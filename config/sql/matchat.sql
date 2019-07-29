@@ -3,5 +3,5 @@ CREATE TABLE `matchat` (
 		`id_usr1`		Int NOT NULL,
 		`id_usr2` int(11) NOT NULL,
 		`key` LONGTEXT NOT NULL,
-		CONSTRAINT matchat_FK PRIMARY KEY (`id_matchat`)
+		CONSTRAINT matchat_PK PRIMARY KEY (`id_matchat`)
 );

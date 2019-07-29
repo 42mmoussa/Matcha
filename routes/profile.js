@@ -102,11 +102,7 @@ router.get('/create-profile', function(req, res) {
 	var choice = {
 		Heterosexual         : req.body.heterosexual,
 		Homosexual           : req.body.homosexual,
-		Bisexual             : req.body.bisexual,
-		Asexual              : req.body.asexual,
-		Pansexual            : req.body.pansexual,
-		Questioning          : req.body.questioning,
-		Other                : req.body.other
+		Bisexual             : req.body.bisexual
 	}
 
 	var orientation = '';
@@ -117,8 +113,14 @@ router.get('/create-profile', function(req, res) {
 		}
 	}
 
-	if (orientation == '') {
+	if (orientation == '' || (orientation != "heterosexual" && orientation != "homosexual" && orientation != "bisexual")) {
 		orientation = 'bisexual';
+	}
+	if ((gender != "man" && gender != "woman") || gender == undefined) {
+		return res.render('create-profile', {
+			warning: "Veuillez rentrer un genre valide",
+			age: mod.dateDiff(birthday, today)
+		});
 	}
 
 	if (name != (req.session.user.lastname + " " + req.session.user.firstname) || username != req.session.user.username || gender == undefined) {
@@ -174,11 +176,7 @@ router.post('/modify', function(req, res) {
 	var choice = {
 	  Heterosexual         : req.body.heterosexual,
 	  Homosexual           : req.body.homosexual,
-	  Bisexual             : req.body.bisexual,
-	  Asexual              : req.body.asexual,
-	  Pansexual            : req.body.pansexual,
-	  Questioning          : req.body.questioning,
-	  Other                : req.body.other
+	  Bisexual             : req.body.bisexual
 	}
   
 	var orientation = '';

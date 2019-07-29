@@ -10,6 +10,6 @@ CREATE TABLE `profiles` (
 		`orientation`	text,
 		`pictures`		int(11) NOT NULL,
 		`tags`			text,
-		CONSTRAINT profiles_FK PRIMARY KEY (`id_profile`),
-		CONSTRAINT profiles_users_FK FOREIGN KEY (`id_usr`) REFERENCES users(`id_usr`)
+		CONSTRAINT profiles_PK PRIMARY KEY (`id_profile`),
+		CONSTRAINT profiles_users_FK FOREIGN KEY (`id_usr`) REFERENCES users(`id_usr`) ON DELETE CASCADE
 );
