@@ -31,6 +31,7 @@ const swipe = require('./routes/swipe');
 const matchat = require('./routes/matchat');
 const resetpasswd = require ('./routes/reset-password');
 const changepasswd = require ('./routes/change-password');
+const confirmpassword = require('./routes/confirm-password');
 
 // configure app
 
@@ -66,6 +67,7 @@ app.use(function(req, res, next) {
 
 // define routes
 
+app.use('/confirm-passowrd', confirmpassword);
 app.use('/change-password', changepasswd);
 app.use('/reset-password', resetpasswd);
 app.use('/profile', profile);

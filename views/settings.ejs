@@ -20,6 +20,14 @@
 			<%= error %>
 		</div>
 	<% } %>
+	<fieldset class="form-group">
+		<div class="row">
+			<label for="staticName" class="col-sm-3 col-form-label"><b>Delete</b></label>
+			<div class="col-sm-10">
+				<a role="button" id="delete" name="delete" href="/confirm-password" class="btn btn-outline-danger">Delete your Account</a>
+			</div>
+		</div>
+	</fieldset>
 </section>
 
 <% include templates/footer.ejs %>
