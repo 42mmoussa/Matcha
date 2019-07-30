@@ -19,19 +19,6 @@ var router = express.Router();
     return res.redirect('/');
   });
 
-  router.post('/add-notif', function (req, res) {
-      data = req.body;
-      req.session.notif.push({
-        id_usr: req.session.user.id,
-        id: parseInt(data.from.id, 10),
-        username: data.from.username,
-        link: data.link + data.from.id,
-        msg: data.msg,
-        title: data.title
-      });
-      res.send(true);
-  });
-
   router.get('/confirm-acc', function (req, res) {
     newKey = mod.randomString(50, '0123456789abcdefABCDEF');
     if (req.query.id_usr !== "") {

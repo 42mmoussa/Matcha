@@ -12,7 +12,7 @@ router.get('/', function (req, res) {
 	}
 	else {
 		return res.render('login', {
-			
+
 		});
 	}
 });
@@ -40,8 +40,6 @@ router.post('/login_validation', function(req, res) {
 				firstConnection = false;
 				conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)
 				.then((rows) => {
-					if (rows[0].nb === 0)
-						req.session.firstConnection = true;
 					let anniversaire = new Date(result[0].birthday);
 					req.session.user = {
 						id: result[0].id_usr,
@@ -53,21 +51,14 @@ router.post('/login_validation', function(req, res) {
 						age: mod.dateDiff(anniversaire, today)
 					};
 					req.session.connect = true;
-					return (conn.query("SELECT * FROM notifications WHERE id_usr = ?", [req.session.user.id]));		
-				}).then(row2 => {
-					i = -1;
-					req.session.notif = [];
-					while (++i < row2.length) {					
-						req.session.notif.push(row2[i]);
-					}
-					if (req.session.firstConnection) {
+					if (rows[0].nb === 0) {
 						conn.end();
 						return res.redirect('/profile/create-profile');
 					} else {
 						conn.end();
 						return res.redirect('/');
 					}
-				});
+				})
 			} else {
 				conn.end();
 				return res.render('login', {

@@ -18,20 +18,7 @@ router.get('/', function(req, res) {
 				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", id)
 			})
 			.then((rows) => {
-				if (rows[0]) {					
-					conn.query("DELETE FROM notifications WHERE id_usr=? AND (link = ? OR (id = ? AND msg = ?));",
-					[req.session.user.id, "/profile?id=" + id, id, "You just matched !"]);
-					let i = 1;
-					while (i == 1) {
-						i = 0;
-						for (let index = 0; index < req.session.notif.length; index++) {
-							const element = req.session.notif[index];
-							if (element.link == "/profile?id=" + id || (element.id == id && element.msg == "You just matched !")) {
-								req.session.notif.splice(index, 1);
-								i = 1;
-							}
-						}
-					}
+				if (rows[0]) {
 					conn.end();
 					return res.render('profile', {
 						firstname: rows[0].firstname,
@@ -93,7 +80,7 @@ router.get('/create-profile', function(req, res) {
 			return res.redirect('/');
 		}
 	});
-	
+
 	router.post('/submit-create', function(req, res) {
 		var name           = req.body.staticName;
 		var username       = req.body.staticUsername;
@@ -193,19 +180,19 @@ router.post('/modify', function(req, res) {
 	  Questioning          : req.body.questioning,
 	  Other                : req.body.other
 	}
-  
+
 	var orientation = '';
-  
+
 	for (var property in choice) {
 	  if (choice[property] == 'on') {
 		orientation = orientation + property + ", ";
 	  }
 	}
-  
+
 	if (orientation == '') {
 			orientation = 'bisexual';
 	}
-  
+
 	if (fname == "") {
 	  fname = req.session.user.firstname;
 	}
@@ -215,7 +202,7 @@ router.post('/modify', function(req, res) {
 	if (uname == "") {
 	  uname = req.session.user.lastname;
 	}
-  
+
 	else
 	  if (req.session.connect) {
 		mod.pool.getConnection()

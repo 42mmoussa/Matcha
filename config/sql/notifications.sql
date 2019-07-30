@@ -5,5 +5,6 @@ CREATE TABLE `notifications` (
     `username`		    TINYTEXT NOT NULL,
     `link`		        TEXT NOT NULL,
     `msg`		        TEXT NOT NULL,
-    `title`		        TEXT NOT NULL
+    `title`		        TEXT NOT NULL,
+    `date`		        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

@@ -32,7 +32,7 @@
 								<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> <%= locals.msg[i].time %></small>
 								</div>
 								<hr class="w-100">
-								<p class="wordwrap mb-0"><%= locals.msg[i].message %></p>
+								<p class="wordwrap mb-0 left"><%= locals.msg[i].message %></p>
 							</div>
 						</li>
 					<%} else {%>
@@ -43,7 +43,7 @@
 								<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> <%= locals.msg[i].time %></small>
 								</div>
 								<hr class="w-100">
-								<p class="wordwrap mb-0"><%= locals.msg[i].message %></p>
+								<p class="wordwrap mb-0 right"><%= locals.msg[i].message %></p>
 							</div>
 							<img src='/img/<%= locals.msg[i].id_usr %>/profile.jpg' alt="avatar" class="avatar rounded-circle mr-0 ml-3 z-depth-1">
 						</li>
@@ -107,7 +107,7 @@
 								<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> ' + time +'</small>\
 								</div>\
 								<hr class="w-100">\
-								<p class="wordwrap mb-0">' + message + '</p>\
+								<p class="wordwrap mb-0 left">' + message + '</p>\
 							</div>\
 						</li>');
 			}
@@ -122,12 +122,12 @@
 							<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> ' + time +'</small>\
 							</div>\
 							<hr class="w-100">\
-							<p class="wordwrap mb-0">' + message + '</p>\
+							<p class="wordwrap mb-0 right">' + message + '</p>\
 						</div>\
 						<img src="/img/' + <%= locals.session.user.id %> + '/profile.jpg" alt="avatar" class="avatar rounded-circle mr-0 ml-3 z-depth-1">\
 					</li>');
 			}
-			
+
 			function loadMessage(data, nb, i) {
 				if (data[i].id_usr == <%= locals.session.user.id %>) {
 					pseudo = '<%= locals.session.user.username %>';
@@ -139,7 +139,7 @@
 								<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> ' + data[i].time +'</small>\
 								</div>\
 								<hr class="w-100">\
-								<p class="wordwrap mb-0">' + data[i].message + '</p>\
+								<p class="wordwrap mb-0 right">' + data[i].message + '</p>\
 							</div>\
 							<img src="/img/' + data[i].id_usr + '/profile.jpg" alt="avatar" class="avatar rounded-circle mr-0 ml-3 z-depth-1">\
 						</li>');
@@ -154,7 +154,7 @@
 								<small class="pull-right text-muted"><i class="glyphicon glyphicon-time"></i> ' + data[i].time +'</small>\
 								</div>\
 								<hr class="w-100">\
-								<p class="wordwrap mb-0">' + data[i].message + '</p>\
+								<p class="wordwrap mb-0 left">' + data[i].message + '</p>\
 							</div>\
 						</li>');
 				}
@@ -162,7 +162,7 @@
 					$('#loadingDiv').after('<p class="date">' + data[i].day + '</p>');
 				}
 			}
-			
+
 			$( document ).ready(function() {
 
 				$("#zone_chat").scroll(function() {
@@ -196,7 +196,7 @@
 					},
 					success: function() {}
 				});
-				
+
 			});
 
         </script>

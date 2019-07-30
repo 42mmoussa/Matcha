@@ -20,3 +20,11 @@
   word-break: break-word;
   background-color: white;
 }
+
+.header-dark {
+  background-color: #042f4b !important;
+}
+
+body {
+  background-color: #fff6da !important;
+}

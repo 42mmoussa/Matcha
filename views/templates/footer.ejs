@@ -48,18 +48,11 @@
         var nbtoast = 0;
 
         var socket = io.connect();
-        
-        socket.emit('joinRoom', '<%= locals.session.user.id %>');
-        
-        socket.on('notifMsg', function(data) {
-            
-            insertnotif(data);
 
-            $.ajax({
-                type: 'POST',
-                url: '/add-notif',
-                data: data,
-            });
+        socket.emit('joinRoom', '<%= locals.session.user.id %>');
+
+        socket.on('notifMsg', function(data) {
+            insertnotif(data);
         });
 
         function insertnotif(data) {
@@ -76,16 +69,6 @@
                 allNotif.push($(this).attr('href'));
             });
 
-            if (allNotif.includes(data.title +  data.from.username) == false) {
-                $("#notificationMenu").append(
-                    '<button class="dropdown-item" type="button">\
-                        <a target="_blank" rel="noopener noreferrer" href="' + data.link + data.from.id +'">'
-                            + data.title +  data.from.username + 
-                        '</a>\
-                    </button>'
-                );
-            }
-
             $("#notif-toaster").append(
                 '<div class="toast" id="toast' + nbtoast + '">\
                     <div class="toast-header">\
@@ -101,16 +84,6 @@
             $('#toast' + nbtoast).toast("show");
 
             nbtoast++;
-        }
-        var notif = <%- JSON.stringify(locals.session.notif) %>;
-        var i = -1;
-        while (++i < notif.length) {
-            $("#notificationMenu").append(
-                '<button class="dropdown-item" type="button">\
-                    <a target="_blank" rel="noopener noreferrer" href="' + notif[i].link + '">\
-                    ' + notif[i].title + notif[i].username + '</a>\
-                </button>'
-            );
         }
     <% } %>
 </script>

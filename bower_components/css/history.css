@@ -1,0 +1,22 @@
+.history-list {
+  display: block;
+  margin: 0 auto;
+}
+
+.sub-history {
+  border-radius: 5px;
+  text-decoration: none!important;
+  color: #326771;
+  pointer-events: none;
+  background-color: #FFCAD4;
+  font-weight: bold;
+  padding: 10px;
+}
+
+.h-history:hover {
+  text-decoration: none!important;
+}
+
+.h-history:hover .sub-history {
+    background-color: #F9E7E7;
+}
