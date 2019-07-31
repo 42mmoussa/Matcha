@@ -17,18 +17,15 @@
 			<%= error %>
 		</div>
 		<% } %>
-	<form class="" action="/change-password/confirm" method="post" novalidate>
+	<form action="/settings/change-mail/confirm" method="post">
 		<div class="form-row">
 			<div class="col-md-6 mb-3">
-				<label for="validationTooltip01">Password</label>
-				<input type="password" class="form-control" id="pwd" name="pwd" placeholder="New password" value="" required>
-			</div>
-			<div class="col-md-6 mb-3">
-				<label for="validationTooltip01">Password</label>
-				<input type="password" class="form-control" id="pwdConf" name="pwdConf" placeholder="Confirm password" value="" required>
+				<label for="pwd">E-mail</label>
+				<input type="text" class="form-control" id="mail" name="mail" placeholder="E-mail" value="" required>
 			</div>
 		</div>
-		<button class="btn btn-primary" type="submit">Change Your Password</button>
+		<button class="btn btn-primary" type="submit">Delete</button>
 	</form>
 </section>
+
 <% include templates/footer.ejs %>

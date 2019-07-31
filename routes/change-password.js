@@ -6,24 +6,32 @@ const crypto	= require('crypto-js');
 let id_usr;
 
 router.get('/', function (req, res) {
-	if (req.query.id_usr !== undefined) {
+	if (req.query.id_usr) {
 		id_usr = req.query.id_usr;
 	}
-	if (req.query.confirmkey !== undefined) {
+	if (req.query.confirmkey) {
 		confirmkey = req.query.confirmkey;
 	}
+	if (req.session.connect) {
+		id_usr = req.session.user.id;
+	}
 
-	if (req.query.confirmkey !== undefined && req.query.id_usr !== undefined) {
+	if ((req.query.confirmkey !== undefined && req.query.id_usr !== undefined) || req.session.connect) {
 		mod.pool.getConnection()
 		.then(conn => {
 
 		conn.query("USE matcha")
 			.then(() => {
-				return conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ? AND confirmkey = ?", [id_usr, crypto.SHA512(confirmkey).toString()]);
+				if (req.query.confirmkey) {
+					return conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ? AND confirmkey = ?", [id_usr, crypto.SHA512(confirmkey).toString()]);
+				}
+				else {
+					return conn.query("SELECT COUNT(*) as nb FROM users where id_usr = ?", [req.session.user.id]);
+				}
 			})
 			.then((row) => {
 				if (row[0].nb === 1) {
-				  return conn.query("SELECT * FROM users WHERE id_usr = ?", [id_usr]);
+					return conn.query("SELECT * FROM users WHERE id_usr = ?", [id_usr]);
 				} else {
 					conn.end();
 					return res.render('index', {

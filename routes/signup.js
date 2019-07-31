@@ -98,7 +98,7 @@ router.post('/signup_validation', function (req, res) {
 						subject: 'Confirm your account',
 						html: `<html>
 						<body>
-						<a href="http://matcha.atelli.me/confirm-acc?id_usr=` + resu[0].id_usr + `&confirmkey=` + confirmKey + `">Confirm your account</a>
+						<a href="http://localhost:8888/login/confirm-acc?id_usr=` + resu[0].id_usr + `&confirmkey=` + confirmKey + `">Confirm your account</a>
 						</body>
 						</html>`
 					};

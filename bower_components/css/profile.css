@@ -32,6 +32,10 @@
   max-width: 500px;
 }
 
+.delete {
+  max-width: 500px;
+}
+
 #edit-profile {
   float: right;
 }

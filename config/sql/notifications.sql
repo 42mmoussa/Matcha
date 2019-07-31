@@ -6,5 +6,6 @@ CREATE TABLE `notifications` (
     `link`		        TEXT NOT NULL,
     `msg`		        TEXT NOT NULL,
     `title`		        TEXT NOT NULL,
-    `date`		        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    `date`		        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT notifications_users_FK FOREIGN KEY (`id_usr`) REFERENCES users(`id_usr`) ON DELETE CASCADE
 );

@@ -102,11 +102,7 @@ router.get('/create-profile', function(req, res) {
 	var choice = {
 		Heterosexual         : req.body.heterosexual,
 		Homosexual           : req.body.homosexual,
-		Bisexual             : req.body.bisexual,
-		Asexual              : req.body.asexual,
-		Pansexual            : req.body.pansexual,
-		Questioning          : req.body.questioning,
-		Other                : req.body.other
+		Bisexual             : req.body.bisexual
 	}
 
 	var orientation = '';
@@ -116,9 +112,16 @@ router.get('/create-profile', function(req, res) {
 			orientation = orientation + property + ", ";
 		}
 	}
+	
 
-	if (orientation == '') {
+	if (orientation == '' || (orientation != "heterosexual" && orientation != "homosexual")) {
 		orientation = 'bisexual';
+	}
+	if ((gender != "man" && gender != "woman") || gender == undefined) {
+		return res.render('create-profile', {
+			warning: "Veuillez rentrer un genre valide",
+			age: mod.dateDiff(birthday, today)
+		});
 	}
 
 	if (name != (req.session.user.lastname + " " + req.session.user.firstname) || username != req.session.user.username || gender == undefined) {
@@ -174,11 +177,7 @@ router.post('/modify', function(req, res) {
 	var choice = {
 	  Heterosexual         : req.body.heterosexual,
 	  Homosexual           : req.body.homosexual,
-	  Bisexual             : req.body.bisexual,
-	  Asexual              : req.body.asexual,
-	  Pansexual            : req.body.pansexual,
-	  Questioning          : req.body.questioning,
-	  Other                : req.body.other
+	  Bisexual             : req.body.bisexual
 	}
 
 	var orientation = '';
@@ -249,15 +248,26 @@ router.post('/modify', function(req, res) {
 						})
 					});
 				}
-				conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ?, tags = ? WHERE id_usr = ?", [lname, fname, uname, orientation, bio, tags, req.session.user.id]);
-				req.session.user.firstname = fname;
-				req.session.user.lastname = lname;
-				req.session.user.username = uname;
-				conn.end();
-				return res.redirect("/");
+				conn.query("SELECT COUNT(*) as nb FROM profiles WHERE username = ?", [uname])
+				.then(rows => {
+					if (rows[0].nb == 0) {
+						conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ?, tags = ? WHERE id_usr = ?", [lname, fname, uname, orientation, bio, tags, req.session.user.id]);
+						req.session.user.firstname = fname;
+						req.session.user.lastname = lname;
+						req.session.user.username = uname;
+						conn.end();
+						return res.redirect("/");
+					}
+					else {
+						conn.end();
+						return res.render("profile", {
+							error: "This username is already taken"
+						});
+					}
 				})
-		  });
-	  }
+			})
+		});
+	}
 });
 
 module.exports = router;

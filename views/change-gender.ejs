@@ -1,0 +1,39 @@
+<% include templates/header.ejs %>
+<link rel="stylesheet" href="/css/body.css">
+<section class="container">
+	<h3>Change your Gender</h3>
+	<% if (locals.warning) { %>
+		<div class="alert alert-warning" role="alert">
+			<% warning %>
+		</div>
+		<% } %>
+		<% if (locals.success) { %>
+		<div class="alert alert-success" role="alert">
+			<%= success %>
+		</div>
+		<% } %>
+		<% if (locals.error) { %>
+		<div class="alert alert-danger" role="alert">
+			<%= error %>
+		</div>
+		<% } %>
+		<h4>BE CAREFUL</h4>
+		<p>If you change your gender <b style="color:red; font-size: 1.5em;">you will lose all your matches !</b></p>
+	<form action="/settings/change-gender/confirm" method="post">
+		<div class="form-row">
+			<div class="col-md-6 mb-3">
+				<label class="col-sm-2 col-form-label" for="gender"><b>Gender</b></label>
+				<div class="col-sm-10">
+					<select class="custom-select mr-sm-2" id="gender" name="gender">
+						<option value="" selected>Choose...</option>
+						<option value="man">Man</option>
+						<option value="woman">Woman</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<button class="btn btn-outline-danger" type="submit">Change Your Gender</button>
+	</form>
+</section>
+
+<% include templates/footer.ejs %>
