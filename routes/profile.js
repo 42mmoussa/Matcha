@@ -247,15 +247,26 @@ router.post('/modify', function(req, res) {
 						})
 					});
 				}
-				conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ?, tags = ? WHERE id_usr = ?", [lname, fname, uname, orientation, bio, tags, req.session.user.id]);
-				req.session.user.firstname = fname;
-				req.session.user.lastname = lname;
-				req.session.user.username = uname;
-				conn.end();
-				return res.redirect("/");
+				conn.query("SELECT COUNT(*) as nb FROM profiles WHERE username = ?", [uname])
+				.then(rows => {
+					if (rows[0].nb == 0) {
+						conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ?, tags = ? WHERE id_usr = ?", [lname, fname, uname, orientation, bio, tags, req.session.user.id]);
+						req.session.user.firstname = fname;
+						req.session.user.lastname = lname;
+						req.session.user.username = uname;
+						conn.end();
+						return res.redirect("/");
+					}
+					else {
+						conn.end();
+						return res.render("profile", {
+							error: "This username is already taken"
+						});
+					}
 				})
-		  });
-	  }
+			})
+		});
+	}
 });
 
 module.exports = router;

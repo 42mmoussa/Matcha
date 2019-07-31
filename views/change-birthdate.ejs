@@ -1,0 +1,48 @@
+<% include templates/header.ejs %>
+<link rel="stylesheet" href="/css/body.css">
+<section class="container">
+	<h3>Reset your password</h3>
+	<% if (locals.warning) { %>
+		<div class="alert alert-warning" role="alert">
+			<% warning %>
+		</div>
+		<% } %>
+		<% if (locals.success) { %>
+		<div class="alert alert-success" role="alert">
+			<%= success %>
+		</div>
+		<% } %>
+		<% if (locals.error) { %>
+		<div class="alert alert-danger" role="alert">
+			<%= error %>
+		</div>
+		<% } %>
+	<form action="/settings/change-birthdate/confirm" method="post">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+	<div class="form-row">
+	  <div class="col-md-3 mb-3">
+		<label class="validationTooltip03" for="date">Birthday</label>
+		<input class="form-control" id="date" name="date" placeholder="MM/DD/YYYY" type="text" autocomplete="off" onkeyup="validator(this)"/>
+		<div class="invalid-tooltip">
+		  Minimum 18 years old to registrate
+		</div>
+	  </div>
+	</div>
+	<script>
+		$(document).ready(function(){
+			var date_input=$('input[name="date"]'); //our date input has the name "date"
+			var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+			date_input.datepicker({
+				format: 'mm/dd/yyyy',
+				container: container,
+				todayHighlight: true,
+				autoclose: true,
+			})
+		})
+	</script>
+	<button class="btn btn-primary" type="submit">Change your birthdate</button>
+	</form>
+</section>
+
+<% include templates/footer.ejs %>

@@ -65,9 +65,9 @@ router.get('/', function(req, res) {
 			if (b == 1) {
 				return conn.query(search, [req.session.user.id, req.session.user.id, req.session.user.id]);
 			} else
-				return null;
-				}).then((row) => {
-			if (row[0] === undefined) {
+				throw "non recognized orientation:" + profile[0].orientation;
+		}).then((row) => {
+			if (row.length === 0) {
 				conn.end();
 				return res.render('swipe', {
 					popupTitle: 'Swipe',
@@ -80,6 +80,10 @@ router.get('/', function(req, res) {
 				nb_usr: row.length,
 				users: row
 			});
+		})
+		.catch(err => {
+			console.log(err);
+			conn.end(res.redirect("/"));
 		});
 	}).catch(err => {
 		//not connected
@@ -103,7 +107,6 @@ router.post('/like', function(req, res) {
 						}).then((row) => {
 								conn.end();
 								if (row[0].count === 1) {
-
 									conn.query("INSERT INTO matchat(`id_usr1`, `id_usr2`, `key`) VALUES(?, ?, ?)", [req.session.user.id, id, uniqid()]);
 									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [id, req.session.user.id, req.session.user.username, "/matchat/" + req.session.user.id, "You just matched !", "Match with: "]);
 									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [req.session.user.id, id, username, "/matchat/" + id, "You just matched !", "Match with: "]);
