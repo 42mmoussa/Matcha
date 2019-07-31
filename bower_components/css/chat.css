@@ -12,8 +12,8 @@ html, body {
 	height: 40px;
     position: relative;
 	border-radius: 0;
-	background-color: #6d7fcc;
-	border-color: #6d7fcc;
+	background-color: #042f4b;
+	border-color: #042f4b;
 }
 
 .btn:focus,.btn:active,#message:focus {
@@ -80,14 +80,14 @@ a, a:hover, a:focus {
 
 #sidebar {
 	/* don't forget to add all the previously mentioned styles here too */
-    background: #7386D5;
+    background: #042f4b;
     color: #fff;
     transition: all 0.3s;
 }
 
 #sidebar .sidebar-header {
 	padding: 20px;
-    background: #6d7fcc;
+    background: #042f4b;
 }
 
 #sidebar ul p {
@@ -101,18 +101,18 @@ a, a:hover, a:focus {
     display: block;
 }
 #sidebar ul li a:hover {
-	color: #7386D5;
-    background: #fff;
+	color: black;
+    background: #326771;
 }
 
 #sidebar ul li.active > a, a[aria-expanded="true"] {
 	color: #fff;
-    background: #6d7fcc;
+    background: #042f4b;
 }
 ul ul a {
 	font-size: 0.9em !important;
     padding-left: 30px !important;
-    background: #6d7fcc;
+    background: #042f4b;
 }
 
 #zone_chat{

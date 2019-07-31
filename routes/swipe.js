@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const session = require('express-session');
-const crypto = require('crypto-js');
 const mod = require('./mod');
 const uniqid = require('uniqid');
 
@@ -65,9 +63,9 @@ router.get('/', function(req, res) {
 			if (b == 1) {
 				return conn.query(search, [req.session.user.id, req.session.user.id, req.session.user.id]);
 			} else
-				return null;
-				}).then((row) => {
-			if (row[0] === undefined) {
+				throw "non recognized orientation:" + profile[0].orientation;
+		}).then((row) => {
+			if (row.length === 0) {
 				conn.end();
 				return res.render('swipe', {
 					popupTitle: 'Swipe',
@@ -80,6 +78,10 @@ router.get('/', function(req, res) {
 				nb_usr: row.length,
 				users: row
 			});
+		})
+		.catch(err => {
+			console.log(err);
+			conn.end(res.redirect("/"));
 		});
 	}).catch(err => {
 		//not connected

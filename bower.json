@@ -1,0 +1,10 @@
+{
+  "name": "matcha",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "mmoussa"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/42mmoussa/Matcha"
+}

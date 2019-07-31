@@ -6,6 +6,7 @@ const favicon      = require('serve-favicon');
 const cookieParser = require('cookie-parser');
 const session      = require('express-session');
 const server       = require('http').createServer(app);
+const passport     = require('passport');
 
 const TWO_HOURS    = 1000 * 60 * 60 * 2;
 const TWO_DAYS    = 1000 * 60 * 60 * 48;
@@ -41,7 +42,6 @@ app.set('views', path.join(__dirname, 'views'));
 // use middleware
 
 app.use('/img', express.static('img'));
-
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -63,6 +63,8 @@ app.use(function(req, res, next) {
   res.locals.session = req.session;
   next();
 });
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 // define routes

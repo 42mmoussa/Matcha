@@ -1,5 +1,6 @@
 CREATE TABLE `users` (
 		`id_usr` int NOT NULL AUTO_INCREMENT,
+		`googleID` VARCHAR(50),
 		`firstname` text NOT NULL,
 		`lastname` text NOT NULL,
 		`username` varchar(50) NOT NULL,
