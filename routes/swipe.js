@@ -6,7 +6,7 @@ const mod = require('./mod');
 const uniqid = require('uniqid');
 
 router.get('/', function(req, res) {
-	if (req.session.connect) {
+	if (req.session.connect) {	
 	mod.pool.getConnection()
 		.then(conn => {
 		conn.query("USE matcha")
@@ -92,6 +92,7 @@ router.get('/', function(req, res) {
 router.post('/like', function(req, res) {
 		if (req.session.connect) {
 				let id = req.body.id;
+				let username = req.body.username;
 				mod.pool.getConnection(
 				).then(conn => {
 						conn.query("USE matcha")
@@ -102,9 +103,14 @@ router.post('/like', function(req, res) {
 						}).then((row) => {
 								conn.end();
 								if (row[0].count === 1) {
+
 									conn.query("INSERT INTO matchat(`id_usr1`, `id_usr2`, `key`) VALUES(?, ?, ?)", [req.session.user.id, id, uniqid()]);
+									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [id, req.session.user.id, req.session.user.username, "/matchat/" + req.session.user.id, "You just matched !", "Match with: "]);
+									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [req.session.user.id, id, username, "/matchat/" + id, "You just matched !", "Match with: "]);
 									res.send('match');
 								} else {
+									
+									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [id, req.session.user.id, req.session.user.username, "/profile?id=" + req.session.user.id, "This user liked you", "Like from: "]);
 									res.send('liked');
 								}
 						}).catch(err => {

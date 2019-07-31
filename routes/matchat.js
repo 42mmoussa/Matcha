@@ -27,7 +27,7 @@ router.get('/', function (req, res) {
 
 router.get('/:id_usr', function (req, res) {
 	if (req.session.connect) {
-		let id_usr = req.params.id_usr;	
+		let id_usr = req.params.id_usr;
 		mod.pool.getConnection()
 			.then(conn => {
 				conn.query("USE matcha")
@@ -47,7 +47,7 @@ router.get('/:id_usr', function (req, res) {
 									idToChat: id_usr,
 									key: key,
 									msg: row3,
-									nb_msg: row3.length,
+									nb_msg: row3.length
 								});
 							});
 						});
@@ -68,7 +68,7 @@ router.post('/loadmore', function (req, res) {
 
 		let nbscroll = req.body.nbscroll * 50;
 		let key = req.body.room;
-		
+
 		mod.pool.getConnection()
 			.then(conn => {
 				conn.query("USE matcha")
@@ -83,9 +83,10 @@ router.post('/loadmore', function (req, res) {
 							[key, nbscroll]));
 				})
 				.then (row => {
-					res.send({
-						nb: row.length,
-						msg: row});
+  					res.send({
+  						nb: row.length,
+  						msg: row
+            });
 				})
 			});
     } else {

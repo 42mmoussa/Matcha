@@ -1,0 +1,106 @@
+<% include templates/header.ejs %>
+
+<link rel="stylesheet" href="/css/history.css"/>
+<section class="container">
+  <center><h1>History</h1></center>
+
+  <% if (locals.count > 1) {%>
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      <li class="page-item">
+        <a class="page-link" href="/notifications/<%= locals.page - 1 %>" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span>
+        </a>
+      </li>
+      <%
+      let i = locals.page - 1;
+      if (i > 0) {%>
+          <li class="page-item"><a class="page-link" href="/notifications/1">1</a></li>
+    <%}
+      if (i > 1) {
+          if (locals.page != 3) { %>
+            <li class="page-item page-link">...</li>
+          <%}%>
+          <li class="page-item"><a class="page-link" href="/notifications/<%= locals.page - 1 %>"><%= locals.page - 1 %></a></li>
+    <%}
+      while  (++i < locals.count && i < locals.page + 2) { %>
+        <li class="page-item"><a class="page-link" href="/notifications/<%= i %>"><%= i %></a></li>
+      <% }
+      if (locals.count > 3) {
+        if (locals.page < locals.count - 2) { %>
+          <li class="page-item page-link">...</li>
+        <%}%>
+        <li class="page-item"><a class="page-link" href="/notifications/<%= locals.count %>"><%= locals.count %></a></li>
+      <% } else if (locals.count == 3) { %>
+        <li class="page-item"><a class="page-link" href="/notifications/3">3</a></li>
+      <% } %>
+      <li class="page-item">
+        <a class="page-link" href="/notifications/<%= locals.page + 1 %>" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <% } %>
+
+  <div class="history-list">
+    <%
+    i = -1;
+    while  (++i < locals.nbNotif) { %>
+      <a target="_blank" rel="noopener noreferrer" class="h-history" href="<%= locals.notif[i].link %>">
+        <p class="sub-history">
+          <%=locals.notif[i].daytime %><br />
+          <%= locals.notif[i].title %>
+          <%= locals.notif[i].username %>
+          <br /><span><%= locals.notif[i].msg %> </span>
+        </p>
+      </a>
+      <% } %>
+  </div>
+
+  <% if (locals.count > 1) {%>
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      <li class="page-item">
+        <a class="page-link" href="/notifications/<%= locals.page - 1 %>" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span>
+        </a>
+      </li>
+      <%
+      i = locals.page - 1;
+      if (i > 0) {%>
+          <li class="page-item"><a class="page-link" href="/notifications/1">1</a></li>
+    <%}
+      if (i > 1) {
+          if (locals.page != 3) { %>
+            <li class="page-item page-link">...</li>
+          <%}%>
+          <li class="page-item"><a class="page-link" href="/notifications/<%= locals.page - 1 %>"><%= locals.page - 1 %></a></li>
+    <%}
+      while  (++i < locals.count && i < locals.page + 2) { %>
+        <li class="page-item"><a class="page-link" href="/notifications/<%= i %>"><%= i %></a></li>
+      <% }
+      if (locals.count > 3) {
+        if (locals.page < locals.count - 2) { %>
+          <li class="page-item page-link">...</li>
+        <%}%>
+        <li class="page-item"><a class="page-link" href="/notifications/<%= locals.count %>"><%= locals.count %></a></li>
+      <% } else if (locals.count == 3) { %>
+        <li class="page-item"><a class="page-link" href="/notifications/3">3</a></li>
+      <% } %>
+      <li class="page-item">
+        <a class="page-link" href="/notifications/<%= locals.page + 1 %>" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <% } %>
+
+</section>
+
+<% include templates/footer.ejs %>

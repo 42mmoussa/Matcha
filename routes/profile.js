@@ -80,7 +80,7 @@ router.get('/create-profile', function(req, res) {
 			return res.redirect('/');
 		}
 	});
-	
+
 	router.post('/submit-create', function(req, res) {
 		var name           = req.body.staticName;
 		var username       = req.body.staticUsername;
@@ -178,19 +178,19 @@ router.post('/modify', function(req, res) {
 	  Homosexual           : req.body.homosexual,
 	  Bisexual             : req.body.bisexual
 	}
-  
+
 	var orientation = '';
-  
+
 	for (var property in choice) {
 	  if (choice[property] == 'on') {
 		orientation = orientation + property + ", ";
 	  }
 	}
-  
+
 	if (orientation == '') {
 			orientation = 'bisexual';
 	}
-  
+
 	if (fname == "") {
 	  fname = req.session.user.firstname;
 	}
@@ -200,7 +200,7 @@ router.post('/modify', function(req, res) {
 	if (uname == "") {
 	  uname = req.session.user.lastname;
 	}
-  
+
 	else
 	  if (req.session.connect) {
 		mod.pool.getConnection()
