@@ -22,12 +22,13 @@
 	<div class="info">
 			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 					<ol class="carousel-indicators">
-						<% if (locals.pic >= 10 ) {%>
 						  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-						<% }
+						<% if (locals.pic >= 10) {
 						var i = -1;
 						while (++i < locals.pic % 10) { %>
-						  <li data-target="#carouselExampleIndicators" data-slide-to="<%= i %>" class="active"></li>
+						  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+						<% }} else { %>
+							<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
 						<% } %>
 					  </ol>
 					  <div class="carousel-inner">
@@ -36,13 +37,19 @@
 						  <img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
 						  <div class="edit"><a href="/about"><i class="glyphicon glyphicon-pencil"></i></a></div>
 						</div>
-					  <% }
+					  <% } else { %>
+					  <div class="carousel-item active profile-pic">
+						<img class="d-block w-100" src="/img/default.png" alt="First slide" style="max-height: 300px; max-width: 300px;">
+						<div class="edit"><a href="/about"><i class="glyphicon glyphicon-pencil"></i></a></div>
+					  </div>
+					  <% } %>
+					  <% if (locals.pic >=10) {
 					  var i = -1;
 					  while (++i < locals.pic % 10) { %>
 						<div class="carousel-item active">
 							<img class="d-block w-100" src="/img/<%= locals.id %>/image<%= i + 1 %>.jpg" alt="First slide">
 						</div>
-						<% } %>
+						<% } }%>
 					</div>
 					<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
 						<span class="carousel-control-prev-icon" aria-hidden="true"></span>

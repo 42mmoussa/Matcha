@@ -56,10 +56,11 @@ router.post('/delete', function(req, res) {
 			})
 			.then((rows) => {
 				if (rows[0]) {
+					conn.query("DELETE FROM messages WHERE key LIKE (SELECT key FROM matchat WHERE id_usr1 = ? OR id_usr2 = ?)", [req.session.user.id, req.session.user.id]);
+					conn.query("DELETE FROM matchat WHERE id_usr1 = ? OR id_usr2 = ?", [req.session.user.id, req.session.user.id]);
 					conn.query("DELETE FROM users WHERE id_usr = ?", [req.session.user.id])
 					.then(() => {
-						req.session.user = undefined;
-						req.session.connect = undefined;
+						req.session.destroy();
 						conn.end();
 						return res.render('index', {
 							popupTitle: "Account Deleted",
