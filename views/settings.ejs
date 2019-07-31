@@ -22,9 +22,33 @@
 	<% } %>
 	<fieldset class="form-group">
 		<div class="row">
-			<label for="staticName" class="col-sm-3 col-form-label"><b>Delete</b></label>
+			<label for="change-password" class="col-sm-3 col-form-label"><b>Change Password</b></label>
 			<div class="col-sm-10">
-				<a role="button" id="delete" name="delete" href="/confirm-password" class="btn btn-outline-danger">Delete your Account</a>
+				<a role="button" href="/change-password" id="change-password" name="change-password" class="btn btn-outline-primary">Change your Password</a>
+			</div>
+		</div>
+		<div class="row">
+			<label for="change-password" class="col-sm-3 col-form-label"><b>Change your Email</b></label>
+			<div class="col-sm-10">
+				<a role="button" href="/settings/change-mail" id="change-mail" name="change-mail" class="btn btn-outline-primary">Change your Email</a>
+			</div>
+		</div>
+		<div class="row">
+			<label for="change-gender" class="col-sm-3 col-form-label"><b>Change gender</b></label>
+			<div class="col-sm-10">
+				<a role="button" href="/settings/change-gender" id="change-gender" name="change-gender" class="btn btn-outline-primary">Change your Gender</a>
+			</div>
+		</div>
+		<div class="row">
+			<label for="change-gender" class="col-sm-3 col-form-label"><b>Change your Birthdate</b></label>
+			<div class="col-sm-10">
+				<a role="button" href="/settings/change-birthdate" id="change-birthdate" name="change-birthdate" class="btn btn-outline-primary">Change your Birthdate</a>
+			</div>
+		</div>
+		<div class="row">
+			<label for="delete" class="col-sm-3 col-form-label"><b>Delete</b></label>
+			<div class="col-sm-10">
+				<a role="button" id="delete" name="delete" href="/settings/confirm-password" class="btn btn-outline-danger">Delete your Account</a>
 			</div>
 		</div>
 	</fieldset>

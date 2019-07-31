@@ -18,7 +18,7 @@ Mohamad MOUSSA : mmoussa@student.42.fr or (+33) 07.81.78.82.38 -->
   </head>
   <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light" id="headerMenu">
+<nav class="navbar navbar-expand-lg navbar-dark header-dark" id="headerMenu">
   <a class="navbar-brand" href="#">Matcha</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
 	<span class="navbar-toggler-icon"></span>
@@ -50,10 +50,16 @@ Mohamad MOUSSA : mmoussa@student.42.fr or (+33) 07.81.78.82.38 -->
 		<div id="notificationMenu" class="dropdown-menu" aria-labelledby="dropdownMenu2"></div>
 	</div>
 	<% if (locals.session.connect) { %>
-	  <a href="/logout" class="nav-link login"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+	<li class="nav-item">
+		<a href="/logout" class="nav-link login"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
+	</li>
 	<% } else { %>
-	  <a href="/login" class="nav-link login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
-	  <a href="/signup" class="nav-link"><span class="glyphicon glyphicon-log-in"></span> Sign up</a>
+	<li class="nav-item">
+		<a href="/login" class="nav-link login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+	</li>
+	<li class="nav-item">
+		<a href="/signup" class="nav-link"><span class="glyphicon glyphicon-log-in"></span> Sign up</a>
+	</li>
 	<% } %>
   </div>
 </nav>

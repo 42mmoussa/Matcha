@@ -1,144 +1,144 @@
 <% include templates/header.ejs %>
 
 <section class="container">
-  <h3>Sign up</h3>
-  <% if (locals.warning) { %>
-    <div class="alert alert-warning" role="alert">
-      <%= warning %>
-    </div>
-  <% } %>
-  <% if (locals.success) { %>
-    <div class="alert alert-success" role="alert">
-      <%= success %>
-    </div>
-  <% } %>
-  <% if (locals.error) { %>
-    <div class="alert alert-danger" role="alert">
-      <%= error %>
-    </div>
-  <% } %>
-  <form class="" action="/signup/signup_validation" method="post" novalidate>
-    <div class="form-row">
-      <div class="col-md-4 mb-3">
-        <label for="validationTooltip01">Prénom</label>
-        <input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" value="" onkeyup="validator(this)" required>
-      </div>
-      <div class="col-md-4 mb-3">
-        <label for="validationTooltip02">Nom de famille</label>
-        <input type="text" class="form-control" id="lname" name="lname" placeholder="Nom de famille" value="" onkeyup="validator(this)" required>
-      </div>
-      <div class="col-md-4 mb-3">
-        <label for="validationTooltipUsername">Nom d'utilisateur</label>
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="validationTooltipUsernamePrepend">@</span>
-          </div>
-          <input type="text" class="form-control" id="uname" name="uname" placeholder="Nom d'utilisateur" aria-describedby="validationTooltipUsernamePrepend" onkeyup="validator(this)" required>
-          <div class="invalid-tooltip">
-            Please choose a unique and valid username.
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="col-md-6 mb-3">
-        <label for="validationTooltip05">E-mail</label>
-        <input type="text" class="form-control" id="email" name="email" placeholder="E-mail" onkeyup="validator(this)" required>
-        <div class="invalid-tooltip">
-          Please provide a valid E-mail.
-        </div>
-      </div>
-      <div class="col-md-3 mb-3">
-        <label for="validationTooltip04">Mot de passe</label>
-        <input type="password" class="form-control" id="pwd" name="pwd" placeholder="Mot de passe" onkeyup="validator(this)" required>
-        <div class="invalid-tooltip">
-          Please provide a valid password.
-        </div>
-      </div>
-      <div class="col-md-3 mb-3">
-        <label for="validationTooltip03">Confirmez votre mot de passe</label>
-        <input type="password" class="form-control" id="confpwd" name="confpwd" placeholder="Confirmez votre mot de passe" onkeyup="validator(this)" required>
-        <div class="invalid-tooltip">
-          Please provide an identique valid password.
-        </div>
-      </div>
-    </div>
+	<h3>Sign up</h3>
+	<% if (locals.warning) { %>
+		<div class="alert alert-warning" role="alert">
+			<%= warning %>
+		</div>
+	<% } %>
+	<% if (locals.success) { %>
+		<div class="alert alert-success" role="alert">
+			<%= success %>
+		</div>
+	<% } %>
+	<% if (locals.error) { %>
+		<div class="alert alert-danger" role="alert">
+			<%= error %>
+		</div>
+	<% } %>
+	<form class="" action="/signup/signup_validation" method="post" novalidate>
+		<div class="form-row">
+			<div class="col-md-4 mb-3">
+				<label for="validationTooltip01">Prénom</label>
+				<input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" value="" onkeyup="validator(this)" required>
+			</div>
+			<div class="col-md-4 mb-3">
+				<label for="validationTooltip02">Nom de famille</label>
+				<input type="text" class="form-control" id="lname" name="lname" placeholder="Nom de famille" value="" onkeyup="validator(this)" required>
+			</div>
+			<div class="col-md-4 mb-3">
+				<label for="validationTooltipUsername">Nom d'utilisateur</label>
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<span class="input-group-text" id="validationTooltipUsernamePrepend">@</span>
+					</div>
+					<input type="text" class="form-control" id="uname" name="uname" placeholder="Nom d'utilisateur" aria-describedby="validationTooltipUsernamePrepend" onkeyup="validator(this)" required>
+					<div class="invalid-tooltip">
+						Please choose a unique and valid username.
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-row">
+			<div class="col-md-6 mb-3">
+				<label for="validationTooltip05">E-mail</label>
+				<input type="text" class="form-control" id="email" name="email" placeholder="E-mail" onkeyup="validator(this)" required>
+				<div class="invalid-tooltip">
+					Please provide a valid E-mail.
+				</div>
+			</div>
+			<div class="col-md-3 mb-3">
+				<label for="validationTooltip04">Mot de passe</label>
+				<input type="password" class="form-control" id="pwd" name="pwd" placeholder="Mot de passe" onkeyup="validator(this)" required>
+				<div class="invalid-tooltip">
+					Please provide a valid password.
+				</div>
+			</div>
+			<div class="col-md-3 mb-3">
+				<label for="validationTooltip03">Confirmez votre mot de passe</label>
+				<input type="password" class="form-control" id="confpwd" name="confpwd" placeholder="Confirmez votre mot de passe" onkeyup="validator(this)" required>
+				<div class="invalid-tooltip">
+					Please provide an identique valid password.
+				</div>
+			</div>
+		</div>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
-    <div class="form-row">
-      <div class="col-md-3 mb-3">
-        <label class="validationTooltip03" for="date">Birthday</label>
-        <input class="form-control" id="date" name="date" placeholder="MM/DD/YYYY" type="text" autocomplete="off" onkeyup="validator(this)"/>
-        <div class="invalid-tooltip">
-          Minimum 18 years old to registrate
-        </div>
-      </div>
-    </div>
-    <script>
-    	$(document).ready(function(){
-    		var date_input=$('input[name="date"]'); //our date input has the name "date"
-    		var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-    		date_input.datepicker({
-    			format: 'mm/dd/yyyy',
-    			container: container,
-    			todayHighlight: true,
-    			autoclose: true,
-    		})
-    	})
-    </script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+		<div class="form-row">
+			<div class="col-md-3 mb-3">
+				<label class="validationTooltip03" for="date">Birthday</label>
+				<input class="form-control" id="date" name="date" placeholder="MM/DD/YYYY" type="text" autocomplete="off" onkeyup="validator(this)"/>
+				<div class="invalid-tooltip">
+					Minimum 18 years old to registrate
+				</div>
+			</div>
+		</div>
+		<script>
+			$(document).ready(function(){
+				var date_input=$('input[name="date"]'); //our date input has the name "date"
+				var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+				date_input.datepicker({
+					format: 'mm/dd/yyyy',
+					container: container,
+					todayHighlight: true,
+					autoclose: true,
+				})
+			})
+		</script>
 
 
-    <button class="btn btn-primary" type="submit">Inscription</button>
-  </form>
+		<button class="btn btn-primary" type="submit">Inscription</button>
+	</form>
 </section>
 
 <script type="text/javascript">
-  function validator(item) {
+	function validator(item) {
 
-    var id = $(item).attr('id');
+		var id = $(item).attr('id');
 
-    if (id === 'confpwd') {
-      if ($('#pwd').val() === $('#confpwd').val()) {
-        $('#'+id).css('border-color', "green", 'important');
-        $('#'+id).css('box-shadow', '0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(50, 255, 50, 0.5)', 'important');
-      } else {
-        $('#'+id).css('border-color', "red", 'important');
-        $('#'+id).css('box-shadow', '0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 50, 50, 0.5)', 'important');
-      }
-    }
-    $.ajax({
-      type: 'POST',
-      url: '/signup/check?',
-      dataType: 'text',
-      data: {type: id ,item: $('#'+id+'').val()}
-    }).done (function (data) {
-      if (data === 'Unavailable') {
-        $('#'+id).removeClass('is-valid');
-        $('#'+id).addClass('is-invalid');
-        return true;
-      } else if (data === 'Available') {
-        if (id === 'confpwd' || id === 'pwd') {
-          if ($('#pwd').val() === $('#confpwd').val() || $('#confpwd').val() == "") {
-            $('#pwd').removeClass('is-invalid');
-            $('#pwd').addClass('is-valid');
-            if ($('#confpwd').val() !== "") {
-              $('#confpwd').removeClass('is-invalid');
-              $('#confpwd').addClass('is-valid');
-            }
-          } else {
-            $('#confpwd').removeClass('is-valid');
-            $('#confpwd').addClass('is-invalid');
-          }
-        } else {
-          $('#'+id).removeClass('is-invalid');
-          $('#'+id).addClass('is-valid');
-        }
-        return true;
-      }
-    });
+		if (id === 'confpwd') {
+			if ($('#pwd').val() === $('#confpwd').val()) {
+				$('#'+id).css('border-color', "green", 'important');
+				$('#'+id).css('box-shadow', '0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(50, 255, 50, 0.5)', 'important');
+			} else {
+				$('#'+id).css('border-color', "red", 'important');
+				$('#'+id).css('box-shadow', '0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(255, 50, 50, 0.5)', 'important');
+			}
+		}
+		$.ajax({
+			type: 'POST',
+			url: '/signup/check?',
+			dataType: 'text',
+			data: {type: id ,item: $('#'+id+'').val()}
+		}).done (function (data) {
+			if (data === 'Unavailable') {
+				$('#'+id).removeClass('is-valid');
+				$('#'+id).addClass('is-invalid');
+				return true;
+			} else if (data === 'Available') {
+				if (id === 'confpwd' || id === 'pwd') {
+					if ($('#pwd').val() === $('#confpwd').val() || $('#confpwd').val() == "") {
+						$('#pwd').removeClass('is-invalid');
+						$('#pwd').addClass('is-valid');
+						if ($('#confpwd').val() !== "") {
+							$('#confpwd').removeClass('is-invalid');
+							$('#confpwd').addClass('is-valid');
+						}
+					} else {
+						$('#confpwd').removeClass('is-valid');
+						$('#confpwd').addClass('is-invalid');
+					}
+				} else {
+					$('#'+id).removeClass('is-invalid');
+					$('#'+id).addClass('is-valid');
+				}
+				return true;
+			}
+		});
 
-  }
+	}
 </script>
 
 <% include templates/footer.ejs %>

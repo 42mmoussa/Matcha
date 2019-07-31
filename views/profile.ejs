@@ -106,7 +106,28 @@
 	<script src="/js/tag.js"></script>
 </section>
 
+
+<script src="/socket.io/socket.io.js"></script>
 <script>
+
+	<% if (locals.id != locals.session.user.id) { %>
+
+			var socket = io.connect();
+
+			socket.emit("send_notif",
+		  {
+				type: "visit",
+				id: "<%- locals.id %>",
+				link: "/profile?id=",
+				msg: "This user visited you",
+				title: "Visit from: ",
+				from: {
+					username: "<%- locals.session.user.username %>",
+					id: "<%- locals.session.user.id %>"
+				}
+			});
+	<% } %>
+
 	$(document).ready(function(){
 			editProfile = $("#edit-profile");
 			staticName = $("#staticName");

@@ -21,17 +21,17 @@ const {
 
 const IN_PROD      = NODE_ENV === 'production';
 
-const profile = require('./routes/profile');
-const settings = require('./routes/settings');
-const login = require('./routes/login');
-const signup = require('./routes/signup');
-const mod = require('./routes/mod');
-const index = require('./routes/index');
-const swipe = require('./routes/swipe');
-const matchat = require('./routes/matchat');
-const resetpasswd = require ('./routes/reset-password');
-const changepasswd = require ('./routes/change-password');
-const confirmpassword = require('./routes/confirm-password');
+const profile      = require('./routes/profile');
+const settings     = require('./routes/settings');
+const login        = require('./routes/login');
+const signup       = require('./routes/signup');
+const mod          = require('./routes/mod');
+const index        = require('./routes/index');
+const swipe        = require('./routes/swipe');
+const matchat      = require('./routes/matchat');
+const resetpasswd  = require('./routes/reset-password');
+const changepasswd = require('./routes/change-password');
+const notifications = require('./routes/notifications');
 
 // configure app
 
@@ -67,7 +67,7 @@ app.use(function(req, res, next) {
 
 // define routes
 
-app.use('/confirm-passowrd', confirmpassword);
+app.use('/notifications', notifications);
 app.use('/change-password', changepasswd);
 app.use('/reset-password', resetpasswd);
 app.use('/profile', profile);

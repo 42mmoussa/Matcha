@@ -12,7 +12,7 @@ router.get('/', function (req, res) {
 	}
 	else {
 		return res.render('login', {
-			
+
 		});
 	}
 });
@@ -37,27 +37,28 @@ router.post('/login_validation', function(req, res) {
 			if (result[0] === undefined)
 				throw "bad password or username";
 			if (result[0].confirm === 1) {
-				let anniversaire = new Date(result[0].birthday);
-				req.session.user = {
-					id: result[0].id_usr,
-					email: result[0].email,
-					firstname: result[0].firstname,
-					lastname: result[0].lastname,
-					username: result[0].username,
-					birthday: result[0].birthday,
-					age: mod.dateDiff(anniversaire, today)
-				};
-				req.session.connect = true;
+				firstConnection = false;
 				conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)
 				.then((rows) => {
+					let anniversaire = new Date(result[0].birthday);
+					req.session.user = {
+						id: result[0].id_usr,
+						email: result[0].email,
+						firstname: result[0].firstname,
+						lastname: result[0].lastname,
+						username: result[0].username,
+						birthday: result[0].birthday,
+						age: mod.dateDiff(anniversaire, today)
+					};
+					req.session.connect = true;
 					if (rows[0].nb === 0) {
 						conn.end();
 						return res.redirect('/profile/create-profile');
 					} else {
 						conn.end();
-						return res.redirect('/?success=login');
+						return res.redirect('/');
 					}
-				});
+				})
 			} else {
 				conn.end();
 				return res.render('login', {

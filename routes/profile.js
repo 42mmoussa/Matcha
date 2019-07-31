@@ -80,7 +80,7 @@ router.get('/create-profile', function(req, res) {
 			return res.redirect('/');
 		}
 	});
-	
+
 	router.post('/submit-create', function(req, res) {
 		var name           = req.body.staticName;
 		var username       = req.body.staticUsername;
@@ -178,19 +178,19 @@ router.post('/modify', function(req, res) {
 	  Homosexual           : req.body.homosexual,
 	  Bisexual             : req.body.bisexual
 	}
-  
+
 	var orientation = '';
-  
+
 	for (var property in choice) {
 	  if (choice[property] == 'on') {
 		orientation = orientation + property + ", ";
 	  }
 	}
-  
+
 	if (orientation == '') {
 			orientation = 'bisexual';
 	}
-  
+
 	if (fname == "") {
 	  fname = req.session.user.firstname;
 	}
@@ -200,7 +200,7 @@ router.post('/modify', function(req, res) {
 	if (uname == "") {
 	  uname = req.session.user.lastname;
 	}
-  
+
 	else
 	  if (req.session.connect) {
 		mod.pool.getConnection()
@@ -247,15 +247,26 @@ router.post('/modify', function(req, res) {
 						})
 					});
 				}
-				conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ?, tags = ? WHERE id_usr = ?", [lname, fname, uname, orientation, bio, tags, req.session.user.id]);
-				req.session.user.firstname = fname;
-				req.session.user.lastname = lname;
-				req.session.user.username = uname;
-				conn.end();
-				return res.redirect("/");
+				conn.query("SELECT COUNT(*) as nb FROM profiles WHERE username = ?", [uname])
+				.then(rows => {
+					if (rows[0].nb == 0) {
+						conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ?, tags = ? WHERE id_usr = ?", [lname, fname, uname, orientation, bio, tags, req.session.user.id]);
+						req.session.user.firstname = fname;
+						req.session.user.lastname = lname;
+						req.session.user.username = uname;
+						conn.end();
+						return res.redirect("/");
+					}
+					else {
+						conn.end();
+						return res.render("profile", {
+							error: "This username is already taken"
+						});
+					}
 				})
-		  });
-	  }
+			})
+		});
+	}
 });
 
 module.exports = router;
