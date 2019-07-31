@@ -22,7 +22,7 @@ const {
 const IN_PROD      = NODE_ENV === 'production';
 
 const profile      = require('./routes/profile');
-const about        = require('./routes/about');
+const settings     = require('./routes/settings');
 const login        = require('./routes/login');
 const signup       = require('./routes/signup');
 const mod          = require('./routes/mod');
