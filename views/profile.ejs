@@ -35,12 +35,12 @@
 					  <% if (locals.pic >= 10 ) {%>
 						<div class="carousel-item active profile-pic">
 						  <img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
-						  <div class="edit"><a href="/about"><i class="glyphicon glyphicon-pencil"></i></a></div>
+						  <div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
 						</div>
 					  <% } else { %>
 					  <div class="carousel-item active profile-pic">
 						<img class="d-block w-100" src="/img/default.png" alt="First slide" style="max-height: 300px; max-width: 300px;">
-						<div class="edit"><a href="/about"><i class="glyphicon glyphicon-pencil"></i></a></div>
+						<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
 					  </div>
 					  <% } %>
 					  <% if (locals.pic >=10) {
@@ -167,7 +167,7 @@
 							<option value="Homosexual">Homosexual</option>
 							<option value="Bisexual">Bisexual</option>
 							</select>`);
-					bio.replaceWith('<textarea class="form-control" id="bio" name="bio" rows="3" maxlength="500"><%= locals.bio %></textarea>');
+					bio.replaceWith(`<textarea class="form-control" id="bio" name="bio" rows="3" maxlength="500"><%= locals.bio %></textarea>`);
 					tags.replaceWith('<div class="tags-input" data-name="tags" id="tags"></div>');
 					tags = $("#tags");
 					$.getScript("/js/tag.js");

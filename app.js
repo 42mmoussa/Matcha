@@ -33,6 +33,7 @@ const matchat      = require('./routes/matchat');
 const resetpasswd  = require('./routes/reset-password');
 const changepasswd = require('./routes/change-password');
 const notifications = require('./routes/notifications');
+const pictures      = require('./routes/change-picture');
 
 // configure app
 
@@ -69,6 +70,7 @@ app.use(passport.session());
 
 // define routes
 
+app.use('/change-picture', pictures);
 app.use('/notifications', notifications);
 app.use('/change-password', changepasswd);
 app.use('/reset-password', resetpasswd);
