@@ -112,8 +112,9 @@ router.get('/create-profile', function(req, res) {
 			orientation = orientation + property + ", ";
 		}
 	}
+	
 
-	if (orientation == '' || (orientation != "heterosexual" && orientation != "homosexual" && orientation != "bisexual")) {
+	if (orientation == '' || (orientation != "heterosexual" && orientation != "homosexual")) {
 		orientation = 'bisexual';
 	}
 	if ((gender != "man" && gender != "woman") || gender == undefined) {

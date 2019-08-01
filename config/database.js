@@ -12,11 +12,12 @@ const favorites     = require('./sql/favorites.sql');
 const messages      = require('./sql/messages.sql');
 const matchat       = require('./sql/matchat.sql');
 const notifications = require('./sql/notifications.sql');
+const keys          = require('../routes/keys.js');
 
 const pool = mariadb.createPool({
     host: 'localhost',
-    user:'atelli',
-    password: '123456',
+    user: keys.mariadb.user,
+    password: keys.mariadb.password,
     port: '3306'
 });
 

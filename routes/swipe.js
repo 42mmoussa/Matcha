@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const session = require('express-session');
-const crypto = require('crypto-js');
 const mod = require('./mod');
 const uniqid = require('uniqid');
 
