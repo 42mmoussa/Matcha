@@ -1,0 +1,9 @@
+<%
+let i = -1;
+while (++i < locals.nbUsers) {%>
+<div>
+	<p>
+		<%= locals.users[i].username %>
+	</p>
+</div>
+<% } %>

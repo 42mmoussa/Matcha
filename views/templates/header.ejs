@@ -31,6 +31,7 @@ Mohamad MOUSSA : mmoussa@student.42.fr or (+33) 07.81.78.82.38 -->
   	  <li class="nav-item">
   		<a class="nav-link" href="/">Home</a>
   	  </li>
+	<% if (locals.session.connect) { %>
   	  <li class="nav-item">
   		<a class="nav-link" href="/swipe">Swipe</a>
   	  </li>
@@ -42,15 +43,21 @@ Mohamad MOUSSA : mmoussa@student.42.fr or (+33) 07.81.78.82.38 -->
   	  </li>
   	  <li class="nav-item">
 		<a class="nav-link" href="/settings">Settings</a>
-  	  </li>
+		</li>
+    	<% }; %>
   	</ul>
     <div class="navbar-nav">
+	<% if (locals.session.connect) { %>
       <li class="nav-item">
+          <a class="nav-link" href="/search" style="margin-top: 4px;">
+            <span class="glyphicon glyphicon-search"></span>
+          </a>
+      </li>
+	  <li class="nav-item">
           <a class="nav-link" href="/notifications" style="margin-top: 4px;">
             <span class="glyphicon glyphicon-bell"></span>
           </a>
       </li>
-    	<% if (locals.session.connect) { %>
         <li class="nav-item">
     	  <a href="/logout" class="nav-link login"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
         </li>
@@ -61,7 +68,7 @@ Mohamad MOUSSA : mmoussa@student.42.fr or (+33) 07.81.78.82.38 -->
         <li class="nav-item">
     	  <a href="/signup" class="nav-link"><span class="glyphicon glyphicon-log-in"></span> Sign up</a>
         </li>
-    	<% } %>
+    	<% }; %>
     </div>
   </div>
 </nav>
@@ -100,4 +107,4 @@ Mohamad MOUSSA : mmoussa@student.42.fr or (+33) 07.81.78.82.38 -->
 	</div>
   </div>
 </div>
-<% } %>
+<% }; %>

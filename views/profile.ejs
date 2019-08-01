@@ -167,7 +167,7 @@
 							<option value="Homosexual">Homosexual</option>
 							<option value="Bisexual">Bisexual</option>
 							</select>`);
-					bio.replaceWith('<textarea class="form-control" id="bio" name="bio" rows="3" maxlength="500"><%= locals.bio %></textarea>');
+					bio.replaceWith(`<textarea class="form-control" id="bio" name="bio" rows="3" maxlength="500"><%= locals.bio %></textarea>`);
 					tags.replaceWith('<div class="tags-input" data-name="tags" id="tags"></div>');
 					tags = $("#tags");
 					$.getScript("/js/tag.js");

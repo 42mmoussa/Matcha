@@ -22,17 +22,17 @@ const {
 
 const IN_PROD      = NODE_ENV === 'production';
 
-const profile      = require('./routes/profile');
-const settings     = require('./routes/settings');
-const login        = require('./routes/login');
-const signup       = require('./routes/signup');
-const mod          = require('./routes/mod');
-const index        = require('./routes/index');
-const swipe        = require('./routes/swipe');
-const matchat      = require('./routes/matchat');
-const resetpasswd  = require('./routes/reset-password');
-const changepasswd = require('./routes/change-password');
+const profile      	= require('./routes/profile');
+const settings     	= require('./routes/settings');
+const login        	= require('./routes/login');
+const signup       	= require('./routes/signup');
+const index        	= require('./routes/index');
+const swipe        	= require('./routes/swipe');
+const matchat      	= require('./routes/matchat');
+const resetpasswd  	= require('./routes/reset-password');
+const changepasswd 	= require('./routes/change-password');
 const notifications = require('./routes/notifications');
+const search		= require('./routes/search');
 
 // configure app
 
@@ -66,7 +66,6 @@ app.use(function(req, res, next) {
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 // define routes
 
 app.use('/notifications', notifications);
@@ -74,11 +73,20 @@ app.use('/change-password', changepasswd);
 app.use('/reset-password', resetpasswd);
 app.use('/profile', profile);
 app.use('/settings', settings);
+app.use('/search', search);
 app.use('/login', login);
 app.use('/signup', signup);
 app.use('/swipe', swipe);
 app.use('/matchat', matchat);
 app.use('/', index);
+
+app.use(function(req, res, next){
+	res.status(404);
+	if (req.accepts('html')) {
+	  res.render('404', { url: req.url });
+	  return;
+	}
+});
 
 // start socket
 
