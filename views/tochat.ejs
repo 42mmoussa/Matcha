@@ -18,9 +18,11 @@
 
     <!-- Sidebar -->
     <nav id="sidebar">
-        <div class="sidebar-header">
-            <h3><a href="/">Matchat</a></h3>
-        </div>
+		<% if (locals.iframe == 0) { %>
+			<div class="sidebar-header">
+				<h3><a href="/">Matchat</a></h3>
+			</div>
+		<% }; %>
 		<ul class="list-unstyled components">
             <li class="active">
                 <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Your Matchas</a>

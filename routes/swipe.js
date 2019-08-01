@@ -11,6 +11,10 @@ router.get('/', function(req, res) {
 		.then(() => {
 			return conn.query("SELECT * FROM profiles WHERE id_usr=?", [req.session.user.id]);
 		}).then((profile) => {
+			if (profile.length === 0) {
+				conn.end();
+				res.redirect("/profile/create-profile");
+			}
 			let b = 0;
 			let search = '';
 			if (/Heterosexual/.test(profile[0].orientation)) {

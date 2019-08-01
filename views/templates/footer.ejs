@@ -39,6 +39,47 @@
     </footer>
 </div>
 
+<script>
+	function chatClick() {
+		if ($('#chat-box').css('bottom') == '0px') {
+			$('#chat-box').animate({bottom: '-400px'});
+			$('#chat-box-icon').animate({bottom: '0px'});
+		} else {
+			$('#chat-box').animate({bottom: '0px'});
+			$('#chat-box-icon').animate({bottom: '400px'});
+		}
+	}
+
+	$(document).ready(function(){
+		$("#chat-box-icon").css('font-size', $("#chat-box-icon").height() / 1.5);
+	});
+
+
+	document.addEventListener('DOMContentLoaded', () => {
+		'use strict';
+
+		document.addEventListener('keydown', event => {
+			const charList = '\`';
+			const key = event.key.toLowerCase();
+
+			// we are only interested in alphanumeric keys
+			if (charList.indexOf(key) === -1) return;
+
+				chatClick();
+		});
+	});
+
+</script>
+
+<% if (locals.session.connect) { %>
+	<div id="chat-box-icon" onclick="chatClick();">
+		Chat
+	</div>
+	<div id="chat-box">
+		<iframe frameborder="0" id='ifr' src="/matchat?iframe=1">
+	</div>
+<% }; %>
+
 </html>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -52,17 +93,17 @@
         socket.emit('joinRoom', '<%= locals.session.user.id %>');
 
         socket.on('notifMsg', function(data) {
-            insertnotif(data);
+			insertnotif(data);
         });
 
         function insertnotif(data) {
-
-            var allNotif = [];
+			
+			var allNotif = [];
 
             if (data.msg.length >= 50) {
-                showMsg = data.msg.substring(0,50) + '...';
+				showMsg = data.msg.substring(0,50) + '...';
             } else {
-                 showMsg = data.msg;
+				showMsg = data.msg;
             }
 
             $('#notificationMenu a').each(function () {
@@ -83,7 +124,7 @@
             $('#toast' + nbtoast).toast({delay: 10000});
             $('#toast' + nbtoast).toast("show");
 
-            nbtoast++;
-        }
+			nbtoast++;
+		}
     <% } %>
 </script>

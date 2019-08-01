@@ -33,6 +33,10 @@ router.get('/', function(req, res) {
 						tags: rows[0].tags
 					});
 				} else {
+					if (id === req.session.user.id) {
+						conn.end();
+						return res.redirect('/profile/create-profile');
+					}
 					conn.end();
 					return res.render('profile', {
 						popup: true,

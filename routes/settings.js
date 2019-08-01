@@ -6,7 +6,19 @@ const nodemailer = require('nodemailer');
 
 router.get('/', function (req, res, next) {
 	if (req.session.connect) {
-		res.render('settings', {
+		mod.pool.getConnection()
+		  .then((conn) => {
+			conn.query("USE matcha;")
+			.then(() => {
+				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+			})
+			.then((rows) => {
+				conn.end();
+				if (rows.length === 0) {
+					return res.redirect('/profile/create-profile');
+				}
+				return res.render('settings');
+			})
 		});
 	}
 	else {

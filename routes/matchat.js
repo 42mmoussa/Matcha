@@ -4,6 +4,9 @@ var mod = require('./mod');
 
 router.get('/', function (req, res) {
     if (req.session.connect) {
+		iframe = req.query.iframe;
+		if (isNaN(iframe))
+			iframe = 0;
 		mod.pool.getConnection()
 			.then(conn => {
 				conn.query("USE matcha")
@@ -16,7 +19,8 @@ router.get('/', function (req, res) {
 					conn.end();
 					return res.render('tochat', {
 						nb_users: row.length,
-						users: row
+						users: row,
+						iframe: iframe
 					});
 				})
 			});
