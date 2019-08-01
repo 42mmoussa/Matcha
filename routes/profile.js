@@ -26,7 +26,7 @@ router.get('/', function(req, res) {
 						username: rows[0].username,
 						id: rows[0].id_usr,
 						age: rows[0].age,
-						orientation: rows[0].orientation.substring(0, rows[0].orientation.length - 2),
+						orientation: rows[0].orientation.charAt(0).toUpperCase() + rows[0].orientation.slice(1),
 						gender: rows[0].gender.charAt(0).toUpperCase() + rows[0].gender.slice(1),
 						bio: rows[0].bio,
 						pic: rows[0].pictures,
@@ -85,6 +85,7 @@ router.get('/create-profile', function(req, res) {
 		var name           = req.body.staticName;
 		var username       = req.body.staticUsername;
 		var gender         = req.body.gender;
+		var orientation    = req.body.orientation;
 		var bio            = req.body.bio;
 		var photo          = req.body.photo;
 		var birthday       = new Date(req.session.user.birthday);
@@ -99,23 +100,8 @@ router.get('/create-profile', function(req, res) {
 		}
 		var tags = tagexist.join(',');
 
-	var choice = {
-		Heterosexual         : req.body.heterosexual,
-		Homosexual           : req.body.homosexual,
-		Bisexual             : req.body.bisexual
-	}
-
-	var orientation = '';
-
-	for (var property in choice) {
-		if (choice[property] == 'on') {
-			orientation = orientation + property + ", ";
-		}
-	}
-	
-
-	if (orientation == '' || (orientation != "heterosexual" && orientation != "homosexual")) {
-		orientation = 'bisexual';
+	if (orientation != "Heterosexual" && orientation != "Homosexual") {
+		orientation = 'Bisexual';
 	}
 	if ((gender != "man" && gender != "woman") || gender == undefined) {
 		return res.render('create-profile', {
@@ -163,6 +149,7 @@ router.post('/modify', function(req, res) {
 	var fname          = req.body.fname;
 	var uname          = req.body.uname;
 	var bio            = req.body.bio;
+	var orientation    = req.body.orientation;
 	tagexist = req.body.tags.split(',');
 	for(var i = 0; i < tagexist.length - 1; i++) {
 		for(var j = i + 1; j < tagexist.length; j++) {
@@ -174,22 +161,8 @@ router.post('/modify', function(req, res) {
 	}
 	var tags = tagexist.join(',');
 
-	var choice = {
-	  Heterosexual         : req.body.heterosexual,
-	  Homosexual           : req.body.homosexual,
-	  Bisexual             : req.body.bisexual
-	}
-
-	var orientation = '';
-
-	for (var property in choice) {
-	  if (choice[property] == 'on') {
-		orientation = orientation + property + ", ";
-	  }
-	}
-
-	if (orientation == '') {
-			orientation = 'bisexual';
+	if (orientation != 'Heterosexual' && orientation != 'Homosexual') {
+			orientation = 'Bisexual';
 	}
 
 	if (fname == "") {
@@ -259,10 +232,23 @@ router.post('/modify', function(req, res) {
 						return res.redirect("/");
 					}
 					else {
-						conn.end();
-						return res.render("profile", {
-							error: "This username is already taken"
-						});
+						conn.query("SELECT * from profiles WHERE username = ?", [uname])
+						.then(result => {
+							if (result[0].id_usr == req.session.user.id) {
+								conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ?, tags = ? WHERE id_usr = ?", [lname, fname, uname, orientation, bio, tags, req.session.user.id]);
+								req.session.user.firstname = fname;
+								req.session.user.lastname = lname;
+								req.session.user.username = uname;
+								conn.end();
+								return res.redirect("/");
+							}
+							else {
+								conn.end();
+								return res.render("profile?id_usr=" + req.session.user.id, {
+									error: "This username is already taken"
+								});
+							}
+						})
 					}
 				})
 			})
