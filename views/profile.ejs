@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="/css/tag.css">
 
 <section class="container">
-	<h3>Your Profile <a href="#" id="edit-profile"><span class="glyphicon glyphicon-edit"></span></a></h3>
+	<h3>Your Profile <a href="#" id="edit-profile"><% if (locals.id == locals.session.user.id || locals.id == undefined) { %><span class="glyphicon glyphicon-edit"></span><% } %></a></h3>
 	<% if (locals.warning) { %>
 		<div class="alert alert-warning" role="alert">
 			<%= warning %>
@@ -34,13 +34,17 @@
 					  <div class="carousel-inner">
 					  <% if (locals.pic >= 10 ) {%>
 						<div class="carousel-item active profile-pic">
-						  <img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
-						  <div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
+						<img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
+						<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
+							<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
+						<% } %>
 						</div>
 					  <% } else { %>
 					  <div class="carousel-item active profile-pic">
 						<img class="d-block w-100" src="/img/default.png" alt="First slide" style="max-height: 300px; max-width: 300px;">
-						<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
+						<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
+							<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
+						<% } %>
 					  </div>
 					  <% } %>
 					  <% if (locals.pic >=10) {
@@ -135,6 +139,8 @@
 			});
 	<% } %>
 
+	<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
+
 	$(document).ready(function(){
 			editProfile = $("#edit-profile");
 			staticName = $("#staticName");
@@ -157,6 +163,7 @@
 				}
 			}
 
+			
 			editProfile.click(function () {
 					editProfile.remove();
 					staticName.replaceWith('<input type="text" class="form-control" id="lname" name="lname" placeholder="Nom de famille" value="<%= locals.lastname %>" onkeyup="validator(this)"><input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" value="<%= locals.firstname %>" onkeyup="validator(this)">');
@@ -181,6 +188,7 @@
 					</div>`)
 				});
 		})
+		<% } %>
 </script>
 
 
