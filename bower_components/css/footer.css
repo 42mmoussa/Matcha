@@ -111,6 +111,7 @@
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 	color: #ccc;
+  cursor: pointer;
 }
 
 #chat-box-icon > span {
@@ -121,6 +122,6 @@
 
 #ifr {
 	width: 100%;
-	height: calc(100% - 40px);
-	position: fixed;
+	height: 100%;
+	position: relative;
 }
