@@ -28,6 +28,7 @@
     "nodemailer": "^6.2.1",
     "passport": "^0.4.0",
     "passport-google-oauth20": "^2.0.0",
+    "path": "^0.12.7",
     "require-sql": "^1.0.0",
     "serve-favicon": "^2.5.0",
     "socket.io": "^2.2.0",

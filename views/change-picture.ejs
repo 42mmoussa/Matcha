@@ -18,7 +18,9 @@
 		</div>
 	<% } %>
 	<form id="frmUploader" enctype="multipart/form-data" action="/change-picture/upload" method="post">
-		<input type="file" name="imgUploader" multiple />
+		<script src="/js/photo.js"></script>
+		<img id="previewUpload" width="400" height="300" src="https://image.noelshack.com/fichiers/2019/23/3/1559750027-download.png" />
+		<input type="file" name="imgUploader" id="imageUpload" class="chooseFile" onchange="readURL(this);" />
 		<input type="submit" name="submit" id="btnSubmit" value="Upload" />
 	</form>
 </section>

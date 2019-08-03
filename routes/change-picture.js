@@ -1,6 +1,9 @@
 const express = require('express');
 const mod = require('./mod');
 const crypto = require('crypto-js');
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
 
 var router = express.Router();
 
@@ -38,13 +41,23 @@ router.post('/upload', function (req, res) {
 		}
 		});
 
-		var upload = multer({
-		storage: Storage
-		}).array("imgUploader", 3);
+		if (path.extname(req.files.path).toLowerCase() === ".png") {
+			var upload = multer({
+			storage: Storage
+			}).array("imgUploader", 3);
+		}
+		else {
+			res.render('change-picture', {
+				popupTitle: "Image",
+				popupMsg: "Only .png files are accepted",
+				popup: true
+			});
+		}
 	}
 	if (req.session.connect) {
 		upload(req, res, function(err) {
 		if (err) {
+			console.log(err);
 			return res.end("err");
 		}
 		mod.pool.getConnection()
@@ -55,7 +68,7 @@ router.post('/upload', function (req, res) {
 			});
 			conn.end();
 		});
-		return res.redirect("profile");
+		return res.redirect("/profile");
 		});
 	}
 });

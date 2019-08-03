@@ -160,6 +160,7 @@ router.post('/modify', function(req, res) {
 		}
 	}
 	var tags = tagexist.join(',');
+	tags += ',';
 
 	if (orientation != 'Heterosexual' && orientation != 'Homosexual') {
 			orientation = 'Bisexual';
