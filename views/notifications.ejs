@@ -5,7 +5,7 @@
   <center><h1>History</h1></center>
 
   <% if (locals.count > 1) {%>
-  <nav aria-label="Page navigation example">
+  <nav class="navigate">
     <ul class="pagination">
       <li class="page-item">
         <a class="page-link" href="/notifications/<%= locals.page - 1 %>" aria-label="Previous">
@@ -27,7 +27,7 @@
       while  (++i < locals.count && i < locals.page + 2) { %>
         <li class="page-item"><a class="page-link" href="/notifications/<%= i %>"><%= i %></a></li>
       <% }
-      if (locals.count > 3) {
+      if (locals.count > 1) {
         if (locals.page < locals.count - 2) { %>
           <li class="page-item page-link">...</li>
         <%}%>
@@ -61,7 +61,7 @@
   </div>
 
   <% if (locals.count > 1) {%>
-  <nav aria-label="Page navigation example">
+  <nav class="navigate">
     <ul class="pagination">
       <li class="page-item">
         <a class="page-link" href="/notifications/<%= locals.page - 1 %>" aria-label="Previous">
@@ -73,17 +73,18 @@
       i = locals.page - 1;
       if (i > 0) {%>
           <li class="page-item"><a class="page-link" href="/notifications/1">1</a></li>
-    <%}
+      <%}
       if (i > 1) {
-          if (locals.page != 3) { %>
+          if (locals.page > 3) { %>
             <li class="page-item page-link">...</li>
           <%}%>
           <li class="page-item"><a class="page-link" href="/notifications/<%= locals.page - 1 %>"><%= locals.page - 1 %></a></li>
-    <%}
-      while  (++i < locals.count && i < locals.page + 2) { %>
+      <%}
+      while  (++i < locals.count && i < locals.page + 2) {
+        console.log(i);%>
         <li class="page-item"><a class="page-link" href="/notifications/<%= i %>"><%= i %></a></li>
       <% }
-      if (locals.count > 3) {
+      if (locals.count > 1) {
         if (locals.page < locals.count - 2) { %>
           <li class="page-item page-link">...</li>
         <%}%>

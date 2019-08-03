@@ -76,7 +76,7 @@
 		Chat
 	</div>
 	<div id="chat-box">
-		<iframe frameborder="0" id='ifr' src="/matchat?iframe=1">
+		<iframe frameborder="0" id='ifr' src="/matchat?iframe=1"></iframe>
 	</div>
 <% }; %>
 
@@ -93,17 +93,17 @@
         socket.emit('joinRoom', '<%= locals.session.user.id %>');
 
         socket.on('notifMsg', function(data) {
-			insertnotif(data);
+			       insertnotif(data);
         });
 
         function insertnotif(data) {
-			
-			var allNotif = [];
+
+			       var allNotif = [];
 
             if (data.msg.length >= 50) {
-				showMsg = data.msg.substring(0,50) + '...';
+				          showMsg = data.msg.substring(0,50) + '...';
             } else {
-				showMsg = data.msg;
+				          showMsg = data.msg;
             }
 
             $('#notificationMenu a').each(function () {
@@ -124,7 +124,7 @@
             $('#toast' + nbtoast).toast({delay: 10000});
             $('#toast' + nbtoast).toast("show");
 
-			nbtoast++;
-		}
+    			nbtoast++;
+    		}
     <% } %>
 </script>

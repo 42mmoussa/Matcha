@@ -25,7 +25,7 @@ router.get('/', function(req, res) {
 						lastname: rows[0].lastname,
 						username: rows[0].username,
 						id: rows[0].id_usr,
-						age: rows[0].age,
+						age: mod.dateDiff(rows[0].birthday, today),
 						orientation: rows[0].orientation.charAt(0).toUpperCase() + rows[0].orientation.slice(1),
 						gender: rows[0].gender.charAt(0).toUpperCase() + rows[0].gender.slice(1),
 						bio: rows[0].bio,
@@ -103,6 +103,7 @@ router.get('/create-profile', function(req, res) {
 			}
 		}
 		var tags = tagexist.join(',');
+		tags += ',';
 
 	if (orientation != "Heterosexual" && orientation != "Homosexual") {
 		orientation = 'Bisexual';
@@ -139,8 +140,7 @@ router.get('/create-profile', function(req, res) {
 								})
 							});
 						}
-						let age = mod.dateDiff(birthday, today);
-						conn.query("INSERT INTO profiles(id_usr, firstname, lastname, username, gender, age, bio, orientation, pictures, tags) VALUES(?, ?, ?, ?, ?, ?, ?, ?, 0, ?)", [req.session.user.id, req.session.user.firstname, req.session.user.lastname, req.session.user.username, gender, age, bio, orientation, tags]);
+						conn.query("INSERT INTO profiles(id_usr, firstname, lastname, username, gender, birthday, bio, orientation, pictures, tags) VALUES(?, ?, ?, ?, ?, ?, ?, ?, 0, ?)", [req.session.user.id, req.session.user.firstname, req.session.user.lastname, req.session.user.username, gender, birthday, bio, orientation, tags]);
 						conn.end();
 						res.redirect("/");
 					});
@@ -164,6 +164,7 @@ router.post('/modify', function(req, res) {
 		}
 	}
 	var tags = tagexist.join(',');
+	tags += ',';
 
 	if (orientation != 'Heterosexual' && orientation != 'Homosexual') {
 			orientation = 'Bisexual';
@@ -208,8 +209,7 @@ router.post('/modify', function(req, res) {
 							.then((rows) => {
 								if (rows[0].nb === 0) {
 									conn.query("INSERT INTO tags(name_tag, nb_tag) VALUES(?, 1)", [element]);
-								}
-								else {
+								} else {
 									tagsUser = result[0].tags.split(',');
 									e = 0;
 									for(var i = 0; i < tagsUser.length; i++) {

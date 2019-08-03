@@ -220,7 +220,7 @@ router.post('/change-mail/confirm', function(req, res) {
 											pass: 'compteaminemohamad'
 										}
 									});
-		
+
 									var mailOptions = {
 										from: 'matcha.mmoussa.atelli@gmail.com',
 										to: rows[0].email,
@@ -231,7 +231,7 @@ router.post('/change-mail/confirm', function(req, res) {
 										</body>
 										</html>`
 									};
-		
+
 									transporter.sendMail(mailOptions, function(error, info){
 										if (error) {
 											console.log(error);
@@ -298,7 +298,7 @@ router.post('/change-birthdate/confirm', function(req, res) {
 				.then(() => {
 					age = mod.dateDiff(birthday, today);
 					conn.query("UPDATE users SET birthday = ? WHERE id_usr = ?", [birthday, req.session.user.id]);
-					conn.query("UPDATE profiles SET age = ? WHERE id_usr = ?", [age, req.session.user.id]);
+					conn.query("UPDATE profiles SET birthday = ? WHERE id_usr = ?", [birthday, req.session.user.id]);
 					req.session.age = age;
 					conn.end();
 					return res.render('index', {

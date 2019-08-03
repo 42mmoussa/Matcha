@@ -1,9 +1,81 @@
-<%
-let i = -1;
-while (++i < locals.nbUsers) {%>
-<div>
-	<p>
-		<%= locals.users[i].username %>
-	</p>
+<% include templates/header.ejs %>
+<link rel="stylesheet" href="/css/search.css">
+
+<div id="filter-group" class="container filter-group d-flex mb-3 flex-wrap justify-content-center">
+	<div class="filter" id='tags'>
+
+		<select id="tags-select" class="selectpicker" multiple data-live-search="true">
+		  <option>Mustard</option>
+		  <option>Ketchup</option>
+		  <option>Relish</option>
+		</select>
+			<input type="hidden" name="hidden-tags" id="hidden-tags"/>
+	</div>
+	<div class="filter">
+
+	</div>
+	<div class="filter">
+
+	</div>
+	<div class="filter">
+
+	</div>
 </div>
+
+<div class="d-flex bd-highlight mb-3 flex-wrap justify-content-center">
+		<%
+		let i = -1;
+		while (++i < locals.nbUsers) {%>
+			  <a href="/profile?id=<%= locals.users[i].id_usr %>" class="user-search p-2">
+						<div class="picture" style="background-image: url('/img/<%= locals.users[i].id_usr %>/profile.jpg')"></div>
+						username: <%= locals.users[i].username %><br />
+						tags: <%= locals.users[i].tags %><br />
+						age: <%= locals.users[i].age %><br />
+						localisation: Quelque part<br />
+						popularity score: Score<br />
+				</a>
+		<% } %>
+</div>
+
+<% if (locals.count > 1) {%>
+<nav class="navigate">
+		<ul class="pagination">
+				<li class="page-item">
+						<a class="page-link" href="/search/<%= locals.page - 1 %>" aria-label="Previous">
+								<span aria-hidden="true">&laquo;</span>
+								<span class="sr-only">Previous</span>
+						</a>
+				</li>
+				<%
+				let i = locals.page - 1;
+				if (i > 0) {%>
+						<li class="page-item"><a class="page-link" href="/search/1">1</a></li>
+				<%}
+				if (i > 1) {
+						if (locals.page != 3) { %>
+								<li class="page-item page-link">...</li>
+						<%}%>
+						<li class="page-item"><a class="page-link" href="/search/<%= locals.page - 1 %>"><%= locals.page - 1 %></a></li>
+				<%}
+				while  (++i < locals.count && i < locals.page + 2) { %>
+						<li class="page-item"><a class="page-link" href="/search/<%= i %>"><%= i %></a></li>
+				<% }
+				if (locals.count > 1) {
+						if (locals.page < locals.count - 2) { %>
+								<li class="page-item page-link">...</li>
+						<%}%>
+						<li class="page-item"><a class="page-link" href="/search/<%= locals.count %>"><%= locals.count %></a></li>
+				<% } else if (locals.count == 3) { %>
+						<li class="page-item"><a class="page-link" href="/search/3">3</a></li>
+				<% } %>
+				<li class="page-item">
+						<a class="page-link" href="/search/<%= locals.page + 1 %>" aria-label="Next">
+								<span aria-hidden="true">&raquo;</span>
+								<span class="sr-only">Next</span>
+						</a>
+				</li>
+		</ul>
+</nav>
 <% } %>
+
+<% include templates/footer.ejs %>

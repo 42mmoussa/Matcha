@@ -74,4 +74,11 @@ function insert(main_string, ins_string, pos) {
 	return main_string.slice(0, pos) + ins_string + main_string.slice(pos);
 }
 
-module.exports = {checkemail, checkuid, checkname, checkpwd, pool, randomString, dateDiff, checkdate, insert};
+function ageToDate(age) {
+  var date = new Date();
+  date.setFullYear(date.getFullYear() - age);
+  let strDate = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate();
+  return strDate;
+}
+
+module.exports = {checkemail, checkuid, checkname, checkpwd, pool, randomString, dateDiff, checkdate, insert, ageToDate};

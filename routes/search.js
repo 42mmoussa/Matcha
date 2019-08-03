@@ -19,14 +19,16 @@ router.get('/:page', function (req, res) {
 			let page = parseInt(req.params.page, 10) - 1;
 			let offset = page * nbElementOnPage;
 
-			let search = "SELECT * FROM profiles";
-			let searchData = [];
+			let search = "SELECT COUNT(*) OVER () as count, id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags FROM profiles";
+      let searchData = [];
+			let searchCol = [];
+
+      let i = 0;
 
 			let strTags = req.query.tags;
 
-			if (typeof strTags === 'string') {	
+			if (typeof strTags === 'string') {
 				let tags = strTags.split(' ');
-				let i = 0;
 				tags.forEach(function (element) {
 					if (i === 0) {
 						search += " WHERE tags LIKE ?";
@@ -34,20 +36,53 @@ router.get('/:page', function (req, res) {
 					} else {
 						search += " OR tags LIKE ?";
 					}
-					searchData.push("%" + element + "%");
-				});		
+          searchData.push("%#" + element + ",%");
+					searchCol.push("tags");
+				});
 			}
 
-			let first = 1;
+      let strAge = req.query.age;
+
+      if (typeof strAge === 'string') {
+          let tags = strAge.split(' ');
+          let from = mod.ageToDate(tags[1]);
+          let to = mod.ageToDate(tags[0]);
+          if (i === 0) {
+            search += " WHERE (birthday BETWEEN ? AND ?)";
+            i = 1;
+          } else {
+            search += " OR (birthday BETWEEN ? AND ?)";
+          }
+          searchData.push(from);
+          searchData.push(to);
+          searchCol.push("birthday");
+      }
+
+			let first = 0;
 			if (searchData.length > 0) {
-				searchData.forEach(function (element) {
-					if (first) {
-						search += " ORDER BY ( IF (tags LIKE ? , 1, 0)";
-						first = 0;
+				searchCol.forEach(function (element) {
+					if (first === 0) {
+            if (element === 'birthday') {
+              search += " ORDER BY ( IF ((birthday BETWEEN ? AND ?) , 1, 0)";
+              searchData.push(searchData[first]);
+              first++;
+              searchData.push(searchData[first]);
+            } else {
+              search += " ORDER BY ( IF (tags LIKE ? , 1, 0)";
+              searchData.push(searchData[first]);
+            }
 					} else {
-						search += " + IF (tags LIKE ? , 1, 0)";
+            if (element === 'birthday') {
+              search += " + IF ((birthday BETWEEN ? AND ?) , 1, 0)";
+              searchData.push(searchData[first]);
+              first++;
+              searchData.push(searchData[first]);
+            } else {
+              search += " + IF (tags LIKE ? , 1, 0)";
+              searchData.push(searchData[first]);
+            }
 					}
-					searchData.push(element);
+          first++;
 				});
 				search += ") DESC";
 			}
@@ -59,14 +94,22 @@ router.get('/:page', function (req, res) {
 					search += " LIMIT ?, ?;";
 					searchData.push(offset);
 					searchData.push(nbElementOnPage);
-					console.log(search + " | " + searchData);					
+					console.log(search + " | " + searchData);
 					return conn.query(search, searchData);
 				})
 				.then(row => {
 					conn.end();
+          let i = -1;
+          let today = new Date();
+          while (++i < row.length) {
+            let bday = new Date(row[i].birthday);
+            row[i].age = mod.dateDiff(bday, today);
+          }
 					return res.render('search', {
 						users: row,
-						nbUsers: row.length
+						nbUsers: row.length,
+            page: page + 1,
+            count: Math.ceil(row[0].count / nbElementOnPage)
 					});
 				})
 				.catch(err => {
