@@ -4,7 +4,7 @@ module.exports = {
         clientSecret: 'XAWU0ZtXsRJWFUAX04eH2bDm'
     },
     mariadb: {
-        user: 'root',
-        password: ''
+        user: 'mmoussa',
+        password: '123456'
     }
 }

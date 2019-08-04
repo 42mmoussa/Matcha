@@ -1,30 +1,40 @@
 <% include templates/header.ejs %>
 <link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="https://unpkg.com/multiple-select@1.3.1/dist/multiple-select.min.css">
+<script src="https://unpkg.com/multiple-select@1.3.1/dist/multiple-select.min.js"></script>
 
-<div id="filter-group" class="container filter-group d-flex mb-3 flex-wrap justify-content-center">
-	<div class="filter" id='tags'>
+<form  action="/search/1" method="get">
+	<div id="filter-group" class="filter-group d-flex mb-3 flex-wrap justify-content-center">
+		<div class="filter" id='tags'>
+			<select id="select" multiple="multiple" name="tags">
+				<%
+				let i = -1;
+				while (++i < locals.nbTags) {%>
+					<option value="<%= locals.tags[i].name_tag %>"><%= locals.tags[i].name_tag %></option>
+				<% } %>
+			</select>
+			<script>
+				$(function () {
+					$('#select').multipleSelect({
+						width: 200,
+						filter: true,
+						selectAll: false
+					})
+				})
+			</script>
 
-		<select id="tags-select" class="selectpicker" multiple data-live-search="true">
-		  <option>Mustard</option>
-		  <option>Ketchup</option>
-		  <option>Relish</option>
-		</select>
-			<input type="hidden" name="hidden-tags" id="hidden-tags"/>
+		</div>
+		<div class="filter">
+			<label for="customRange1">Filter by age</label>
+			<input type="range" class="custom-range"  min="18" max="100" >
+		</div>
+		<button type="submit" class="btn btn-primary">Submit</button>
 	</div>
-	<div class="filter">
-
-	</div>
-	<div class="filter">
-
-	</div>
-	<div class="filter">
-
-	</div>
-</div>
+</form>
 
 <div class="d-flex bd-highlight mb-3 flex-wrap justify-content-center">
 		<%
-		let i = -1;
+		i = -1;
 		while (++i < locals.nbUsers) {%>
 			  <a href="/profile?id=<%= locals.users[i].id_usr %>" class="user-search p-2">
 						<div class="picture" style="background-image: url('/img/<%= locals.users[i].id_usr %>/profile.jpg')"></div>
