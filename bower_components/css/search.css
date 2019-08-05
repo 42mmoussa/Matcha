@@ -29,8 +29,19 @@
 
 #filter-group {
   height: 100px;
-  margin-top: 20px;
-  border: 1px solid red;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.slider-value {
+  width: 25px;
+  padding-left: 3px;
+}
+
+.search-btn {
+  margin-left: 20px;
+  height: 40px;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .filter {
@@ -41,23 +52,6 @@
   margin-bottom: auto;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**********************************************************GENERAL***************************************************************************/
 body { 
 	font-family: 'Ubuntu', sans-serif;
 	font-weight: bold;
