@@ -5,7 +5,6 @@ const mod				= require('./mod');
 var today				= new Date();
 const passport			= require('passport');
 const passportSetup		= require('./oauth');
-const iplocation		= require("iplocation").default;
 
 router.get('/', function (req, res) {
 	if (req.session.connect) {
@@ -84,15 +83,6 @@ router.post('/login_validation', function(req, res) {
 			return conn.query("SELECT * FROM users WHERE (username = ? OR email=?) AND pwd = ?", [login, login, pwd]);
 		})
 		.then((result) => {
-			var ip = req.headers['x-forwarded-for'] || 
-						req.connection.remoteAddress || 
-						req.socket.remoteAddress ||
-						(req.connection.socket ? req.connection.socket.remoteAddress : null);
-			console.log(ip);
-			iplocation(ip, [], (error, res1) => {
-				console.log(res1);
-				
-			})
 			if (result[0] === undefined)
 				throw "bad password or username";
 			if (result[0].confirm === 1) {
