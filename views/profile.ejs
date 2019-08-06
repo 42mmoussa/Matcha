@@ -22,12 +22,13 @@
 	<div class="info">
 			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 					<ol class="carousel-indicators">
-						<% if (locals.pic >= 10 ) {%>
 						  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-						<% }
+						<% if (locals.pic >= 10) {
 						var i = -1;
 						while (++i < locals.pic % 10) { %>
-						  <li data-target="#carouselExampleIndicators" data-slide-to="<%= i %>" class="active"></li>
+						  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+						<% }} else { %>
+							<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
 						<% } %>
 					  </ol>
 					  <div class="carousel-inner">
@@ -36,13 +37,19 @@
 						  <img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
 						  <div class="edit"><a href="/about"><i class="glyphicon glyphicon-pencil"></i></a></div>
 						</div>
-					  <% }
+					  <% } else { %>
+					  <div class="carousel-item active profile-pic">
+						<img class="d-block w-100" src="/img/default.png" alt="First slide" style="max-height: 300px; max-width: 300px;">
+						<div class="edit"><a href="/about"><i class="glyphicon glyphicon-pencil"></i></a></div>
+					  </div>
+					  <% } %>
+					  <% if (locals.pic >=10) {
 					  var i = -1;
 					  while (++i < locals.pic % 10) { %>
 						<div class="carousel-item active">
 							<img class="d-block w-100" src="/img/<%= locals.id %>/image<%= i + 1 %>.jpg" alt="First slide">
 						</div>
-						<% } %>
+						<% } }%>
 					</div>
 					<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
 						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -154,42 +161,19 @@
 					editProfile.remove();
 					staticName.replaceWith('<input type="text" class="form-control" id="lname" name="lname" placeholder="Nom de famille" value="<%= locals.lastname %>" onkeyup="validator(this)"><input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" value="<%= locals.firstname %>" onkeyup="validator(this)">');
 					username.replaceWith('<input type="text" class="form-control" id="uname" name="uname" value="<%= locals.username %>" placeholder="<%= locals.username %>" aria-describedby="validationTooltipUsernamePrepend" onkeyup="validator(this)" required>');
-					orientationSplit = "<%= locals.orientation %>".toLowerCase().split(', ');
-					orientation.replaceWith(`<div class="col-sm-10" id="precheck">
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" id="heterosexual" name="heterosexual">
-							<label class="form-check-label" for="heterosexual">
-								Heterosexual
-							</label>
-						</div>
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" id="homosexual" name="homosexual">
-							<label class="form-check-label" for="homosexual">
-								Homosexual
-							</label>
-						</div>
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" id="bisexual" name="bisexual">
-							<label class="form-check-label" for="bisexual">
-								Bisexual
-							</label>
-						</div>`);
-					bio.replaceWith('<textarea class="form-control" id="bio" name="bio" rows="3" maxlength="500"><%= locals.bio %></textarea>');
+					orientation.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
+							<option value="" selected>Choose...</option>
+							<option value="Heterosexual">Heterosexual</option>
+							<option value="Homosexual">Homosexual</option>
+							<option value="Bisexual">Bisexual</option>
+							</select>`);
+					bio.replaceWith(`<textarea class="form-control" id="bio" name="bio" rows="3" maxlength="500"><%= locals.bio %></textarea>`);
 					tags.replaceWith('<div class="tags-input" data-name="tags" id="tags"></div>');
 					tags = $("#tags");
 					$.getScript("/js/tag.js");
 					for(var i = 0; i < tagsSplit.length; i++) {
 						tags.append('<span class="tag">' + tagsSplit[i] +'</span>');
 					}
-
-					itemPrecheck = $("#precheck");
-					inputPrecheck = itemPrecheck.find("input");
-					inputPrecheck.each(function(element) {
-						if (jQuery.inArray(inputPrecheck[element].id, orientationSplit) >= 0) {
-							idToCheck = inputPrecheck[element].id;
-							itemToCheck = $('#' + idToCheck).prop('checked', true);
-						}
-					})
 					$('#form-profile').append(`<div class="row">
 						<div class="col-sm-3 col-form-label">
 							<button type="submit" class="btn btn-outline-success">Modify</button>

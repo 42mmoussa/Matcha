@@ -1,0 +1,169 @@
+<% include templates/header.ejs %>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="https://unpkg.com/multiple-select@1.3.1/dist/multiple-select.min.css">
+<script src="https://unpkg.com/multiple-select@1.3.1/dist/multiple-select.min.js"></script>	
+<link rel="stylesheet" href="/css/multirange.css">
+<script src="/js/multirange.js"></script>
+
+<form  action="/search/1" method="get">
+	<div id="filter-group" class="filter-group d-flex mb-3 flex-wrap justify-content-center">
+		<div class="filter" id='tags'>
+			<select id="select" multiple="multiple" name="tags">
+				<%
+				let i = -1;
+				while (++i < locals.nbTags) {%> 
+					<option value="<%= locals.tags[i].name_tag %>"><%= locals.tags[i].name_tag %></option>
+				<% } %>
+			</select>
+			<script>
+
+				var getUrlParameter = function getUrlParameter(sParam) {
+					var sPageURL = window.location.search.substring(1),
+						sURLVariables = sPageURL.split('&'),
+						sParameterName,
+						sLstParameterName = [],
+						i;
+
+					for (i = 0; i < sURLVariables.length; i++) {
+						sParameterName = sURLVariables[i].split('=');
+
+						if (sParameterName[0] === sParam) {
+							sLstParameterName.push(sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]));
+						}
+					}
+					return sLstParameterName
+				};
+
+				var tagsParam = getUrlParameter("tags");
+				for (i = 0; i < tagsParam.length; i++) {
+					$('option[value="' + tagsParam[i] + '"]').attr("selected", "selected");
+				}
+
+				$(function () {
+					$('#select').multipleSelect({
+						width: 200,
+						filter: true,
+						selectAll: false
+					})
+				})
+				
+			</script>
+
+		</div>
+		<div class="filter">
+			<span id="slider_value1" class="slider-value">0</span>
+			<div>
+				<input name="age" id="slider" type="range" multiple value="0,100" />
+			</div>
+			<span id="slider_value2" class="slider-value">100</span>
+		</div>
+		<script>
+			$(document).on('input', '#slider.ghost', function() {
+				val = $('#slider.ghost').val();
+				orVal =  $('#slider.original').val();
+				orVal = orVal.split(',');
+				if (parseInt(orVal[0]) < parseInt(val)) {
+					$('#slider_value2').html(val);
+				} else {
+					$('#slider_value1').html(val);
+				}
+			});
+			$(document).on('input', '#slider.original', function() {
+				val =  $('#slider.original').val();
+				val = val.split(',');
+				if (parseInt(val[0]) < parseInt(val[1])) {
+					$('#slider_value1').html(val[0]);
+				} else {
+					$('#slider_value2').html(val[1]);
+				}
+			});
+
+			var ageParam = getUrlParameter("age");
+			
+			if (ageParam.length > 0) {
+				$('#slider').attr("value", ageParam[0] + ',' + ageParam[1]);
+	
+				$(document).ready(function(){
+					val =  $('#slider.original').val();
+					val = val.split(',');
+					$('#slider_value1').html(val[0]);
+					$('#slider_value2').html(val[1]);
+				});
+			}
+							
+		</script>
+		<div class="filter">
+			<select name="order" class="custom-select" id="order">
+				<option  value="default" selected>Order by</option>
+				<option value="age">Age</option>
+				<option value="popularity">Popularity</option>
+			</select>
+		</div>
+		<script>
+			var orderParam = getUrlParameter("order");
+			
+			if (orderParam.length > 0) {
+				$('#order option[value="' + orderParam[0] + '"]').attr("selected", true);
+			}
+		</script>
+		<button type="submit" class="btn btn-dark search-btn"><span class="glyphicon glyphicon-filter"></span></button>
+	</div>
+</form>
+
+<div class="d-flex bd-highlight mb-3 flex-wrap justify-content-center">
+		<%
+		i = -1;
+		while (++i < locals.nbUsers) {%>
+			  <a href="/profile?id=<%= locals.users[i].id_usr %>" class="user-search p-2">
+						<div class="picture" style="background-image: url('/img/<%= locals.users[i].id_usr %>/profile.jpg')"></div>
+						username: <%= locals.users[i].username %><br />
+						tags: <%= locals.users[i].tags %><br />
+						age: <%= locals.users[i].age %><br />
+						localisation: Quelque part<br />
+						popularity score: Score<br />
+				</a>
+		<% } %>
+</div>
+
+<% if (locals.count > 1) {%>
+<nav class="navigate">
+		<ul class="pagination">
+				<li class="page-item">
+						<a class="page-link" href="/search/<%= locals.page - 1 %>" aria-label="Previous">
+								<span aria-hidden="true">&laquo;</span>
+								<span class="sr-only">Previous</span>
+						</a>
+				</li>
+				<%
+				let i = locals.page - 1;
+				if (i > 0) {%>
+						<li class="page-item"><a class="page-link" href="/search/1">1</a></li>
+				<%}
+				if (i > 1) {
+						if (locals.page != 3) { %>
+								<li class="page-item page-link">...</li>
+						<%}%>
+						<li class="page-item"><a class="page-link" href="/search/<%= locals.page - 1 %>"><%= locals.page - 1 %></a></li>
+				<%}
+				while  (++i < locals.count && i < locals.page + 2) { %>
+						<li class="page-item"><a class="page-link" href="/search/<%= i %>"><%= i %></a></li>
+				<% }
+				if (locals.count > 1) {
+						if (locals.page < locals.count - 2) { %>
+								<li class="page-item page-link">...</li>
+						<%}%>
+						<li class="page-item"><a class="page-link" href="/search/<%= locals.count %>"><%= locals.count %></a></li>
+				<% } else if (locals.count == 3) { %>
+						<li class="page-item"><a class="page-link" href="/search/3">3</a></li>
+				<% } %>
+				<li class="page-item">
+						<a class="page-link" href="/search/<%= locals.page + 1 %>" aria-label="Next">
+								<span aria-hidden="true">&raquo;</span>
+								<span class="sr-only">Next</span>
+						</a>
+				</li>
+		</ul>
+</nav>
+<% } %>
+
+<% include templates/footer.ejs %>

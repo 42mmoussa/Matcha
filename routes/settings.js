@@ -6,7 +6,19 @@ const nodemailer = require('nodemailer');
 
 router.get('/', function (req, res, next) {
 	if (req.session.connect) {
-		res.render('settings', {
+		mod.pool.getConnection()
+		  .then((conn) => {
+			conn.query("USE matcha;")
+			.then(() => {
+				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+			})
+			.then((rows) => {
+				conn.end();
+				if (rows.length === 0) {
+					return res.redirect('/profile/create-profile');
+				}
+				return res.render('settings');
+			})
 		});
 	}
 	else {
@@ -56,10 +68,11 @@ router.post('/delete', function(req, res) {
 			})
 			.then((rows) => {
 				if (rows[0]) {
+					conn.query("DELETE FROM messages WHERE key LIKE (SELECT key FROM matchat WHERE id_usr1 = ? OR id_usr2 = ?)", [req.session.user.id, req.session.user.id]);
+					conn.query("DELETE FROM matchat WHERE id_usr1 = ? OR id_usr2 = ?", [req.session.user.id, req.session.user.id]);
 					conn.query("DELETE FROM users WHERE id_usr = ?", [req.session.user.id])
 					.then(() => {
-						req.session.user = undefined;
-						req.session.connect = undefined;
+						req.session.destroy();
 						conn.end();
 						return res.render('index', {
 							popupTitle: "Account Deleted",
@@ -207,7 +220,7 @@ router.post('/change-mail/confirm', function(req, res) {
 											pass: 'compteaminemohamad'
 										}
 									});
-		
+
 									var mailOptions = {
 										from: 'matcha.mmoussa.atelli@gmail.com',
 										to: rows[0].email,
@@ -218,7 +231,7 @@ router.post('/change-mail/confirm', function(req, res) {
 										</body>
 										</html>`
 									};
-		
+
 									transporter.sendMail(mailOptions, function(error, info){
 										if (error) {
 											console.log(error);
@@ -285,7 +298,7 @@ router.post('/change-birthdate/confirm', function(req, res) {
 				.then(() => {
 					age = mod.dateDiff(birthday, today);
 					conn.query("UPDATE users SET birthday = ? WHERE id_usr = ?", [birthday, req.session.user.id]);
-					conn.query("UPDATE profiles SET age = ? WHERE id_usr = ?", [age, req.session.user.id]);
+					conn.query("UPDATE profiles SET birthday = ? WHERE id_usr = ?", [birthday, req.session.user.id]);
 					req.session.age = age;
 					conn.end();
 					return res.render('index', {

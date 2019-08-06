@@ -17,9 +17,9 @@ router.get('/:page', function (req, res) {
     if (req.session.connect) {
         if (!isNaN(req.params.page) && req.params.page > 0) {
 
-          let nbElementOnPage = 20;
-          let page = parseInt(req.params.page, 10) - 1;
-          let offset = page * nbElementOnPage;
+			let nbElementOnPage = 20;
+			let page = parseInt(req.params.page, 10) - 1;
+			let offset = page * nbElementOnPage;
 
     		    mod.pool.getConnection()
       			.then(conn => {
