@@ -40,35 +40,36 @@
 </div>
 
 <script>
-	function chatClick() {
-		if ($('#chat-box').css('bottom') == '0px') {
-			$('#chat-box').animate({bottom: '-400px'});
-			$('#chat-box-icon').animate({bottom: '0px'});
-		} else {
-			$('#chat-box').animate({bottom: '0px'});
-			$('#chat-box-icon').animate({bottom: '400px'});
-		}
-	}
+    <% if (locals.session.connect) {%>
+        function chatClick() {
+            if ($('#chat-box').css('bottom') == '0px') {
+                $('#chat-box').animate({bottom: '-400px'});
+                $('#chat-box-icon').animate({bottom: '0px'});
+            } else {
+                $('#chat-box').animate({bottom: '0px'});
+                $('#chat-box-icon').animate({bottom: '400px'});
+            }
+        }
 
-	$(document).ready(function(){
-		$("#chat-box-icon").css('font-size', $("#chat-box-icon").height() / 1.5);
-	});
+        $(document).ready(function(){
+            $("#chat-box-icon").css('font-size', $("#chat-box-icon").height() / 1.5);
+        });
 
 
-	document.addEventListener('DOMContentLoaded', () => {
-		'use strict';
+        document.addEventListener('DOMContentLoaded', () => {
+            'use strict';
 
-		document.addEventListener('keydown', event => {
-			const charList = '\`';
-			const key = event.key.toLowerCase();
+            document.addEventListener('keydown', event => {
+                const charList = '\`';
+                const key = event.key.toLowerCase();
 
-			// we are only interested in alphanumeric keys
-			if (charList.indexOf(key) === -1) return;
+                // we are only interested in alphanumeric keys
+                if (charList.indexOf(key) === -1) return;
 
-				chatClick();
-		});
-	});
-
+                    chatClick();
+            });
+        });
+    <% } %>
 </script>
 
 <% if (locals.session.connect) { %>
