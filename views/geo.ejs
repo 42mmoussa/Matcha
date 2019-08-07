@@ -17,9 +17,32 @@
         padding: 0;
       }
     </style>
+	<script type="text/javascript" src='/jquery/dist/jquery.js'></script>
+	<script type="text/javascript" src='/bootstrap/dist/js/bootstrap.js'></script>
   </head>
 <div id="map"></div>
 <script>
+	// GET LOCATION
+	let myLoc = undefined;
+	if (navigator.geolocation) { //check if geolocation is available
+		navigator.geolocation.getCurrentPosition(function(position){
+			myLoc = position;
+			$.ajax({
+				type: 'POST',
+				url: '/maps/update-location',
+				dataType: 'json',
+				data: {
+					lat: myLoc.coords.latitude,
+					lng: myLoc.coords.longitude
+				}
+			});
+		});
+	} else {
+		console.log("Using approximate location");
+	}
+
+
+	// INIT MAP
     var map;
     function initMap() {
         lat = "<%= locals.location.latitude %>";
@@ -28,11 +51,14 @@
             lng = 0;
             zoom = 2;
         } else {
-            lat = "<%= locals.location.latitude %>";
-            lng = "<%= locals.location.longitude %>";
+            lat = parseFloat("<%= locals.location.latitude %>");
+            lng = parseFloat("<%= locals.location.longitude %>");
             zoom = 12;
         }
-		myLatLng = {lat: lat, lng: lng};		
+		myLatLng = {
+			lat: lat,
+			lng: lng
+		};		
 
         map = new google.maps.Map(document.getElementById('map'), {
             center: myLatLng,
@@ -129,11 +155,18 @@
                     lng:  users[i].lng
 				};
 				let markers = [];
-                
-                if (typeof myLatLng.lat == "number" && users[i].pictures > 0) {
+				
+                if ((typeof myLatLng.lat == "number" && users[i].pictures > 0) || (users[i].id_usr === <%- locals.session.user.id %> && myLoc !== undefined)) {
                     icon= "/img/loc.png";
                     if (users[i].id_usr === <%- locals.session.user.id %>) {
-                        icon= "/img/myloc.png";
+						icon= "/img/myloc.png";
+						
+						if (myLoc !== undefined) {
+							myLatLng = {
+								lat:  myLoc.coords.latitude,
+								lng:  myLoc.coords.longitude
+							};
+						}
 					}
 
                     var marker = new google.maps.Marker({

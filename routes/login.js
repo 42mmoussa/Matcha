@@ -155,7 +155,6 @@ router.get('/confirm-acc', function (req, res) {
 			popupMsg: "Your request expired",
 			popup: true
 			});
-			return false
 		}
 		})
 		.then((result) => {

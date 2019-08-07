@@ -126,6 +126,38 @@
             $('#toast' + nbtoast).toast("show");
 
     			nbtoast++;
-    		}
+            }
+
+            let myLoc = undefined;
+            if (navigator.geolocation) { //check if geolocation is available
+                navigator.geolocation.getCurrentPosition(SavePos, showError);
+            }
+
+            function SavePos(position) {
+                myLoc = position;
+                $.ajax({
+                    type: 'POST',
+                    url: '/maps/update-location',
+                    dataType: 'json',
+                    data: {
+                        lat: myLoc.coords.latitude,
+                        lng: myLoc.coords.longitude
+                    }
+                });
+            }
+
+            function showError(error) {                
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                    $.ajax({
+                        type: 'POST',
+                        url: '/maps/ip-location'
+                    });
+                    break;
+                }
+            }
+
     <% } %>
+
+
 </script>
