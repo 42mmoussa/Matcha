@@ -1,28 +1,81 @@
 <% include templates/header.ejs %>
-<link rel="stylesheet" href="/css/body.css">
+<link rel="stylesheet" href="/css/change-picture.css">
 <section class="container">
-	<h3>Change your Pictures</h3>
-	<% if (locals.warning) { %>
-		<div class="alert alert-warning" role="alert">
-			<% warning %>
+<h3>Change your Pictures</h3>
+<% if (locals.warning) { %>
+	<div class="alert alert-warning" role="alert">
+		<% warning %>
+	</div>
+<% } %>
+<% if (locals.success) { %>
+	<div class="alert alert-success" role="alert">
+		<%= success %>
+	</div>
+<% } %>
+<% if (locals.error) { %>
+	<div class="alert alert-danger" role="alert">
+		<%= error %>
+	</div>
+<% } %>
+<div class="contain animated bounce">
+	<form action="/change-picture/upload" method="post" enctype="multipart/form-data">
+		<div class="alert"></div>
+		<% if (locals.pic >= 10) { %>
+			<div id='img_contain'><img id="blah" align='middle' src="/img/1001/profile.jpg" alt="your image" title=''/></div> 
+		<% } else { %>
+			<div id='img_contain'><img id="blah" align='middle' src="/img/default.png" alt="your image" title=''/></div> 
+		<% } %>
+		<div class="input-group"> 
+			<div class="custom-file">
+				<input type="file" id="inputGroupFile01" name="myImage" class="imgInp custom-file-input" aria-describedby="inputGroupFileAddon01">
+				<label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+			</div>
 		</div>
-	<% } %>
-	<% if (locals.success) { %>
-		<div class="alert alert-success" role="alert">
-			<%= success %>
-		</div>
-	<% } %>
-	<% if (locals.error) { %>
-		<div class="alert alert-danger" role="alert">
-			<%= error %>
-		</div>
-	<% } %>
-	<form id="frmUploader" enctype="multipart/form-data" action="/change-picture/upload" method="post">
-		<script src="/js/photo.js"></script>
-		<img id="previewUpload" width="400" height="300" src="https://image.noelshack.com/fichiers/2019/23/3/1559750027-download.png" />
-		<input type="file" name="imgUploader" id="imageUpload" class="chooseFile" onchange="readURL(this);" />
-		<input type="submit" name="submit" id="btnSubmit" value="Upload" />
+		<% if (locals.pic > 10) {
+			var i = -1;
+			while (++i < locals.pic % 10) { %>
+			<div id='img_contain'><img id="blah" align='middle' src="/img/<%= locals.id %>/image<%= i + 1 %>.jpg" alt="your image" title=''/></div>
+			<div class="input-group"> 
+					<div class="custom-file">
+						<input type="file" id="inputGroupFile01" name="myImage" class="imgInp custom-file-input" aria-describedby="inputGroupFileAddon01">
+						<label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+					</div>
+				</div>
+		<% }} %>
+		<button type="submit" class="btn btn-primary">Submit</button>
 	</form>
+</div>
+<script type="text/javascript">
+	$("#inputGroupFile01").change(function(event) {  
+		RecurFadeIn();
+		readURL(this);
+	});
+	$("#inputGroupFile01").on('click',function(event){
+		RecurFadeIn();
+	});
+	function readURL(input) {    
+		if (input.files && input.files[0]) {   
+			var reader = new FileReader();
+			var filename = $("#inputGroupFile01").val();
+			filename = filename.substring(filename.lastIndexOf('\\')+1);
+			reader.onload = function(e) {
+				$('#blah').attr('src', e.target.result);
+				$('#blah').hide();
+				$('#blah').fadeIn(500);      
+				$('.custom-file-label').text(filename);             
+			}
+			reader.readAsDataURL(input.files[0]);    
+		} 
+		$(".alert").removeClass("loading").hide();
+	}
+	function RecurFadeIn(){ 
+		FadeInAlert("Wait for it...");  
+	}
+	function FadeInAlert(text){
+		$(".alert").show();
+		$(".alert").text(text).addClass("loading");  
+	}
+</script>
 </section>
 
 <% include templates/footer.ejs %>

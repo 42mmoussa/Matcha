@@ -22,11 +22,13 @@
 	<div class="info">
 			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 					<ol class="carousel-indicators">
-						  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+						<% if (locals.pic >= 10) { %>
+							<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+						<% } %>
 						<% if (locals.pic >= 10) {
 						var i = -1;
 						while (++i < locals.pic % 10) { %>
-						  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+						  <li data-target="#carouselExampleIndicators" data-slide-to="<% i + 1 %>"></li>
 						<% }} else { %>
 							<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
 						<% } %>
@@ -41,7 +43,7 @@
 						</div>
 					  <% } else { %>
 					  <div class="carousel-item active profile-pic">
-						<img class="d-block w-100" src="/img/default.png" alt="First slide" style="max-height: 300px; max-width: 300px;">
+						<img class="d-block w-100" src="/img/default.png" alt="First slide">
 						<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
 							<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
 						<% } %>
@@ -50,8 +52,11 @@
 					  <% if (locals.pic >=10) {
 					  var i = -1;
 					  while (++i < locals.pic % 10) { %>
-						<div class="carousel-item active">
+						<div class="carousel-item profile-pic">
 							<img class="d-block w-100" src="/img/<%= locals.id %>/image<%= i + 1 %>.jpg" alt="First slide">
+							<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
+								<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
+							<% } %>
 						</div>
 						<% } }%>
 					</div>
