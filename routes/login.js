@@ -1,10 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const crypto = require('crypto-js');
-const mod = require('./mod');
-var today = new Date();
-const passport = require('passport');
-const passportSetup = require('./oauth');
+const express			= require('express');
+const router			= express.Router();
+const crypto			= require('crypto-js');
+const mod				= require('./mod');
+var today				= new Date();
+const passport			= require('passport');
+const passportSetup		= require('./oauth');
 
 router.get('/', function (req, res) {
 	if (req.session.connect) {
@@ -155,7 +155,6 @@ router.get('/confirm-acc', function (req, res) {
 			popupMsg: "Your request expired",
 			popup: true
 			});
-			return false
 		}
 		})
 		.then((result) => {

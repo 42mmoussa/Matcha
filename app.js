@@ -34,7 +34,7 @@ const changepasswd 	= require('./routes/change-password');
 const notifications = require('./routes/notifications');
 const search        = require('./routes/search');
 const pictures      = require('./routes/change-picture');
-
+const geo		        = require('./routes/geo');
 
 // configure app
 
@@ -81,6 +81,7 @@ app.use('/login', login);
 app.use('/signup', signup);
 app.use('/swipe', swipe);
 app.use('/matchat', matchat);
+app.use('/maps', geo);
 app.use('/', index);
 
 app.use(function(req, res, next){

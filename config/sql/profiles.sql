@@ -5,11 +5,13 @@ CREATE TABLE `profiles` (
 		`lastname`		text NOT NULL,
 		`username`		varchar(50) NOT NULL,
 		`gender`		text NOT NULL,
-		`birthday`			DATE NOT NULL,
+		`birthday`		DATE NOT NULL,
 		`bio`			varchar(520),
 		`orientation`	text,
 		`pictures`		int(11) NOT NULL,
 		`tags`			text,
+		`lat`			float,
+		`lng`			float,
 		CONSTRAINT profiles_PK PRIMARY KEY (`id_profile`),
 		CONSTRAINT profiles_users_FK FOREIGN KEY (`id_usr`) REFERENCES users(`id_usr`) ON DELETE CASCADE
 );
