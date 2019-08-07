@@ -4,14 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "C:\\Users\\moham\\AppData\\Roaming\\npm\\nodemon app"
+    "start": "nodemon app.js",
+    "test": "C:\\Users\\moham\\AppData\\Roaming\\npm\\nodemon app"
   },
   "author": "mmoussa",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
     "bootstrap-social": "^5.1.1",
+    "bs-custom-file-input": "^1.3.2",
     "cookie-parser": "^1.4.4",
     "crypto-js": "^3.1.9-1",
     "dateformat": "^3.0.3",
@@ -28,6 +29,7 @@
     "nodemailer": "^6.2.1",
     "passport": "^0.4.0",
     "passport-google-oauth20": "^2.0.0",
+    "path": "^0.12.7",
     "require-sql": "^1.0.0",
     "serve-favicon": "^2.5.0",
     "socket.io": "^2.2.0",

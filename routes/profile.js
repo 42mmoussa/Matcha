@@ -244,12 +244,14 @@ router.post('/modify', function(req, res) {
 								req.session.user.lastname = lname;
 								req.session.user.username = uname;
 								conn.end();
-								return res.redirect("/");
+								return res.redirect("/profile");
 							}
 							else {
 								conn.end();
-								return res.render("profile?id_usr=" + req.session.user.id, {
-									error: "This username is already taken"
+								return res.render("index", {
+									popupTitle: "Profile",
+									popupMsg: "Username already taken",
+									popup: true
 								});
 							}
 						})

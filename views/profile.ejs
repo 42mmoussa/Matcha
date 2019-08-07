@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="/css/tag.css">
 
 <section class="container">
-	<h3>Your Profile <a href="#" id="edit-profile"><span class="glyphicon glyphicon-edit"></span></a></h3>
+	<h3>Your Profile <a href="#" id="edit-profile"><% if (locals.id == locals.session.user.id || locals.id == undefined) { %><span class="glyphicon glyphicon-edit"></span><% } %></a></h3>
 	<% if (locals.warning) { %>
 		<div class="alert alert-warning" role="alert">
 			<%= warning %>
@@ -22,11 +22,13 @@
 	<div class="info">
 			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 					<ol class="carousel-indicators">
-						  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+						<% if (locals.pic >= 10) { %>
+							<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+						<% } %>
 						<% if (locals.pic >= 10) {
 						var i = -1;
 						while (++i < locals.pic % 10) { %>
-						  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+						  <li data-target="#carouselExampleIndicators" data-slide-to="<% i + 1 %>"></li>
 						<% }} else { %>
 							<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
 						<% } %>
@@ -34,20 +36,27 @@
 					  <div class="carousel-inner">
 					  <% if (locals.pic >= 10 ) {%>
 						<div class="carousel-item active profile-pic">
-						  <img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
-						  <div class="edit"><a href="/about"><i class="glyphicon glyphicon-pencil"></i></a></div>
+						<img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
+						<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
+							<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
+						<% } %>
 						</div>
 					  <% } else { %>
 					  <div class="carousel-item active profile-pic">
-						<img class="d-block w-100" src="/img/default.png" alt="First slide" style="max-height: 300px; max-width: 300px;">
-						<div class="edit"><a href="/about"><i class="glyphicon glyphicon-pencil"></i></a></div>
+						<img class="d-block w-100" src="/img/default.png" alt="First slide">
+						<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
+							<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
+						<% } %>
 					  </div>
 					  <% } %>
 					  <% if (locals.pic >=10) {
 					  var i = -1;
 					  while (++i < locals.pic % 10) { %>
-						<div class="carousel-item active">
+						<div class="carousel-item profile-pic">
 							<img class="d-block w-100" src="/img/<%= locals.id %>/image<%= i + 1 %>.jpg" alt="First slide">
+							<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
+								<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
+							<% } %>
 						</div>
 						<% } }%>
 					</div>
@@ -135,6 +144,8 @@
 			});
 	<% } %>
 
+	<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
+
 	$(document).ready(function(){
 			editProfile = $("#edit-profile");
 			staticName = $("#staticName");
@@ -148,7 +159,7 @@
 
 			for(var i = 0; i < tagsSplit.length; i++) {
 				if (i < tagsSplit.length - 1) {
-					tags.append('<a class="tag" href="#">' + tagsSplit[i] + '</a>, ');
+					tags.append('<a class="tag" href="#">' + tagsSplit[i] + '</a> &nbsp');
 					save.append('<p class="save" style="display:none;">' + tagsSplit[i] + '</p>')
 				}
 				else {
@@ -157,6 +168,7 @@
 				}
 			}
 
+			
 			editProfile.click(function () {
 					editProfile.remove();
 					staticName.replaceWith('<input type="text" class="form-control" id="lname" name="lname" placeholder="Nom de famille" value="<%= locals.lastname %>" onkeyup="validator(this)"><input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" value="<%= locals.firstname %>" onkeyup="validator(this)">');
@@ -181,6 +193,7 @@
 					</div>`)
 				});
 		})
+		<% } %>
 </script>
 
 

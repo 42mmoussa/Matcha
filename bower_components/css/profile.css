@@ -42,7 +42,6 @@
 
 .profile-pic {
 	position: relative;
-	display: inline-block;
 }
 
 .profile-pic:hover .edit {
