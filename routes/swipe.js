@@ -13,61 +13,110 @@ router.get('/', function(req, res) {
 		}).then((profile) => {
 			if (profile.length === 0) {
 				conn.end();
-				res.redirect("/profile/create-profile");
+				return res.redirect("/profile/create-profile");
 			}
 			let b = 0;
-			let search = '';
+
+			let distCalc = "111.111 *"+
+						"DEGREES(ACOS(LEAST(COS(RADIANS(lat))"+
+						" * COS(RADIANS(?))"+
+						" * COS(RADIANS(lng - ?))"+
+						" + SIN(RADIANS(lat))"+
+						" * SIN(RADIANS(?)), 1.0)))";
+
+			let search = "SELECT * FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, "+
+						distCalc + " As Dist"+
+						" FROM profiles) as res" +
+						" WHERE res.id_usr != ? AND res.id_usr"+
+						" NOT IN (SELECT id_liked FROM likes WHERE id_usr = ?"+
+						" UNION SELECT id_disliked FROM dislikes WHERE id_usr = ?"+
+						" UNION SELECT id_favorited FROM favorites WHERE id_usr = ?)"+
+						" AND (";
+			let searchData = [];
+			let searchCol = [];
+			
 			if (/Heterosexual/.test(profile[0].orientation)) {
-				b = 1;
+				search += " (res.orientation LIKE ?"+
+				" AND res.gender = ?)";
 				if (profile[0].gender === 'man') {
-					search = "(SELECT * FROM profiles\n\
-						WHERE orientation LIKE '%Heterosexual%'\n\
-						AND gender = 'woman'\n\
-						AND pictures >= 10)";
+					searchData.push("%Heterosexual%");
+					searchData.push("woman");
+					searchCol.push("heterosexual");
 				} else {
-					search = "(SELECT * FROM profiles\n\
-						WHERE orientation LIKE '%Heterosexual%'\n\
-						AND gender = 'man'\n\
-						AND pictures >= 10)";
+					searchData.push("%Heterosexual%");
+					searchData.push("man");
+					searchCol.push("heterosexual");
 				}
 			}
-			if (/Homosexual/.test(profile[0].orientation))
+			else if (/Homosexual/.test(profile[0].orientation))
 			{
-				b = 1;
-				if (search !== '')
-					search += " UNION "
+				search += " (res.orientation LIKE ?"+
+				" AND res.gender = ?)";
 				if (profile[0].gender === 'man') {
-					search += "(SELECT * FROM profiles\n\
-						WHERE orientation LIKE '%Homosexual%'\n\
-						AND gender = 'man'\n\
-						AND pictures >= 10)";
+					searchData.push("%Homosexual%");
+					searchData.push("man");
+					searchCol.push("homosexual");
 				}
 				else {
-					search += "(SELECT * FROM profiles\n\
-						WHERE orientation LIKE '%Homosexual%'\n\
-						AND gender = 'woman'\n\
-						AND pictures >= 10)";
+					searchData.push("%Homosexual%");
+					searchData.push("woman");
+					searchCol.push("homosexual");
 				}
 			}
-			if (/Bisexual/.test(profile[0].orientation))
+			else if (/Bisexual/.test(profile[0].orientation))
 			{
-				b = 1;
-				if (search !== '')
-					search += " UNION "
-				search += "(SELECT * FROM profiles\n\
-					WHERE orientation LIKE '%Bisexual%'\n\
-					AND (gender = 'man' OR gender = 'woman')\n\
-					AND pictures >= 10)";
+				search += " (res.orientation LIKE ?"+
+					" AND (res.gender = ? OR res.gender = ?))";
+				searchData.push("%Bisexual%");
+				searchData.push("woman");
+				searchData.push("man");
+				searchCol.push("homosexual");
 			}
-			search = "SELECT * FROM (" + search;
-			search += ") as res WHERE res.id_usr\n\
-				NOT IN (SELECT id_liked FROM likes WHERE id_usr = ?\n\
-				UNION SELECT id_disliked FROM dislikes WHERE id_usr = ?\n\
-				UNION SELECT id_favorited FROM favorites WHERE id_usr = ?) ORDER BY id_usr ASC;";
-			if (b == 1) {
-				return conn.query(search, [req.session.user.id, req.session.user.id, req.session.user.id]);
-			} else
-				throw "non recognized orientation:" + profile[0].orientation;
+
+			search += ")";
+
+			let first = 0;
+			if (searchCol.length > 0) {
+				searchCol.forEach(function (element) {
+					if (first === 0) {
+						if (element === 'heterosexual' || element === 'homosexual') {
+							search += " ORDER BY ( IF (res.orientation LIKE ? AND res.gender = ? , 1000, 0)";
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+						} else if (element === 'bisexual') {
+							search += " ORDER BY ( IF (res.orientation LIKE ? AND (res.gender = ? OR res.gender = ?) , 1000, 0)";
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+						}
+					} else {
+						if (element === 'heterosexual' || element === 'homosexual') {
+							search += "+ IF (res.orientation LIKE ? AND res.gender = ? , 1000, 0)";
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+						} else if (element === 'bisexual') {
+							search += " + IF (res.orientation LIKE ? AND (res.gender = ? OR gender = ?) , 1000, 0)";
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+						}
+					}
+					first++;
+				});
+				search += " + IF (res.Dist < 1 , 400, 0)"+
+						" + IF (res.Dist < 5 , 200, 0)"+
+						" + IF (res.Dist < 7 , 100, 0)"+
+						" + IF (res.Dist < 10 , 25, 0)"+
+						") DESC;";
+			}
+			searchData.unshift(profile[0].lat, profile[0].lng, profile[0].lat, profile[0].id_usr, profile[0].id_usr, profile[0].id_usr, profile[0].id_usr);
+			return conn.query(search, searchData);
 		}).then((row) => {
 			if (row.length === 0) {
 				conn.end();

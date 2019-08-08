@@ -96,7 +96,7 @@
 			<select name="order" class="custom-select" id="order">
 				<option  value="default" selected>Order by</option>
 				<option value="age">Age</option>
-				<option value="popularity">Popularity</option>
+				<option value="distance">Distance</option>
 			</select>
 		</div>
 		<script>
@@ -125,7 +125,7 @@
 		<% } %>
 </div>
 
-<% if (locals.count > 1) {%>
+<% if (locals.count > 1) { %>
 <nav class="navigate">
 		<ul class="pagination">
 				<li class="page-item">
