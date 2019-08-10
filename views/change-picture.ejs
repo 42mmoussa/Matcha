@@ -19,56 +19,133 @@
 <% } %>
 <div class="contain animated bounce">
 	<form action="/change-picture/upload" method="post" enctype="multipart/form-data">
+		<div id ="all-images">
+		<% var i = 0; %>
+		<div id="picture<%= i %>">
+		<h5>Profile Picture</h5>
 		<div class="alert"></div>
 		<% if (locals.pic >= 10) { %>
-			<div id='img_contain'><img id="blah" align='middle' src="/img/1001/profile.jpg" alt="your image" title=''/></div> 
+			<div id='img_contain'><img class="blah" id="blah<%= i %>" align='middle' src="/img/<%= locals.id %>/profile.jpg" alt="your image" title=''/></div> 
 		<% } else { %>
-			<div id='img_contain'><img id="blah" align='middle' src="/img/default.png" alt="your image" title=''/></div> 
+			<div id='img_contain'><img class="blah" id="blah<%= i %>" align='middle' src="/img/default.png" alt="your image" title=''/></div> 
 		<% } %>
 		<div class="input-group"> 
 			<div class="custom-file">
-				<input type="file" id="inputGroupFile01" name="myImage" class="imgInp custom-file-input" aria-describedby="inputGroupFileAddon01">
-				<label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+				<input type="file" id="image<%= i %>" name="image<%= i %>" class="imgInp custom-file-input" aria-describedby="inputGroupFileAddon01">
+				<label class="custom-file-label" id="custom-file-label<%= i %>" for="image<%= i %>">Choose file</label>
 			</div>
 		</div>
+		</div>
 		<% if (locals.pic > 10) {
-			var i = -1;
-			while (++i < locals.pic % 10) { %>
-			<div id='img_contain'><img id="blah" align='middle' src="/img/<%= locals.id %>/image<%= i + 1 %>.jpg" alt="your image" title=''/></div>
+			while (++i <= locals.pic % 10) { %>
+		<div id="picture<%= i %>">
+			<h5>Picture n°<%= i + 1 %></h5>
+			<div class="alert"></div>
+			<div id='img_contain'><img class="blah" id="blah<%= i %>" align='middle' src="/img/<%= locals.id %>/image<%= i %>.jpg" alt="your image" title=''/></div>
 			<div class="input-group"> 
 					<div class="custom-file">
-						<input type="file" id="inputGroupFile01" name="myImage" class="imgInp custom-file-input" aria-describedby="inputGroupFileAddon01">
-						<label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+						<input type="file" id="image<%= i %>" name="image<%= i %>" class="imgInp custom-file-input" aria-describedby="inputGroupFileAddon01">
+						<label class="custom-file-label" id="custom-file-label<%= i %>" for="image<%= i %>">Choose file</label>
 					</div>
 				</div>
+		</div>
 		<% }} %>
-		<button type="submit" class="btn btn-primary">Submit</button>
+		</div>
+		<% if (i < 5) {%>
+			<button type="button" id="moreImages" class="btn btn-primary">Add a Picture</button>
+		<% } %>
+		<button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
 	</form>
 </div>
 <script type="text/javascript">
-	$("#inputGroupFile01").change(function(event) {  
+	var i = "<%= i + 1 %>";
+	$("#moreImages").click(function() {
+		if (i < 5) {
+			$("#all-images").append(jQuery(`<div id="picture`+ i +`">
+			<h5>Picture n°`+ i +`</h5>
+			<div class="alert"></div>
+			<div id='img_contain'><img class="blah" id="blah`+ i +`" align='middle' src="/img/default.png" alt="your image" title=''/></div>
+			<div class="input-group"> 
+					<div class="custom-file">
+						<input type="file" id="image`+ i +`" name="image`+ i +`" class="imgInp custom-file-input" aria-describedby="inputGroupFileAddon01">
+						<label class="custom-file-label" id="custom-file-label`+ i +`" for="image`+ i +`">Choose file</label>
+					</div>
+				</div>
+		</div>`));
+		var j = i;
+		$("#image" + j).change(function(event) {
+			RecurFadeIn();
+			if (this.files && this.files[0]) {
+				var reader = new FileReader();
+				var filename = $("#image" + j).val();
+				filename = filename.substring(filename.lastIndexOf('\\')+1);
+				reader.onload = function(e) {
+					$('#blah' + j).attr('src', e.target.result);
+					$('#blah' + j).hide();
+					$('#blah' + j).fadeIn(500);
+					$('#custom-file-label' + j).text(filename);
+				}
+				reader.readAsDataURL(this.files[0]);
+			} 
+			$(".alert").removeClass("loading").hide();
+		});
+		$("#image" + j).on('click',function(event){
+			RecurFadeIn();
+		});
+		i++;
+		if (i == 5) {
+			$("#moreImages").remove();
+		}
+	}
+	else {
+		$("#moreImages").remove();
+	}
+	});
+	$("#image0").change(function(event) {  
 		RecurFadeIn();
 		readURL(this);
 	});
-	$("#inputGroupFile01").on('click',function(event){
+	$("#image0").on('click',function(event){
 		RecurFadeIn();
 	});
-	function readURL(input) {    
-		if (input.files && input.files[0]) {   
+	$("#image1").change(function(event) {  
+		RecurFadeIn();
+		readURL1(this);
+	});
+	$("#image1").on('click',function(event){
+		RecurFadeIn();
+	});
+	function readURL(input) {
+		if (input.files && input.files[0]) {
 			var reader = new FileReader();
-			var filename = $("#inputGroupFile01").val();
+			var filename = $("#image0").val();
 			filename = filename.substring(filename.lastIndexOf('\\')+1);
 			reader.onload = function(e) {
-				$('#blah').attr('src', e.target.result);
-				$('#blah').hide();
-				$('#blah').fadeIn(500);      
-				$('.custom-file-label').text(filename);             
+				$('#blah0').attr('src', e.target.result);
+				$('#blah0').hide();
+				$('#blah0').fadeIn(500);
+				$('#custom-file-label0').text(filename);
 			}
-			reader.readAsDataURL(input.files[0]);    
+			reader.readAsDataURL(input.files[0]);
 		} 
 		$(".alert").removeClass("loading").hide();
 	}
-	function RecurFadeIn(){ 
+	function readURL1(input) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+			var filename = $("#image1").val();
+			filename = filename.substring(filename.lastIndexOf('\\')+1);
+			reader.onload = function(e) {
+				$('#blah1').attr('src', e.target.result);
+				$('#blah1').hide();
+				$('#blah1').fadeIn(500);
+				$('#custom-file-label1').text(filename);
+			}
+			reader.readAsDataURL(input.files[0]);
+		} 
+		$(".alert").removeClass("loading").hide();
+	}
+	function RecurFadeIn(){
 		FadeInAlert("Wait for it...");  
 	}
 	function FadeInAlert(text){

@@ -12,7 +12,7 @@ body{
 	text-align:center;
   }
   
-  #blah{  
+  .blah{  
 	max-height:256px;
 	height:auto;
 	width:auto;
