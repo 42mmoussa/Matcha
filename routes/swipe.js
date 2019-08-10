@@ -134,7 +134,8 @@ router.get('/', function(req, res) {
 		})
 		.catch(err => {
 			console.log(err);
-			conn.end(res.redirect("/"));
+			conn.end();
+			return res.redirect("/")
 		});
 	}).catch(err => {
 		//not connected
@@ -152,19 +153,23 @@ router.post('/like', function(req, res) {
 				).then(conn => {
 						conn.query("USE matcha")
 						.then(() => {
+							return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id]);
+						})
+						.then((row) => {
+							conn.query("UPDATE profiles SET pop = pop + (40 / (1 + POW(10, (pop - ?) /40))) where id_usr = ?", [row[0].pop, id]);
 							return conn.query("INSERT INTO likes(id_usr, id_liked) VALUES(?, ?)", [req.session.user.id, id]);
 						}).then((row) => {
 							return conn.query("SELECT COUNT(*) as `count` FROM likes WHERE id_usr = ? AND id_liked = ?", [id, req.session.user.id])
 						}).then((row) => {
-								conn.end();
 								if (row[0].count === 1) {
 									conn.query("INSERT INTO matchat(`id_usr1`, `id_usr2`, `key`) VALUES(?, ?, ?)", [req.session.user.id, id, uniqid()]);
 									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [id, req.session.user.id, req.session.user.username, "/matchat/" + req.session.user.id, "You just matched !", "Match with: "]);
 									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [req.session.user.id, id, username, "/matchat/" + id, "You just matched !", "Match with: "]);
+									conn.end();
 									res.send('match');
 								} else {
-									
 									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [id, req.session.user.id, req.session.user.username, "/profile?id=" + req.session.user.id, "This user liked you", "Like from: "]);
+									conn.end();
 									res.send('liked');
 								}
 						}).catch(err => {
@@ -186,14 +191,19 @@ router.post('/dislike', function(req, res) {
 		mod.pool.getConnection()
 		.then(conn => {
 			conn.query("USE matcha")
-				.then(() => {
-					conn.query("INSERT INTO dislikes(id_usr, id_disliked) VALUES(?, ?)", [req.session.user.id, id]);
-					conn.end();
-					return true;
-				}).catch(err => {
-					console.log(err);
-					res.send(false);
-				});
+			.then(() => {
+				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id]);
+			})
+			.then((row) => {
+				conn.query("UPDATE profiles SET pop = GREATEST(pop - (40 / (1 + POW(10, (? - pop) /40))), 0) where id_usr = ?", [row[0].pop, id]);
+				conn.query("INSERT INTO dislikes(id_usr, id_disliked) VALUES(?, ?)", [req.session.user.id, id]);
+				conn.end();
+				return true;
+			}).catch(err => {
+				console.log(err);
+				conn.end();
+				res.send(false);
+			});
 		}).catch(err => {
 			console.log(err);
 			res.send(false);
@@ -216,6 +226,7 @@ router.post('/fav', function(req, res) {
 					return true;
 				}).catch(err => {
 					console.log(err);
+					conn.end();
 					res.send(false);
 				});
 		}).catch(err => {

@@ -10,6 +10,7 @@ CREATE TABLE `profiles` (
 		`orientation`	text,
 		`pictures`		int(11) NOT NULL,
 		`tags`			text,
+		`pop`			int(11) NOT NULL DEFAULT 1,
 		`lat`			float,
 		`lng`			float,
 		CONSTRAINT profiles_PK PRIMARY KEY (`id_profile`),

@@ -51,9 +51,9 @@
 
 		</div>
 		<div class="filter">
-			<span id="slider_value1" class="slider-value">0</span>
+			<span id="slider_value1" class="slider-value">18</span>
 			<div>
-				<input name="age" id="slider" type="range" multiple value="0,100" />
+				<input name="age" id="slider" type="range" min="18" multiple value="18,100" />
 			</div>
 			<span id="slider_value2" class="slider-value">100</span>
 		</div>
@@ -69,9 +69,10 @@
 				}
 			});
 			$(document).on('input', '#slider.original', function() {
+				Gval = $('#slider.ghost').val();
 				val =  $('#slider.original').val();
 				val = val.split(',');
-				if (parseInt(val[0]) < parseInt(val[1])) {
+				if (parseInt(val[0]) < Gval) {
 					$('#slider_value1').html(val[0]);
 				} else {
 					$('#slider_value2').html(val[1]);
@@ -93,10 +94,87 @@
 							
 		</script>
 		<div class="filter">
+			<span id="slider_value4" class="slider-value-dist" style="text-align-last: end;">1</span>
+			<div>
+				<input name="popularity" id="sliderPop" type="range" multiple min="1" max="500" value="1,500" />
+			</div>
+			<span id="slider_value5" class="slider-value-dist">500</span>
+		</div>
+		<script>
+			$(document).on('input', '#sliderPop.ghost', function() {
+				val = $('#sliderPop.ghost').val();
+				orVal =  $('#sliderPop.original').val();
+				orVal = orVal.split(',');				
+				if (parseInt(orVal[0]) < parseInt(val)) {
+					$('#slider_value5').html(val);
+				} else {
+					$('#slider_value4').html(val);
+				}
+			});
+			$(document).on('input', '#sliderPop.original', function() {
+				Gval = $('#sliderPop.ghost').val();
+				val =  $('#sliderPop.original').val();
+				val = val.split(',');
+				if (parseInt(val[0]) < Gval) {
+					$('#slider_value4').html(val[0]);
+				} else {
+					$('#slider_value5').html(val[1]);
+				}
+			});
+
+			var popParam = getUrlParameter("popularity");
+			
+			if (popParam.length > 0) {
+				$('#sliderPop').attr("value", popParam[0] + ',' + popParam[1]);
+	
+				$(document).ready(function(){
+					val =  $('#sliderPop.original').val();
+					val = val.split(',');
+					$('#slider_value4').html(val[0]);
+					$('#slider_value5').html(val[1]);
+				});
+			}
+							
+		</script>
+		<div class="filter">
+			<div>
+				<input name="distance" id="sliderDist" type="range" max="30" value="30" step="1" />
+			</div>
+			<span id="slider_value3" class="slider-value-dist">30 and +</span>
+		</div>
+		<script>
+			$(document).on('input', '#sliderDist', function() {
+				val = $('#sliderDist').val();
+				if (val == 30) {
+					$('#slider_value3').html("30 and +");
+				} else {
+					$('#slider_value3').html(val);
+				}
+			});
+
+			var ageParam = getUrlParameter("distance");
+			
+			if (ageParam.length > 0) {
+				$('#sliderDist').attr("value", parseInt(ageParam[0]));
+	
+				$(document).ready(function(){
+					val = $('#sliderDist').val();
+					if (val == 30) {
+						$('#slider_value3').html("30 and +");
+					} else {
+						$('#slider_value3').html(val);
+					}
+				});
+			}
+							
+		</script>
+		<div class="filter">
 			<select name="order" class="custom-select" id="order">
 				<option  value="default" selected>Order by</option>
 				<option value="age">Age</option>
 				<option value="distance">Distance</option>
+				<option value="popularity">Popularity</option>
+				<option value="tags">Tags</option>
 			</select>
 		</div>
 		<script>
@@ -106,7 +184,7 @@
 				$('#order option[value="' + orderParam[0] + '"]').attr("selected", true);
 			}
 		</script>
-		<button type="submit" class="btn btn-dark search-btn"><span class="glyphicon glyphicon-filter"></span></button>
+		<button type="submit" class="btn btn-dark search-btn">filter</button>
 	</div>
 </form>
 
@@ -119,8 +197,8 @@
 						username: <%= locals.users[i].username %><br />
 						tags: <%= locals.users[i].tags %><br />
 						age: <%= locals.users[i].age %><br />
-						localisation: Quelque part<br />
-						popularity score: Score<br />
+						localisation: <%= parseInt(locals.users[i].Dist) %> km from you<br />
+						popularity score: <%= locals.users[i].pop %><br />
 				</a>
 		<% } %>
 </div>

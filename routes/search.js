@@ -28,7 +28,7 @@ router.get('/:page', function (req, res) {
 						" + SIN(RADIANS(lat))"+
 						" * SIN(RADIANS(?)), 1.0)))";
 
-			let search = "SELECT COUNT(*) OVER () as count, id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, "+
+			let search = "SELECT COUNT(*) OVER () as count, id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, pop, Dist FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, pop, "+
 						distCalc + " As Dist"+
 						" FROM profiles) as res";
       		let searchData = [];
@@ -64,7 +64,7 @@ router.get('/:page', function (req, res) {
 
 			let strAge = req.query.age;
 
-			if (strAge !== undefined && (strAge[0] != 0 || strAge[1] != 100)) {
+			if (strAge !== undefined && (strAge[0] !== "18" || strAge[1] !== "100")) {
 				let from = mod.ageToDate(parseInt(strAge[0]));
 				let to = mod.ageToDate(parseInt(strAge[1]) + 1);
 				if (from > to) {
@@ -83,9 +83,30 @@ router.get('/:page', function (req, res) {
 				searchCol.push("birthday");
 			}
 
+			let popTab = req.query.popularity;
+
+			if (popTab !== undefined && (parseInt(popTab[0]) != 1 || parseInt(popTab[1]) != 500)) {
+				let from = parseInt(popTab[0]);
+				let to = parseInt(popTab[1]);
+				if (from > to) {
+					let c = from;
+					from = to;
+					to = c;
+				}
+				if (i === 0) {
+					search += " WHERE (res.pop BETWEEN ? AND ?)";
+					i = 1;
+				} else {
+					search += " OR (res.pop BETWEEN ? AND ?)";
+				}
+				searchData.push(from);
+				searchData.push(to);
+				searchCol.push("popularity");
+			}
+
  			let strDist = req.query.distance;
 
-			if (strDist !== undefined) {
+			if (strDist !== undefined && parseInt(strDist) < 30) {
 				let maxdist = parseInt(strDist);
 				if (i === 0) {
 					search += " WHERE (res.Dist < ?)";
@@ -102,13 +123,37 @@ router.get('/:page', function (req, res) {
 			let order = req.query.order;
 			const lstOrder = [
 				"age",
-				"distance"
+				"distance",
+				"popularity",
+				"tags"
 			]
 			if (lstOrder.includes(order)) {
 				if (order === "age") {
 					search += " ORDER BY res.birthday DESC";
 				} else if (order === "distance") {
-					search += " ORDER BY res.Dist DESC";
+					search += " ORDER BY res.Dist ASC";
+				} else if (order === "popularity") {
+					search += " ORDER BY res.pop DESC";
+				} else if (order === "tags") {
+					if (tags !== undefined) {
+						if (typeof tags === "string") {
+							search += " ORDER BY ( IF (res.tags LIKE ? , 1, 0))";
+							searchData.push("%" + tags + ",%");
+						} else {
+							i = 0;
+							tags.forEach(function (element) {
+								if (i === 0) {
+									search += " ORDER BY ( IF (res.tags LIKE ? , 1, 0)";
+									i = 1;
+								} else {
+									search += " + IF (res.tags LIKE ? , 1, 0)";
+								}
+								searchData.push("%" + element + ",%");
+								searchCol.push("tags");
+							});
+							search += " ) DESC";
+						}
+					}
 				}
 			} else if (searchData.length > 0) {
 				searchCol.forEach(function (element) {
@@ -120,6 +165,11 @@ router.get('/:page', function (req, res) {
 							searchData.push(searchData[first]);
 						} else if (element === 'Distance') {
 							search += " ORDER BY ( IF (res.Dist < ? , 1, 0)";
+							searchData.push(searchData[first]);
+						} else if (element === 'popularity') {
+							search += " ORDER BY ( IF ((res.pop BETWEEN ? AND ?) , 1, 0)";
+							searchData.push(searchData[first]);
+							first++;
 							searchData.push(searchData[first]);
 						} else {
 							search += " ORDER BY ( IF (res.tags LIKE ? , 1, 0)";
@@ -133,6 +183,11 @@ router.get('/:page', function (req, res) {
 							searchData.push(searchData[first]);
 						} else if (element === 'Distance') {
 							search += " + IF (res.Dist < ? , 1, 0)";
+							searchData.push(searchData[first]);
+						} else if (element === 'populaity') {
+							search += " + IF ((res.pop BETWEEN ? AND ?) , 1, 0)";
+							searchData.push(searchData[first]);
+							first++;
 							searchData.push(searchData[first]);
 						} else {
 							search += " + IF (res.tags LIKE ? , 1, 0)";
