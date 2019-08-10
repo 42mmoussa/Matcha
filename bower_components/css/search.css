@@ -7,6 +7,11 @@
   color: #326771!important;
 }
 
+.slider-value-dist {
+  width: 70px;
+  padding-left: 3px;
+}
+
 .user-search:hover {
   text-decoration: none!important;
   background-color: #FFCAD4;

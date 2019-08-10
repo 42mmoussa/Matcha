@@ -57,10 +57,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		var isFirstTime = true;
 		var elementHeight;
 		var obj;
-    var elTrans;
-    var iUsers = <%= iUsers %>;
-    var matchUser = <%- JSON.stringify(locals.users) %>;
-    var iUser = 0;
+		var elTrans;
+		var iUsers = <%= iUsers %>;
+		var matchUser = <%- JSON.stringify(locals.users) %>;
+		var iUser = 0;
+		console.log(matchUser);
+		
 
 		obj = document.getElementById('stacked-cards-block');
 		stackedCardsObj = obj.querySelector('.stackedcards-container');

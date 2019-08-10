@@ -160,23 +160,23 @@ router.get('/confirm-acc', function (req, res) {
 		.then((result) => {
 		if (result) {
 			if (result[0].id_usr == id_usr) {
-			if (result[0].confirm == 1) {
-				conn.end();
-				return res.render('index', {
-				popupTitle: "Account",
-				popupMsg: "Your account is already confirmed",
-				popup: true
-				});
-			} else {
-				conn.query("UPDATE users SET confirm = 1 WHERE id_usr = ?", [id_usr]);
-				conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
-				conn.end();
-				return res.render('login', {
-				popupTitle: "Account",
-				popupMsg: "Your account has been confirmed",
-				popup: true
-				});
-			}
+				if (result[0].confirm == 1) {
+					conn.end();
+					return res.render('index', {
+					popupTitle: "Account",
+					popupMsg: "Your account is already confirmed",
+					popup: true
+					});
+				} else {
+					conn.query("UPDATE users SET confirm = 1 WHERE id_usr = ?", [id_usr]);
+					conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
+					conn.end();
+					return res.render('login', {
+					popupTitle: "Account",
+					popupMsg: "Your account has been confirmed",
+					popup: true
+					});
+				}
 			}
 		}
 		})

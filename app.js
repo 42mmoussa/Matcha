@@ -35,6 +35,7 @@ const notifications = require('./routes/notifications');
 const search        = require('./routes/search');
 const pictures      = require('./routes/change-picture');
 const geo		        = require('./routes/geo');
+const suggest		    = require('./routes/suggestion');
 
 // configure app
 
@@ -70,6 +71,7 @@ app.use(passport.session());
 
 // define routes
 
+app.use('/suggest', suggest);
 app.use('/change-picture', pictures);
 app.use('/notifications', notifications);
 app.use('/change-password', changepasswd);
