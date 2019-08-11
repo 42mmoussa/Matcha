@@ -116,6 +116,27 @@
 	$("#image1").on('click',function(event){
 		RecurFadeIn();
 	});
+	$("#image2").change(function(event) {  
+		RecurFadeIn();
+		readURL2(this);
+	});
+	$("#image2").on('click',function(event){
+		RecurFadeIn();
+	});
+	$("#image3").change(function(event) {  
+		RecurFadeIn();
+		readURL3(this);
+	});
+	$("#image3").on('click',function(event){
+		RecurFadeIn();
+	});
+	$("#image4").change(function(event) {  
+		RecurFadeIn();
+		readURL4(this);
+	});
+	$("#image4").on('click',function(event){
+		RecurFadeIn();
+	});
 	function readURL(input) {
 		if (input.files && input.files[0]) {
 			var reader = new FileReader();
@@ -141,6 +162,51 @@
 				$('#blah1').hide();
 				$('#blah1').fadeIn(500);
 				$('#custom-file-label1').text(filename);
+			}
+			reader.readAsDataURL(input.files[0]);
+		} 
+		$(".alert").removeClass("loading").hide();
+	}
+	function readURL2(input) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+			var filename = $("#image2").val();
+			filename = filename.substring(filename.lastIndexOf('\\')+1);
+			reader.onload = function(e) {
+				$('#blah2').attr('src', e.target.result);
+				$('#blah2').hide();
+				$('#blah2').fadeIn(500);
+				$('#custom-file-label2').text(filename);
+			}
+			reader.readAsDataURL(input.files[0]);
+		} 
+		$(".alert").removeClass("loading").hide();
+	}
+	function readURL3(input) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+			var filename = $("#image3").val();
+			filename = filename.substring(filename.lastIndexOf('\\')+1);
+			reader.onload = function(e) {
+				$('#blah3').attr('src', e.target.result);
+				$('#blah3').hide();
+				$('#blah3').fadeIn(500);
+				$('#custom-file-label3').text(filename);
+			}
+			reader.readAsDataURL(input.files[0]);
+		} 
+		$(".alert").removeClass("loading").hide();
+	}
+	function readURL4(input) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+			var filename = $("#image4").val();
+			filename = filename.substring(filename.lastIndexOf('\\')+1);
+			reader.onload = function(e) {
+				$('#blah4').attr('src', e.target.result);
+				$('#blah4').hide();
+				$('#blah4').fadeIn(500);
+				$('#custom-file-label4').text(filename);
 			}
 			reader.readAsDataURL(input.files[0]);
 		} 
