@@ -50,11 +50,11 @@
 	</div>
 	<% }} %>
 	</div>
-	<% if (i < 5) {%>
-		<button type="button" id="moreImages" class="btn btn-primary">Add a Picture</button>
-	<% } %>
-	<button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
+	<button type="submit" class="btn btn-primary">Submit</button>
 </form>
+<% if (i < 5) {%>
+	<button type="button" id="moreImages" class="btn btn-primary btn-lg btn-block">Add a Picture</button>
+<% } %>
 <script type="text/javascript">
 	if (<%= i %> == 0)
 		var i = "<%= i + 1 %>";
