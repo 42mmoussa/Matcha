@@ -30,7 +30,8 @@ router.get('/:page', function (req, res) {
 
 			let search = "SELECT COUNT(*) OVER () as count, id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, pop, Dist FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, pop, "+
 						distCalc + " As Dist"+
-						" FROM profiles) as res";
+						" FROM profiles) as res"+
+						" WHERE res.id_usr != ?";
       		let searchData = [];
 			let searchCol = [];
 
@@ -41,7 +42,7 @@ router.get('/:page', function (req, res) {
 			if (tags !== undefined) {
 				if (typeof tags === "string") {
 					if (i === 0) {
-						search += " WHERE res.tags LIKE ?";
+						search += " AND( res.tags LIKE ?";
 						i = 1;
 					} else {
 						search += " OR res.tags LIKE ?";
@@ -51,7 +52,7 @@ router.get('/:page', function (req, res) {
 				} else {
 					tags.forEach(function (element) {
 						if (i === 0) {
-							search += " WHERE res.tags LIKE ?";
+							search += " AND( res.tags LIKE ?";
 							i = 1;
 						} else {
 							search += " OR res.tags LIKE ?";
@@ -73,7 +74,7 @@ router.get('/:page', function (req, res) {
 					to = c;
 				}
 				if (i === 0) {
-					search += " WHERE (res.birthday BETWEEN ? AND ?)";
+					search += " AND( (res.birthday BETWEEN ? AND ?)";
 					i = 1;
 				} else {
 					search += " OR (res.birthday BETWEEN ? AND ?)";
@@ -94,7 +95,7 @@ router.get('/:page', function (req, res) {
 					to = c;
 				}
 				if (i === 0) {
-					search += " WHERE (res.pop BETWEEN ? AND ?)";
+					search += " AND( (res.pop BETWEEN ? AND ?)";
 					i = 1;
 				} else {
 					search += " OR (res.pop BETWEEN ? AND ?)";
@@ -109,13 +110,17 @@ router.get('/:page', function (req, res) {
 			if (strDist !== undefined && parseInt(strDist) < 30) {
 				let maxdist = parseInt(strDist);
 				if (i === 0) {
-					search += " WHERE (res.Dist < ?)";
+					search += " AND( (res.Dist < ?)";
 					i = 1;
 				} else {
 					search += " OR (res.Dist < ?)";
 				}
 				searchData.push(maxdist);
 				searchCol.push("Distance");
+			}
+
+			if (i === 1) {
+				search += ")";
 			}
 
 			let first = 0;
@@ -207,7 +212,7 @@ router.get('/:page', function (req, res) {
 				})
 				.then((me) => {
 					search += " LIMIT ?, ?;";
-					searchData.unshift(me[0].lat, me[0].lng, me[0].lat);
+					searchData.unshift(me[0].lat, me[0].lng, me[0].lat, me[0].id_usr);
 					searchData.push(offset);
 					searchData.push(nbElementOnPage);
 					console.log(search + " | " + searchData);

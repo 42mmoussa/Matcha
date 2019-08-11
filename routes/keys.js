@@ -6,6 +6,6 @@ module.exports = {
     },
     mariadb: {
         user: 'root',
-        password: '123456'
+        password: ''
     }
 }

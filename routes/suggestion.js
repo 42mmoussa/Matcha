@@ -24,7 +24,7 @@ router.get('/', function(req, res) {
 						" + SIN(RADIANS(lat))"+
 						" * SIN(RADIANS(?)), 1.0)))";
 
-			let search = "SELECT * FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, "+
+			let search = "SELECT * FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, pop, "+
 						distCalc + " As Dist"+
 						" FROM profiles) as res" +
 						" WHERE res.id_usr != ?"+
@@ -82,10 +82,44 @@ router.get('/', function(req, res) {
                 });
 			}
 
+			search += " OR res.pop BETWEEN ? - 100 AND ? + 100";
+			searchData.push(profile[0].pop);
+			searchData.push(profile[0].pop);
+			searchCol.push("pop");
+
 			search += ")";
 
 			let first = 0;
-			if (searchCol.length > 0) {
+
+			let order = req.query.order;
+			const lstOrder = [
+				"age",
+				"distance",
+				"popularity",
+				"tags"
+			]
+			if (lstOrder.includes(order)) {
+				if (order === "age") {
+					search += " ORDER BY res.birthday DESC";
+				} else if (order === "distance") {
+					search += " ORDER BY res.Dist ASC";
+				} else if (order === "popularity") {
+					search += " ORDER BY res.pop DESC";
+				} else if (order === "tags") {
+					i = 0;
+					tabTags.forEach(function (element) {
+						if (i === 0) {
+							search += " ORDER BY ( IF (res.tags LIKE ? , 1, 0)";
+							i = 1;
+						} else {
+							search += " + IF (res.tags LIKE ? , 1, 0)";
+						}
+						searchData.push("%" + element + ",%");
+						searchCol.push("tags");
+					});
+					search += " ) DESC";
+				}
+			} else if (searchCol.length > 0) {
 				searchCol.forEach(function (element) {
 					if (first === 0) {
 						if (element === 'heterosexual' || element === 'homosexual') {
@@ -102,6 +136,11 @@ router.get('/', function(req, res) {
 							searchData.push(searchData[first]);
 						} else if (element === 'tags') {
 							search += " ORDER BY ( IF (res.tags LIKE ? , 1000, 0)";
+							searchData.push(searchData[first]);
+						} else if (element === 'pop') {
+							search += " ORDER BY ( IF (res.pop BETWEEN ? - 200 AND ? + 200 , 25, 0)";
+							searchData.push(searchData[first]);
+							first++;
 							searchData.push(searchData[first]);
 						}
 					} else {
@@ -120,14 +159,18 @@ router.get('/', function(req, res) {
 						} else if (element === 'tags') {
 							search += " + IF (res.tags LIKE ? , 10, 0)";
 							searchData.push(searchData[first]);
+						} else if (element === 'pop') {
+							search += " + IF (res.pop BETWEEN ? - 200 AND ? + 200 , 25, 0)";
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
 						}
 					}
 					first++;
                 });
                 search += " + IF (res.Dist < 1 , 400, 0)"+
                     " + IF (res.Dist < 5 , 200, 0)"+
-                    " + IF (res.Dist < 7 , 100, 0)"+
-                    " + IF (res.Dist < 10 , 25, 0)"+
+                    " + IF (res.Dist < 7 , 50, 0)"+
                     ") DESC;";
 			}
             searchData.unshift(profile[0].lat, profile[0].lng, profile[0].lat, profile[0].id_usr);
