@@ -105,12 +105,11 @@ router.post('/upload', function (req, res) {
 		if (!fs.existsSync("img/" + req.session.user.id)) {
 			fs.mkdirSync("img/" + req.session.user.id);
 		}
-		var i = 0;
 		const storage = multer.diskStorage({
 			destination: "img/" + req.session.user.id,
 			filename: function(req, file, callback){
 				if (file) {
-					if (i == 0) {
+					if(file.fieldname == 'image0') {
 						mod.pool.getConnection()
 						.then((conn) => {
 							conn.query("USE matcha;")
@@ -125,22 +124,237 @@ router.post('/upload', function (req, res) {
 						});
 						callback(null, "profile.jpg");
 					}
-					else {
-						mod.pool.getConnection()
-						.then((conn) => {
-							conn.query("USE matcha;")
-							.then(() => {
-								conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
-								.then(rows => {
-									if (rows[0].pictures >= 10 && rows[0].pictures < 14)
-										conn.query("UPDATE profiles SET pictures = pictures + 1 WHERE id_usr = ?;", [req.session.user.id]);
+					if(file.fieldname == 'image1') {
+						if (fs.existsSync("img/" + req.session.user.id + "/profile.jpg"))
+						{
+							mod.pool.getConnection()
+							.then((conn) => {
+								conn.query("USE matcha;")
+								.then(() => {
+									conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+									.then(rows => {
+										if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+											conn.query("UPDATE profiles SET pictures = 11 WHERE id_usr = ?;", [req.session.user.id]);
+									});
 								});
+								conn.end();
 							});
-							conn.end();
-						});
-						callback(null, "image" + i + ".jpg");
+							callback(null, "image1.jpg");
+						}
+						else {
+							mod.pool.getConnection()
+							.then((conn) => {
+								conn.query("USE matcha;")
+								.then(() => {
+									conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+									.then(rows => {
+										if (rows[0].pictures == 0)
+											conn.query("UPDATE profiles SET pictures = 10 WHERE id_usr = ?;", [req.session.user.id]);
+									});
+								});
+								conn.end();
+							});
+							callback(null, "profile.jpg");
+						}
 					}
-					i++;
+					if(file.fieldname == 'image2') {
+						if (fs.existsSync("img/" + req.session.user.id + "/profile.jpg")) {
+							if (fs.existsSync("img/" + req.session.user.id + "/image1.jpg")) {
+								mod.pool.getConnection()
+								.then((conn) => {
+									conn.query("USE matcha;")
+									.then(() => {
+										conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+										.then(rows => {
+											if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+												conn.query("UPDATE profiles SET pictures = 12 WHERE id_usr = ?;", [req.session.user.id]);
+										});
+									});
+									conn.end();
+								});
+								callback(null, "image2.jpg");
+							}
+							else {
+								mod.pool.getConnection()
+								.then((conn) => {
+									conn.query("USE matcha;")
+									.then(() => {
+										conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+										.then(rows => {
+											if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+												conn.query("UPDATE profiles SET pictures = 11 WHERE id_usr = ?;", [req.session.user.id]);
+										});
+									});
+									conn.end();
+								});
+								callback(null, "image1.jpg");
+							}
+						}
+						else {
+							mod.pool.getConnection()
+							.then((conn) => {
+								conn.query("USE matcha;")
+								.then(() => {
+									conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+									.then(rows => {
+										if (rows[0].pictures == 0)
+											conn.query("UPDATE profiles SET pictures = 10 WHERE id_usr = ?;", [req.session.user.id]);
+									});
+								});
+								conn.end();
+							});
+							callback(null, "profile.jpg");
+						}
+					}
+					if(file.fieldname == 'image3') {
+						if (fs.existsSync("img/" + req.session.user.id + "/profile.jpg")) {
+							if (fs.existsSync("img/" + req.session.user.id + "/image1.jpg")) {
+								if (fs.existsSync("img/" + req.session.user.id + "/image2.jpg")) {
+									mod.pool.getConnection()
+									.then((conn) => {
+										conn.query("USE matcha;")
+										.then(() => {
+											conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+											.then(rows => {
+												if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+													conn.query("UPDATE profiles SET pictures = 13 WHERE id_usr = ?;", [req.session.user.id]);
+											});
+										});
+										conn.end();
+									});
+									callback(null, "image3.jpg");
+								}
+								else {
+									mod.pool.getConnection()
+									.then((conn) => {
+										conn.query("USE matcha;")
+										.then(() => {
+											conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+											.then(rows => {
+												if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+													conn.query("UPDATE profiles SET pictures = 12 WHERE id_usr = ?;", [req.session.user.id]);
+											});
+										});
+										conn.end();
+									});
+									callback(null, "image2.jpg");
+								}
+							}
+							else {
+								mod.pool.getConnection()
+								.then((conn) => {
+									conn.query("USE matcha;")
+									.then(() => {
+										conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+										.then(rows => {
+											if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+												conn.query("UPDATE profiles SET pictures = 11 WHERE id_usr = ?;", [req.session.user.id]);
+										});
+									});
+									conn.end();
+								});
+								callback(null, "image1.jpg");
+							}
+						}
+						else {
+							mod.pool.getConnection()
+							.then((conn) => {
+								conn.query("USE matcha;")
+								.then(() => {
+									conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+									.then(rows => {
+										if (rows[0].pictures == 0)
+											conn.query("UPDATE profiles SET pictures = 10 WHERE id_usr = ?;", [req.session.user.id]);
+									});
+								});
+								conn.end();
+							});
+							callback(null, "profile.jpg");
+						}
+					}
+					if(file.fieldname == 'image4') {
+						if (fs.existsSync("img/" + req.session.user.id + "/profile.jpg")) {
+							if (fs.existsSync("img/" + req.session.user.id + "/image1.jpg")) {
+								if (fs.existsSync("img/" + req.session.user.id + "/image2.jpg")) {
+									if (fs.existsSync("img/" + req.session.user.id + "/image3.jpg")) {
+										mod.pool.getConnection()
+										.then((conn) => {
+											conn.query("USE matcha;")
+											.then(() => {
+												conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+												.then(rows => {
+													if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+													conn.query("UPDATE profiles SET pictures = 14 WHERE id_usr = ?;", [req.session.user.id]);
+												});
+											});
+											conn.end();
+										});
+										callback(null, "image4.jpg");
+									}
+									else {
+										mod.pool.getConnection()
+										.then((conn) => {
+											conn.query("USE matcha;")
+											.then(() => {
+												conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+												.then(rows => {
+													if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+														conn.query("UPDATE profiles SET pictures = 13 WHERE id_usr = ?;", [req.session.user.id]);
+												});
+											});
+											conn.end();
+										});
+										callback(null, "image3.jpg");
+									}
+								}
+								else {
+									mod.pool.getConnection()
+									.then((conn) => {
+										conn.query("USE matcha;")
+										.then(() => {
+											conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+											.then(rows => {
+												if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+													conn.query("UPDATE profiles SET pictures = 12 WHERE id_usr = ?;", [req.session.user.id]);
+											});
+										});
+										conn.end();
+									});
+									callback(null, "image2.jpg");
+								}
+							}
+							else {
+								mod.pool.getConnection()
+								.then((conn) => {
+									conn.query("USE matcha;")
+									.then(() => {
+										conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+										.then(rows => {
+											if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+												conn.query("UPDATE profiles SET pictures = 11 WHERE id_usr = ?;", [req.session.user.id]);
+										});
+									});
+									conn.end();
+								});
+								callback(null, "image1.jpg");
+							}
+						}
+						else {
+							mod.pool.getConnection()
+							.then((conn) => {
+								conn.query("USE matcha;")
+								.then(() => {
+									conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+									.then(rows => {
+										if (rows[0].pictures == 0)
+											conn.query("UPDATE profiles SET pictures = 10 WHERE id_usr = ?;", [req.session.user.id]);
+									});
+								});
+								conn.end();
+							});
+							callback(null, "profile.jpg");
+						}
+					}
 				}
 			}
 			});
@@ -168,6 +382,90 @@ router.post('/upload', function (req, res) {
 				});
 			}
 			else {
+				if (fs.existsSync("img/" + req.session.user.id + "/image4.jpg")) {
+					mod.pool.getConnection()
+					.then((conn) => {
+						conn.query("USE matcha;")
+						.then(() => {
+							conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+							.then(rows => {
+								if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+									conn.query("UPDATE profiles SET pictures = 14 WHERE id_usr = ?;", [req.session.user.id]);
+							});
+						});
+						conn.end();
+					});
+				}
+				else if (fs.existsSync("img/" + req.session.user.id + "/image3.jpg")) {
+					mod.pool.getConnection()
+					.then((conn) => {
+						conn.query("USE matcha;")
+						.then(() => {
+							conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+							.then(rows => {
+								if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+									conn.query("UPDATE profiles SET pictures = 13 WHERE id_usr = ?;", [req.session.user.id]);
+							});
+						});
+						conn.end();
+					});
+				}
+				else if (fs.existsSync("img/" + req.session.user.id + "/image2.jpg")) {
+					mod.pool.getConnection()
+					.then((conn) => {
+						conn.query("USE matcha;")
+						.then(() => {
+							conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+							.then(rows => {
+								if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+									conn.query("UPDATE profiles SET pictures = 12 WHERE id_usr = ?;", [req.session.user.id]);
+							});
+						});
+						conn.end();
+					});
+				}
+				else if (fs.existsSync("img/" + req.session.user.id + "/image1.jpg")) {
+					mod.pool.getConnection()
+					.then((conn) => {
+						conn.query("USE matcha;")
+						.then(() => {
+							conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+							.then(rows => {
+								if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+									conn.query("UPDATE profiles SET pictures = 11 WHERE id_usr = ?;", [req.session.user.id]);
+							});
+						});
+						conn.end();
+					});
+				}
+				else if (fs.existsSync("img/" + req.session.user.id + "/profile.jpg")) {
+					mod.pool.getConnection()
+					.then((conn) => {
+						conn.query("USE matcha;")
+						.then(() => {
+							conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+							.then(rows => {
+								if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+									conn.query("UPDATE profiles SET pictures = 10 WHERE id_usr = ?;", [req.session.user.id]);
+							});
+						});
+						conn.end();
+					});
+				}
+				else {
+					mod.pool.getConnection()
+					.then((conn) => {
+						conn.query("USE matcha;")
+						.then(() => {
+							conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+							.then(rows => {
+								if (rows[0].pictures >= 10 && rows[0].pictures < 14)
+									conn.query("UPDATE profiles SET pictures = 0 WHERE id_usr = ?;", [req.session.user.id]);
+							});
+						});
+						conn.end();
+					});
+				}
 				res.redirect('/profile');
 			}
 		});
