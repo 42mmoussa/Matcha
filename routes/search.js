@@ -254,8 +254,7 @@ router.get('/:page', function (req, res) {
 						users: results,
 						nbUsers: results.length,
 						page: page + 1,
-						count: Math.ceil(results[0].count / nbElementOnPage),
-						filters: req.query
+						count: Math.ceil(results[0].count / nbElementOnPage)
 					});
 				})
 				.catch(err => {
