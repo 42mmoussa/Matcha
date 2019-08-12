@@ -242,6 +242,24 @@
 				</li>
 		</ul>
 </nav>
+
+<script>
+$(document).ready(function() {
+	var x = document.URL.split("?");
+	if (typeof x === "object" && x.length === 2) {
+		params = x[1];
+
+		$(".page-link").each(function() {
+			if ($(this).attr("href") != undefined ) {
+				$(this).attr("href", $(this).attr("href") + "?" + params);
+			}
+		});
+
+	}
+});
+	
+</script>
+
 <% } %>
 
 <% include templates/footer.ejs %>
