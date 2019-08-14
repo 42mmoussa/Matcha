@@ -191,3 +191,28 @@ body {
   background-size: contain;
   background-color: #FFFFFF;
 }
+
+.info_user {
+	position: absolute;
+    height: inherit;
+    top: 0;
+	width: inherit;
+	background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+	padding: 10px;
+	border-radius: 10px;
+	overflow: hidden;
+}
+
+.link-profile {
+	position: absolute;
+	top: 0px;
+	right: 5px;
+	font-size: 17px;
+}
+
+@media (max-width:576px) {
+	.link-profile {
+		font-size: 13px;
+	}
+}

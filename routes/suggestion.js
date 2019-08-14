@@ -253,6 +253,8 @@ router.get('/:page', function(req, res) {
 					conn.end();
 					if (resUsers.length === 0) {
 						return res.render('suggestion', {
+							tags: tags,
+							nbTags: tags.length,
 							popupTitle: 'Swipe',
 							popupMsg: 'We\'ve found no one',
 							popup: true

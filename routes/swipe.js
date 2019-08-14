@@ -24,7 +24,7 @@ router.get('/', function(req, res) {
 						" + SIN(RADIANS(lat))"+
 						" * SIN(RADIANS(?)), 1.0)))";
 
-			let search = "SELECT * FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, "+
+			let search = "SELECT * FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, bio, "+
 						distCalc + " As Dist"+
 						" FROM profiles) as res" +
 						" WHERE res.id_usr != ? AND res.id_usr"+
@@ -121,10 +121,21 @@ router.get('/', function(req, res) {
 			if (row.length === 0) {
 				conn.end();
 				return res.render('swipe', {
+					nb_usr: 0,
+					users: null,
 					popupTitle: 'Swipe',
 					popupMsg: 'We\'ve found no one, you are unique !',
 					popup: true
 				});
+			}
+			let i = -1;
+			let today = new Date();
+			while (++i < row.length) {
+				let bday = new Date(row[i].birthday);
+				row[i].age = mod.dateDiff(bday, today);
+				if (row[i].tags != null) {
+					row[i].tags = row[i].tags.replace(/,/g, ' ');
+				}
 			}
 			conn.end();
 			return res.render('swipe', {

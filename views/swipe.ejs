@@ -60,9 +60,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		var elTrans;
 		var iUsers = <%= iUsers %>;
 		var matchUser = <%- JSON.stringify(locals.users) %>;
-		var iUser = 0;
-		console.log(matchUser);
-		
+		var iUser = 0;		
 
 		obj = document.getElementById('stacked-cards-block');
 		stackedCardsObj = obj.querySelector('.stackedcards-container');
@@ -777,6 +775,27 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			}
 		};
 
+		function gestureClick(evt) {
+
+			if($('.info_user','.card-item:eq(0)').length == 0) {
+
+				
+				let infoUser = "<p>" + matchUser[iUser].firstname + " " + matchUser[iUser].lastname + ', ' + matchUser[iUser].age + " years old</p>";
+				infoUser += matchUser[iUser].tags != null ? "<p>" + matchUser[iUser].tags + "</p>" : "";
+				infoUser += matchUser[iUser].bio != null ? "<p>" + matchUser[iUser].bio + "</p>" : "";
+				infoUser += "<a class=\"link-profile\" target=\"_blank\"  href=\"/profile?id=" + matchUser[iUser].id_usr + "\">view profile</a>";
+
+				$("<div class=\"info_user\">" + infoUser + "</div>").hide().appendTo(".card-item:eq(0)").fadeIn(750);
+			
+			
+			} else if ($('.info_user','.card-item:eq(0)').length == 1) {
+				
+				$('.info_user','.card-item:eq(0)').fadeToggle(750);
+
+			}
+		};
+
+		element.addEventListener('click', gestureClick, false);
 		element.addEventListener('touchstart', gestureStart, false);
 		element.addEventListener('touchmove', gestureMove, false);
 		element.addEventListener('touchend', gestureEnd, false);

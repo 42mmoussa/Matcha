@@ -8,6 +8,7 @@
 <form  action="/search/1" method="get">
 	<div id="filter-group" class="filter-group d-flex mb-3 flex-wrap justify-content-center">
 		<div class="filter" id='tags'>
+			<label style="margin-right: 5px;">Tags:</label>
 			<select id="select" multiple="multiple" name="tags">
 				<%
 				let i = -1;
@@ -51,6 +52,7 @@
 
 		</div>
 		<div class="filter">
+			<label style="margin-right: 5px;">Age:</label>
 			<span id="slider_value1" class="slider-value">18</span>
 			<div>
 				<input name="age" id="slider" type="range" min="18" multiple value="18,100" />
@@ -94,6 +96,7 @@
 							
 		</script>
 		<div class="filter">
+			<label style="margin-right: 5px;">Popularity:</label>
 			<span id="slider_value4" class="slider-value-dist" style="text-align-last: end;">1</span>
 			<div>
 				<input name="popularity" id="sliderPop" type="range" multiple min="1" max="500" value="1,500" />
@@ -137,6 +140,7 @@
 							
 		</script>
 		<div class="filter">
+			<label style="margin-right: 5px;">Distance:</label>
 			<div>
 				<input name="distance" id="sliderDist" type="range" max="30" value="30" step="1" />
 			</div>
@@ -184,7 +188,7 @@
 				$('#order option[value="' + orderParam[0] + '"]').attr("selected", true);
 			}
 		</script>
-		<button type="submit" class="btn btn-dark search-btn">filter</button>
+		<button type="submit" class="btn btn-dark search-btn">search</button>
 	</div>
 </form>
 

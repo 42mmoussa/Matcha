@@ -91,7 +91,7 @@
 
         var socket = io.connect();
 
-        socket.emit('joinRoom', '<%= locals.session.user.id %>');
+        socket.emit('joinRoom', '<%= locals.session.user.id %>', '<%- locals.session.user.id %>');
 
         socket.on('notifMsg', function(data) {
 			       insertnotif(data);
