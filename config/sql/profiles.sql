@@ -13,6 +13,7 @@ CREATE TABLE `profiles` (
 		`pop`			int(11) NOT NULL DEFAULT 1,
 		`lat`			float,
 		`lng`			float,
+    	`read`		    int(1) NOT NULL DEFAULT 1,
 		CONSTRAINT profiles_PK PRIMARY KEY (`id_profile`),
 		CONSTRAINT profiles_users_FK FOREIGN KEY (`id_usr`) REFERENCES users(`id_usr`) ON DELETE CASCADE
 );
