@@ -40,7 +40,11 @@
 </div>
 
 <script>
-    <% if (locals.session.connect) {%>
+	<% if (locals.session.connect) {%>
+		<% if (locals.session.notif === 0) {  %>
+			$(".read-notif").show();
+		<% } %>
+
         function chatClick() {
             if ($('#chat-box').css('bottom') == '0px') {
                 $('#chat-box').animate({bottom: '-400px'});
@@ -94,17 +98,23 @@
         socket.emit('joinRoom', '<%= locals.session.user.id %>', '<%- locals.session.user.id %>');
 
         socket.on('notifMsg', function(data) {
-			       insertnotif(data);
+			insertnotif(data);
+			$(".read-notif").show();
+			$.ajax({
+				type: 'POST',
+				url: '/notifications/new',
+				dataType: 'json'
+			});
         });
 
         function insertnotif(data) {
 
-			       var allNotif = [];
+			var allNotif = [];
 
             if (data.msg.length >= 50) {
-				          showMsg = data.msg.substring(0,50) + '...';
+				showMsg = data.msg.substring(0,50) + '...';
             } else {
-				          showMsg = data.msg;
+				showMsg = data.msg;
             }
 
             $('#notificationMenu a').each(function () {

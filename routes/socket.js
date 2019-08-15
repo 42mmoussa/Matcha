@@ -32,6 +32,7 @@ module.exports = function (server) {
 					})
 					.then((row) => {
 						if (row.length === 0) {
+							conn.query("UPDATE profiles SET read = 0 WHERE id_usr = ?", [data.id]);
 							conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)",
 							[data.id, data.from.id, data.from.username, "/profile?id=" + data.from.id, "This user visited your profile", "Visit from: "]);
 						}
