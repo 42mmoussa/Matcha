@@ -102,7 +102,10 @@ router.post('/login_validation', function(req, res) {
 						age: mod.dateDiff(anniversaire, today)
 					};
 					req.session.connect = true;
-					req.session.notif = read[0].read;
+					req.session.notif = 1;
+					if (read.length > 0) {
+						req.session.notif = read[0].read;
+					}
 					return (conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr));
 				})
 				.then(rows => {
