@@ -14,7 +14,6 @@ module.exports = function (server) {
 		socket.on('joinRoom', (room, id_usr) => {
 			socket.user = id_usr;
 			users[socket.user] = {online: true};
-			console.log('user connected: ' + socket.user);
 			socket.join(room);
 			updateStatus();
 		});

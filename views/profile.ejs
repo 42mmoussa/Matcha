@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="/css/tag.css">
 
 <section class="container">
-	<h3>Your Profile <% if (locals.id != locals.session.user.id) { %><button id="status" class="offline"></button> <span id="last-con"><span><% } %> <% if (locals.id == locals.session.user.id || locals.id == undefined) { %><a href="#" id="edit-profile"><span class="glyphicon glyphicon-edit"></span></a><% } %><% if (locals.like === 1) { %><span class="glyphicon glyphicon-heart-empty"></span><% } %></h3>
+	<h3>Your Profile <% if (locals.id != locals.session.user.id) { %><button id="status" class="offline"></button> <span id="last-con"><span><% } %> <a href="#" id="edit-profile"><% if (locals.id == locals.session.user.id || locals.id == undefined) { %><span class="glyphicon glyphicon-edit"></span><% } %></a></h3>
 	<% if (locals.warning) { %>
 		<div class="alert alert-warning" role="alert">
 			<%= warning %>
