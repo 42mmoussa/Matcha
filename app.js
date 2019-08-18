@@ -36,6 +36,7 @@ const search        = require('./routes/search');
 const pictures      = require('./routes/change-picture');
 const geo		        = require('./routes/geo');
 const suggest		    = require('./routes/suggestion');
+const report        = require('./routes/report');
 
 // configure app
 
@@ -71,6 +72,7 @@ app.use(passport.session());
 
 // define routes
 
+app.use('/report', report);
 app.use('/suggest', suggest);
 app.use('/change-picture', pictures);
 app.use('/notifications', notifications);

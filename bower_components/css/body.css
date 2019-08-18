@@ -1,3 +1,10 @@
 #reset-passwd {
 	margin-left: 4%;
 }
+
+#reason {
+	width: 400;
+    height: 100px;
+    font-size: 18px;
+    resize: none;
+}

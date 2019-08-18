@@ -11,9 +11,15 @@
 			<%
 			var iUsers = -1;
 			while (++iUsers < locals.nb_usr && iUsers < 5) {%>
+				<% if (locals.users[iUsers].id_usr < 1001) { %>
+				<div class="card-item">
+					<div class="image" style="background-image: url('/img/default.png')"></div>
+				</div>
+				<% } else { %>
 				<div class="card-item">
 					<div class="image" style="background-image: url('/img/<%= locals.users[iUsers].id_usr %>/profile.jpg')"></div>
 				</div>
+				<% } %>
 			<%}%>
       </div>
       <div class="stackedcards--animatable stackedcards-overlay top"><span class="glyphicon glyphicon-star" aria-hidden="true"></div>
@@ -515,9 +521,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			imageUser.setAttribute("class", "image");
       if (iUsers >= <%- locals.nb_usr %>) {
         imageUser.setAttribute("style", "background-image: url('/img/Nothing.jpg')");
-      } else {
+      } else if (<%= locals.users[iUsers].id_usr %> > 1000) {
         imageUser.setAttribute("style", "background-image: url('/img/" + matchUser[iUsers].id_usr + "/profile.jpg')");
-      }
+	  }
+	  else {
+		imageUser.setAttribute("style", "background-image: url('/img/default.png')");
+	  }
 			nextUser.append(imageUser);
 			stackedCardsObj.append(nextUser);
       ++iUsers;

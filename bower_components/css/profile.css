@@ -48,6 +48,10 @@
 	display: block;
 }
 
+.profile-pic:hover .report {
+	display: block;
+}
+
 .edit {
 	/* padding-top: 7px;
 	padding-right: 7px; */
@@ -60,7 +64,23 @@
   	background-color: rgba(255, 255, 255, 0.4);
 }
 
+.report {
+	/* padding-top: 7px;
+	padding-right: 7px; */
+  	padding: 50px;
+	position: absolute;
+	right: calc(50% - 70px);
+	top: calc(50% - 70px);
+  	font-size: 30px;
+	display: none;
+  	background-color: rgba(255, 255, 255, 0.4);
+}
+
 .edit a {
+	color: #000;
+}
+
+.report a {
 	color: #000;
 }
 

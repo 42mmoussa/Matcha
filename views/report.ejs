@@ -1,0 +1,25 @@
+<% include templates/header.ejs %>
+<link rel="stylesheet" href="/css/body.css">
+<section class="container">
+    <h3>Report</h3>
+    <% if (locals.warning) { %>
+        <div class="alert alert-warning" role="alert">
+            <% warning %>
+        </div>
+    <% } %>
+    <% if (locals.success) { %>
+        <div class="alert alert-success" role="alert">
+            <%= success %>
+        </div>
+    <% } %>
+    <% if (locals.error) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= error %>
+        </div>
+    <% } %>
+    <p>Tell us why would you like to report <b style="color:red; font-size: 1.5em;"><%= locals.name %></b></p>
+    <form method="POST" action="/report/confirm_report?id=<%= locals.id %>">
+        <textarea id="reason" name="reason"></textarea><br /><br />
+        <button type="submit" class="btn btn-danger">Report</button>
+    </form>
+<% include templates/footer.ejs %>
