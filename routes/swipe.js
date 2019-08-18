@@ -13,69 +13,129 @@ router.get('/', function(req, res) {
 		}).then((profile) => {
 			if (profile.length === 0) {
 				conn.end();
-				res.redirect("/profile/create-profile");
+				return res.redirect("/profile/create-profile");
 			}
 			let b = 0;
-			let search = '';
+
+			let distCalc = "111.111 *"+
+						"DEGREES(ACOS(LEAST(COS(RADIANS(lat))"+
+						" * COS(RADIANS(?))"+
+						" * COS(RADIANS(lng - ?))"+
+						" + SIN(RADIANS(lat))"+
+						" * SIN(RADIANS(?)), 1.0)))";
+
+			let search = "SELECT * FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, bio, "+
+						distCalc + " As Dist"+
+						" FROM profiles) as res" +
+						" WHERE res.id_usr != ? AND res.id_usr"+
+						" NOT IN (SELECT id_liked FROM likes WHERE id_usr = ?"+
+						" UNION SELECT id_disliked FROM dislikes WHERE id_usr = ?"+
+						" UNION SELECT id_favorited FROM favorites WHERE id_usr = ?)"+
+						" AND (";
+			let searchData = [];
+			let searchCol = [];
+			
 			if (/Heterosexual/.test(profile[0].orientation)) {
-				b = 1;
+				search += " (res.orientation LIKE ?"+
+				" AND res.gender = ?)";
 				if (profile[0].gender === 'man') {
-					search = "(SELECT * FROM profiles\n\
-						WHERE orientation LIKE '%Heterosexual%'\n\
-						AND gender = 'woman'\n\
-						AND pictures >= 10)";
+					searchData.push("%Heterosexual%");
+					searchData.push("woman");
+					searchCol.push("heterosexual");
 				} else {
-					search = "(SELECT * FROM profiles\n\
-						WHERE orientation LIKE '%Heterosexual%'\n\
-						AND gender = 'man'\n\
-						AND pictures >= 10)";
+					searchData.push("%Heterosexual%");
+					searchData.push("man");
+					searchCol.push("heterosexual");
 				}
 			}
-			if (/Homosexual/.test(profile[0].orientation))
+			else if (/Homosexual/.test(profile[0].orientation))
 			{
-				b = 1;
-				if (search !== '')
-					search += " UNION "
+				search += " (res.orientation LIKE ?"+
+				" AND res.gender = ?)";
 				if (profile[0].gender === 'man') {
-					search += "(SELECT * FROM profiles\n\
-						WHERE orientation LIKE '%Homosexual%'\n\
-						AND gender = 'man'\n\
-						AND pictures >= 10)";
+					searchData.push("%Homosexual%");
+					searchData.push("man");
+					searchCol.push("homosexual");
 				}
 				else {
-					search += "(SELECT * FROM profiles\n\
-						WHERE orientation LIKE '%Homosexual%'\n\
-						AND gender = 'woman'\n\
-						AND pictures >= 10)";
+					searchData.push("%Homosexual%");
+					searchData.push("woman");
+					searchCol.push("homosexual");
 				}
 			}
-			if (/Bisexual/.test(profile[0].orientation))
+			else if (/Bisexual/.test(profile[0].orientation))
 			{
-				b = 1;
-				if (search !== '')
-					search += " UNION "
-				search += "(SELECT * FROM profiles\n\
-					WHERE orientation LIKE '%Bisexual%'\n\
-					AND (gender = 'man' OR gender = 'woman')\n\
-					AND pictures >= 10)";
+				search += " (res.orientation LIKE ?"+
+					" AND (res.gender = ? OR res.gender = ?))";
+				searchData.push("%Bisexual%");
+				searchData.push("woman");
+				searchData.push("man");
+				searchCol.push("homosexual");
 			}
-			search = "SELECT * FROM (" + search;
-			search += ") as res WHERE res.id_usr\n\
-				NOT IN (SELECT id_liked FROM likes WHERE id_usr = ?\n\
-				UNION SELECT id_disliked FROM dislikes WHERE id_usr = ?\n\
-				UNION SELECT id_favorited FROM favorites WHERE id_usr = ?) ORDER BY id_usr ASC;";
-			if (b == 1) {
-				return conn.query(search, [req.session.user.id, req.session.user.id, req.session.user.id]);
-			} else
-				throw "non recognized orientation:" + profile[0].orientation;
+
+			search += ")";
+
+			let first = 0;
+			if (searchCol.length > 0) {
+				searchCol.forEach(function (element) {
+					if (first === 0) {
+						if (element === 'heterosexual' || element === 'homosexual') {
+							search += " ORDER BY ( IF (res.orientation LIKE ? AND res.gender = ? , 1000, 0)";
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+						} else if (element === 'bisexual') {
+							search += " ORDER BY ( IF (res.orientation LIKE ? AND (res.gender = ? OR res.gender = ?) , 1000, 0)";
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+						}
+					} else {
+						if (element === 'heterosexual' || element === 'homosexual') {
+							search += "+ IF (res.orientation LIKE ? AND res.gender = ? , 1000, 0)";
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+						} else if (element === 'bisexual') {
+							search += " + IF (res.orientation LIKE ? AND (res.gender = ? OR gender = ?) , 1000, 0)";
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+						}
+					}
+					first++;
+				});
+				search += " + IF (res.Dist < 1 , 400, 0)"+
+						" + IF (res.Dist < 5 , 200, 0)"+
+						" + IF (res.Dist < 7 , 100, 0)"+
+						" + IF (res.Dist < 10 , 25, 0)"+
+						") DESC;";
+			}
+			searchData.unshift(profile[0].lat, profile[0].lng, profile[0].lat, profile[0].id_usr, profile[0].id_usr, profile[0].id_usr, profile[0].id_usr);
+			return conn.query(search, searchData);
 		}).then((row) => {
 			if (row.length === 0) {
 				conn.end();
 				return res.render('swipe', {
+					nb_usr: 0,
+					users: null,
 					popupTitle: 'Swipe',
 					popupMsg: 'We\'ve found no one, you are unique !',
 					popup: true
 				});
+			}
+			let i = -1;
+			let today = new Date();
+			while (++i < row.length) {
+				let bday = new Date(row[i].birthday);
+				row[i].age = mod.dateDiff(bday, today);
+				if (row[i].tags != null) {
+					row[i].tags = row[i].tags.replace(/,/g, ' ');
+				}
 			}
 			conn.end();
 			return res.render('swipe', {
@@ -85,7 +145,8 @@ router.get('/', function(req, res) {
 		})
 		.catch(err => {
 			console.log(err);
-			conn.end(res.redirect("/"));
+			conn.end();
+			return res.redirect("/")
 		});
 	}).catch(err => {
 		//not connected
@@ -103,19 +164,23 @@ router.post('/like', function(req, res) {
 				).then(conn => {
 						conn.query("USE matcha")
 						.then(() => {
+							return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id]);
+						})
+						.then((row) => {
+							conn.query("UPDATE profiles SET pop = pop + (40 / (1 + POW(10, (pop - ?) /40))) where id_usr = ?", [row[0].pop, id]);
 							return conn.query("INSERT INTO likes(id_usr, id_liked) VALUES(?, ?)", [req.session.user.id, id]);
 						}).then((row) => {
 							return conn.query("SELECT COUNT(*) as `count` FROM likes WHERE id_usr = ? AND id_liked = ?", [id, req.session.user.id])
 						}).then((row) => {
-								conn.end();
 								if (row[0].count === 1) {
 									conn.query("INSERT INTO matchat(`id_usr1`, `id_usr2`, `key`) VALUES(?, ?, ?)", [req.session.user.id, id, uniqid()]);
 									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [id, req.session.user.id, req.session.user.username, "/matchat/" + req.session.user.id, "You just matched !", "Match with: "]);
 									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [req.session.user.id, id, username, "/matchat/" + id, "You just matched !", "Match with: "]);
+									conn.end();
 									res.send('match');
 								} else {
-									
 									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [id, req.session.user.id, req.session.user.username, "/profile?id=" + req.session.user.id, "This user liked you", "Like from: "]);
+									conn.end();
 									res.send('liked');
 								}
 						}).catch(err => {
@@ -137,14 +202,19 @@ router.post('/dislike', function(req, res) {
 		mod.pool.getConnection()
 		.then(conn => {
 			conn.query("USE matcha")
-				.then(() => {
-					conn.query("INSERT INTO dislikes(id_usr, id_disliked) VALUES(?, ?)", [req.session.user.id, id]);
-					conn.end();
-					return true;
-				}).catch(err => {
-					console.log(err);
-					res.send(false);
-				});
+			.then(() => {
+				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id]);
+			})
+			.then((row) => {
+				conn.query("UPDATE profiles SET pop = GREATEST(pop - (40 / (1 + POW(10, (? - pop) /40))), 0) where id_usr = ?", [row[0].pop, id]);
+				conn.query("INSERT INTO dislikes(id_usr, id_disliked) VALUES(?, ?)", [req.session.user.id, id]);
+				conn.end();
+				return true;
+			}).catch(err => {
+				console.log(err);
+				conn.end();
+				res.send(false);
+			});
 		}).catch(err => {
 			console.log(err);
 			res.send(false);
@@ -167,6 +237,7 @@ router.post('/fav', function(req, res) {
 					return true;
 				}).catch(err => {
 					console.log(err);
+					conn.end();
 					res.send(false);
 				});
 		}).catch(err => {

@@ -28,3 +28,11 @@
 body {
   background-color: #fff6da !important;
 }
+
+.read-notif {
+    width: 7px;
+	height: 7px;
+	border-radius: 100%;
+	background-color: red;
+    float: right;
+}

@@ -65,7 +65,7 @@
 
 			key = '<%- locals.key %>';
 			var nbscroll = 1;
-			socket.emit('joinRoom', key);
+			socket.emit('joinRoom', key, '<%- locals.session.user.id %>');
 
             socket.on('message', function(data) {
 				var dt = new Date();

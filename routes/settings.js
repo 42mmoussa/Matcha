@@ -74,7 +74,7 @@ router.post('/delete', function(req, res) {
 					.then(() => {
 						req.session.destroy();
 						conn.end();
-						return res.render('index', {
+						return res.render('login', {
 							popupTitle: "Account Deleted",
 							popupMsg: "Your account has been deleted with success",
 							popup: true
@@ -133,7 +133,7 @@ router.post('/change-gender/confirm', function(req, res) {
 						conn.query("DELETE FROM matchat WHERE id_usr2 = ?", [req.session.user.id]);
 						conn.query("UPDATE profiles SET gender = ? WHERE id_usr = ?", [req.body.gender, req.session.user.id]);
 						conn.end();
-						return res.render('index', {
+						return res.render('settings', {
 							popupTitle: "Gender",
 							popupMsg: "Your gender has been changed with success",
 							popup: true
@@ -141,7 +141,7 @@ router.post('/change-gender/confirm', function(req, res) {
 					}
 					else {
 						conn.end();
-						return res.render('index');
+						return res.render('settings');
 					}
 				}
 				else {
@@ -188,7 +188,7 @@ router.post('/change-mail/confirm', function(req, res) {
 	}
 	else {
 		if (req.body.mail == req.session.user.email) {
-			return res.render('index', {
+			return res.render('settings', {
 				popupTitle: "Email",
 				popupMsg: "Your email has been changed",
 				popup: true
@@ -239,7 +239,7 @@ router.post('/change-mail/confirm', function(req, res) {
 											console.log('Email sent: ' + info.response);
 										}
 									});
-									res.render('index', {
+									res.render('settings', {
 										popupTitle: "Email",
 										popupMsg: "Your email has been changed with success",
 										popup: true
@@ -301,7 +301,7 @@ router.post('/change-birthdate/confirm', function(req, res) {
 					conn.query("UPDATE profiles SET birthday = ? WHERE id_usr = ?", [birthday, req.session.user.id]);
 					req.session.age = age;
 					conn.end();
-					return res.render('index', {
+					return res.render('settings', {
 						popupTitle: "Birthdate",
 						popupMsg: "Your birthdate has been changed with success",
 						popup: true

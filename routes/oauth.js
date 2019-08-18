@@ -26,7 +26,6 @@ passport.deserializeUser((user, done) => {
         })
     })
     .catch(err => {
-        conn.end();
         console.log(err);
     })
 });

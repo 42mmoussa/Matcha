@@ -51,8 +51,10 @@ router.get('/google/redirect', passport.authenticate('google'), function (req, r
 			})
 			.then(row => {
 				conn.end();
+				req.session.notif = 0;
 				if (row.length === 0)
 					return res.redirect("/profile/create-profile");
+				req.session.notif = row[0].read;
 				return res.redirect('/profile');
 			})
 			.catch(err => {
@@ -87,8 +89,8 @@ router.post('/login_validation', function(req, res) {
 				throw "bad password or username";
 			if (result[0].confirm === 1) {
 				firstConnection = false;
-				conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr)
-				.then((rows) => {
+				conn.query("SELECT `read` FROM profiles WHERE id_usr = ?", result[0].id_usr)
+				.then((read) => {
 					let anniversaire = new Date(result[0].birthday);
 					req.session.user = {
 						id: result[0].id_usr,
@@ -100,14 +102,20 @@ router.post('/login_validation', function(req, res) {
 						age: mod.dateDiff(anniversaire, today)
 					};
 					req.session.connect = true;
+					req.session.notif = 1;
+					if (read.length > 0) {
+						req.session.notif = read[0].read;
+					}
+					return (conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ?", result[0].id_usr));
+				})
+				.then(rows => {
+					conn.end();
 					if (rows[0].nb === 0) {
-						conn.end();
 						return res.redirect('/profile/create-profile');
 					} else {
-						conn.end();
 						return res.redirect('/');
 					}
-				})
+				});
 			} else {
 				conn.end();
 				return res.render('login', {
@@ -160,23 +168,23 @@ router.get('/confirm-acc', function (req, res) {
 		.then((result) => {
 		if (result) {
 			if (result[0].id_usr == id_usr) {
-			if (result[0].confirm == 1) {
-				conn.end();
-				return res.render('index', {
-				popupTitle: "Account",
-				popupMsg: "Your account is already confirmed",
-				popup: true
-				});
-			} else {
-				conn.query("UPDATE users SET confirm = 1 WHERE id_usr = ?", [id_usr]);
-				conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
-				conn.end();
-				return res.render('login', {
-				popupTitle: "Account",
-				popupMsg: "Your account has been confirmed",
-				popup: true
-				});
-			}
+				if (result[0].confirm == 1) {
+					conn.end();
+					return res.render('index', {
+					popupTitle: "Account",
+					popupMsg: "Your account is already confirmed",
+					popup: true
+					});
+				} else {
+					conn.query("UPDATE users SET confirm = 1 WHERE id_usr = ?", [id_usr]);
+					conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
+					conn.end();
+					return res.render('login', {
+					popupTitle: "Account",
+					popupMsg: "Your account has been confirmed",
+					popup: true
+					});
+				}
 			}
 		}
 		})

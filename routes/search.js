@@ -21,8 +21,17 @@ router.get('/:page', function (req, res) {
 			let nbElementOnPage = 20;
 			let page = parseInt(req.params.page, 10) - 1;
 			let offset = page * nbElementOnPage;
+			let distCalc = "111.111 *"+
+						"DEGREES(ACOS(LEAST(COS(RADIANS(lat))"+
+						" * COS(RADIANS(?))"+
+						" * COS(RADIANS(lng - ?))"+
+						" + SIN(RADIANS(lat))"+
+						" * SIN(RADIANS(?)), 1.0)))";
 
-			let search = "SELECT COUNT(*) OVER () as count, id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags FROM profiles";
+			let search = "SELECT COUNT(*) OVER () as count, id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, pop, Dist FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, pop, "+
+						distCalc + " As Dist"+
+						" FROM profiles) as res"+
+						" WHERE res.id_usr != ?";
       		let searchData = [];
 			let searchCol = [];
 
@@ -33,20 +42,20 @@ router.get('/:page', function (req, res) {
 			if (tags !== undefined) {
 				if (typeof tags === "string") {
 					if (i === 0) {
-						search += " WHERE tags LIKE ?";
+						search += " AND( res.tags LIKE ?";
 						i = 1;
 					} else {
-						search += " OR tags LIKE ?";
+						search += " OR res.tags LIKE ?";
 					}
 					searchData.push("%" + tags + ",%");
 					searchCol.push("tags");
 				} else {
 					tags.forEach(function (element) {
 						if (i === 0) {
-							search += " WHERE tags LIKE ?";
+							search += " AND( res.tags LIKE ?";
 							i = 1;
 						} else {
-							search += " OR tags LIKE ?";
+							search += " OR res.tags LIKE ?";
 						}
 						searchData.push("%" + element + ",%");
 						searchCol.push("tags");
@@ -56,7 +65,7 @@ router.get('/:page', function (req, res) {
 
 			let strAge = req.query.age;
 
-			if (strAge !== undefined && (strAge[0] != 0 || strAge[1] != 100)) {
+			if (strAge !== undefined && (strAge[0] !== "18" || strAge[1] !== "100")) {
 				let from = mod.ageToDate(parseInt(strAge[0]));
 				let to = mod.ageToDate(parseInt(strAge[1]) + 1);
 				if (from > to) {
@@ -65,14 +74,53 @@ router.get('/:page', function (req, res) {
 					to = c;
 				}
 				if (i === 0) {
-					search += " WHERE (birthday BETWEEN ? AND ?)";
+					search += " AND( (res.birthday BETWEEN ? AND ?)";
 					i = 1;
 				} else {
-					search += " OR (birthday BETWEEN ? AND ?)";
+					search += " OR (res.birthday BETWEEN ? AND ?)";
 				}
 				searchData.push(from);
 				searchData.push(to);
 				searchCol.push("birthday");
+			}
+
+			let popTab = req.query.popularity;
+
+			if (popTab !== undefined && (parseInt(popTab[0]) != 1 || parseInt(popTab[1]) != 500)) {
+				let from = parseInt(popTab[0]);
+				let to = parseInt(popTab[1]);
+				if (from > to) {
+					let c = from;
+					from = to;
+					to = c;
+				}
+				if (i === 0) {
+					search += " AND( (res.pop BETWEEN ? AND ?)";
+					i = 1;
+				} else {
+					search += " OR (res.pop BETWEEN ? AND ?)";
+				}
+				searchData.push(from);
+				searchData.push(to);
+				searchCol.push("popularity");
+			}
+
+ 			let strDist = req.query.distance;
+
+			if (strDist !== undefined && parseInt(strDist) < 30) {
+				let maxdist = parseInt(strDist);
+				if (i === 0) {
+					search += " AND( (res.Dist < ?)";
+					i = 1;
+				} else {
+					search += " OR (res.Dist < ?)";
+				}
+				searchData.push(maxdist);
+				searchCol.push("Distance");
+			}
+
+			if (i === 1) {
+				search += ")";
 			}
 
 			let first = 0;
@@ -80,34 +128,74 @@ router.get('/:page', function (req, res) {
 			let order = req.query.order;
 			const lstOrder = [
 				"age",
-				"popularity"
+				"distance",
+				"popularity",
+				"tags"
 			]
-			console.log(typeof order);
 			if (lstOrder.includes(order)) {
 				if (order === "age") {
-					search += " ORDER BY birthday DESC";
+					search += " ORDER BY res.birthday DESC";
+				} else if (order === "distance") {
+					search += " ORDER BY res.Dist ASC";
+				} else if (order === "popularity") {
+					search += " ORDER BY res.pop DESC";
+				} else if (order === "tags") {
+					if (tags !== undefined) {
+						if (typeof tags === "string") {
+							search += " ORDER BY ( IF (res.tags LIKE ? , 1, 0))";
+							searchData.push("%" + tags + ",%");
+						} else {
+							i = 0;
+							tags.forEach(function (element) {
+								if (i === 0) {
+									search += " ORDER BY ( IF (res.tags LIKE ? , 1, 0)";
+									i = 1;
+								} else {
+									search += " + IF (res.tags LIKE ? , 1, 0)";
+								}
+								searchData.push("%" + element + ",%");
+								searchCol.push("tags");
+							});
+							search += " ) DESC";
+						}
+					}
 				}
-			}
-			else if (searchData.length > 0) {
+			} else if (searchData.length > 0) {
 				searchCol.forEach(function (element) {
 					if (first === 0) {
 						if (element === 'birthday') {
-							search += " ORDER BY ( IF ((birthday BETWEEN ? AND ?) , 1, 0)";
+							search += " ORDER BY ( IF ((res.birthday BETWEEN ? AND ?) , 1, 0)";
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+						} else if (element === 'Distance') {
+							search += " ORDER BY ( IF (res.Dist < ? , 1, 0)";
+							searchData.push(searchData[first]);
+						} else if (element === 'popularity') {
+							search += " ORDER BY ( IF ((res.pop BETWEEN ? AND ?) , 1, 0)";
 							searchData.push(searchData[first]);
 							first++;
 							searchData.push(searchData[first]);
 						} else {
-							search += " ORDER BY ( IF (tags LIKE ? , 1, 0)";
+							search += " ORDER BY ( IF (res.tags LIKE ? , 1, 0)";
 							searchData.push(searchData[first]);
 						}
 					} else {
 						if (element === 'birthday') {
-							search += " + IF ((birthday BETWEEN ? AND ?) , 1, 0)";
+							search += " + IF ((res.birthday BETWEEN ? AND ?) , 1, 0)";
+							searchData.push(searchData[first]);
+							first++;
+							searchData.push(searchData[first]);
+						} else if (element === 'Distance') {
+							search += " + IF (res.Dist < ? , 1, 0)";
+							searchData.push(searchData[first]);
+						} else if (element === 'populaity') {
+							search += " + IF ((res.pop BETWEEN ? AND ?) , 1, 0)";
 							searchData.push(searchData[first]);
 							first++;
 							searchData.push(searchData[first]);
 						} else {
-							search += " + IF (tags LIKE ? , 1, 0)";
+							search += " + IF (res.tags LIKE ? , 1, 0)";
 							searchData.push(searchData[first]);
 						}
 					}
@@ -120,13 +208,17 @@ router.get('/:page', function (req, res) {
 			.then(conn => {
 				conn.query("USE matcha")
 				.then(() => {
+					return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+				})
+				.then((me) => {
 					search += " LIMIT ?, ?;";
+					searchData.unshift(me[0].lat, me[0].lng, me[0].lat, me[0].id_usr);
 					searchData.push(offset);
 					searchData.push(nbElementOnPage);
 					console.log(search + " | " + searchData);
 					return conn.query(search, searchData);
 				})
-				.then(row => {					
+				.then(row => {
 					if (row.length != 0) {
 						let i = -1;
 						let today = new Date();
@@ -162,8 +254,7 @@ router.get('/:page', function (req, res) {
 						users: results,
 						nbUsers: results.length,
 						page: page + 1,
-						count: Math.ceil(results[0].count / nbElementOnPage),
-						filters: req.query
+						count: Math.ceil(results[0].count / nbElementOnPage)
 					});
 				})
 				.catch(err => {

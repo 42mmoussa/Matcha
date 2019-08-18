@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="/css/tag.css">
 
 <section class="container">
-	<h3>Your Profile <a href="#" id="edit-profile"><% if (locals.id == locals.session.user.id || locals.id == undefined) { %><span class="glyphicon glyphicon-edit"></span><% } %></a></h3>
+	<h3>Your Profile <% if (locals.id != locals.session.user.id) { %><button id="status" class="offline"></button> <span id="last-con"><span><% } %> <a href="#" id="edit-profile"><% if (locals.id == locals.session.user.id || locals.id == undefined) { %><span class="glyphicon glyphicon-edit"></span><% } %></a></h3>
 	<% if (locals.warning) { %>
 		<div class="alert alert-warning" role="alert">
 			<%= warning %>
@@ -131,7 +131,7 @@
 			var socket = io.connect();
 
 			socket.emit("send_notif",
-		  {
+		  	{
 				type: "visit",
 				id: "<%- locals.id %>",
 				link: "/profile?id=",
@@ -142,6 +142,24 @@
 					id: "<%- locals.session.user.id %>"
 				}
 			});
+
+			socket.on('status', function(data){
+
+				var isUserOnline = false;
+				if (data[<%- locals.id %>] != null) {
+					isUserOnline = data[<%- locals.id %>].online
+					if (isUserOnline) {
+						$("#status").removeClass('offline');
+						$("#status").addClass('online');
+						$("#last-con").html(" ");
+					} else {
+						$("#status").removeClass('online');
+						$("#status").addClass('offline');
+						$("#last-con").html(data[<%- locals.id %>].visit);
+					}
+				}
+			});
+			
 	<% } %>
 
 	<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>

@@ -5,9 +5,11 @@ const crypto = require('crypto-js');
 var router = express.Router();
 
   router.get('/', function (req, res) {
-    return res.render('index', {
-
-    });
+    if (req.session.connect) {
+      return res.redirect('/swipe');
+    } else {
+      return res.render("index");
+    }
   });
 
   router.get('/logout', function (req, res) {
