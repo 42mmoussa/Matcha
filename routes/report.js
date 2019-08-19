@@ -58,7 +58,7 @@ router.post('/confirm_report', function (req, res) {
 							to: 'matcha.mmoussa.atelli@gmail.com',
 							subject: 'User ' + req.query.id + " reported by " + req.session.user.id,
 							html: `<p>User with id ` + req.session.user.id + ` reported user with id ` + req.query.id + ` for this reason :<br/>
-							` + req.body.reason + `</p>`
+							` + req.body.reason.trim() + `</p>`
 						};
 						transporter.sendMail(mailOptions, function(error, info){
 							if (error) {
