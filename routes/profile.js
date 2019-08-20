@@ -267,4 +267,39 @@ router.post('/modify', function(req, res) {
 	}
 });
 
+router.post('/block_user', function(req, res) {
+	var id_blocked = req.query.id;
+
+	if (id_blocked == req.session.user.id) {
+		res.render('settings', {
+			popup: true,
+			popupTitle: 'Error',
+			popupMsg: "You can't block yourself !!!!"
+		});
+	}
+	else {
+		mod.pool.getConnection()
+		.then((conn) => {
+			conn.query("USE matcha;")
+			.then(() => {
+				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+				.then(rows => {
+					user_blocked = rows[0].blocked_user;
+					if (user_blocked != null)
+						user_blocked = user_blocked + ',' + id_blocked;
+					else
+						user_blocked = id_blocked;
+					conn.query("UPDATE profiles SET blocked_user = ? WHERE id_usr = ?", [user_blocked, req.session.user.id]);
+					conn.end();
+					res.render("settings", {
+						popup: true,
+						popupTitle: "Success",
+						popupMsg: "This user has been blocked with success"
+					});
+				})
+			})
+		});
+	}
+});
+
 module.exports = router;
