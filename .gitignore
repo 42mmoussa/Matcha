@@ -60,3 +60,4 @@ typings/
 node_modules/
 img/10*
 .DS_Store
+routes/keys.js
