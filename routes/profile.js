@@ -4,10 +4,15 @@ const session = require('express-session');
 const crypto = require('crypto-js');
 const fs = require('fs');
 const mod = require('./mod');
-let	  today = new Date();
+const keys = require('./keys');
+var	  today = new Date();
 
 router.get('/', function(req, res) {
 	if (req.session.connect) {
+		if (req.session.user.age < 18) {
+			console.log(req.session.user.age);
+			return res.redirect("/settings/change-birthdate");
+		}
 		id = req.query.id;
 		if (id === undefined)
 			id = req.session.user.id;
@@ -18,7 +23,7 @@ router.get('/', function(req, res) {
 				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", id)
 			})
 			.then((rows) => {
-				if (rows[0]) {
+				if (rows.length == 1) {
 					conn.end();
 					return res.render('profile', {
 						firstname: rows[0].firstname.charAt(0).toUpperCase() + rows[0].firstname.slice(1),
@@ -30,19 +35,20 @@ router.get('/', function(req, res) {
 						gender: rows[0].gender.charAt(0).toUpperCase() + rows[0].gender.slice(1),
 						bio: rows[0].bio,
 						pic: rows[0].pictures,
-						tags: rows[0].tags
+						tags: rows[0].tags,
+						pop: rows[0].pop,
+						coords: {
+							lat: rows[0].lat,
+							lng: rows[0].lng
+						},
+						key: keys.google.key
 					});
 				} else {
+					conn.end();
 					if (id === req.session.user.id) {
-						conn.end();
 						return res.redirect('/profile/create-profile');
 					}
-					conn.end();
-					return res.render('profile', {
-						popup: true,
-						popupMsg: "This user did not create a profile",
-						popupTitle: 'Informations missing'
-					});
+					return res.redirect("/profile");
 				}
 			})
 			.catch(err => {

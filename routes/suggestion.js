@@ -4,6 +4,9 @@ const mod = require('./mod');
 
 router.get('/', function (req, res) {
     if (req.session.connect) {
+      if (req.session.user.age < 18) {
+        return res.redirect("/settings/change-birthdate");
+      }
     	res.redirect('/suggest/1');
   	} else {
   		res.redirect('/login');
@@ -13,7 +16,7 @@ router.get('/', function (req, res) {
 router.get('/:page', function(req, res) {
 	if (req.session.connect) {
 		if (!isNaN(req.params.page) && req.params.page > 0) {
-			
+
 			resUsers = [];
 
 			let nbElementOnPage = 20;
@@ -46,7 +49,7 @@ router.get('/:page', function(req, res) {
 								" AND (";
 					let searchData = [];
 					let searchCol = [];
-					
+
 					if (/Heterosexual/.test(profile[0].orientation)) {
 						search += " (res.orientation LIKE ?"+
 						" AND res.gender = ?)";
@@ -83,7 +86,7 @@ router.get('/:page', function(req, res) {
 						searchData.push("man");
 						searchCol.push("homosexual");
 					}
-					
+
 					search += " OR res.Dist < 10";
 
 					let tabTags = profile[0].tags.split(",");
@@ -154,7 +157,7 @@ router.get('/:page', function(req, res) {
 						searchData.push(maxdist);
 						searchCol.push("filterDistance");
 					}
-					
+
 					let first = 0;
 
 					let order = req.query.order;
@@ -272,7 +275,7 @@ router.get('/:page', function(req, res) {
 						}
 					}
 					console.log("ok");
-					
+
 					return res.render('suggestion', {
 						tags: tags,
 						nbTags: tags.length,
