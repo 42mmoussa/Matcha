@@ -55,6 +55,9 @@ router.get('/google/redirect', passport.authenticate('google'), function (req, r
 				if (row.length === 0)
 					return res.redirect("/profile/create-profile");
 				req.session.notif = row[0].read;
+				if (req.session.user.age < 18) {
+					return res.redirect("/settings/change-birthdate");
+				}
 				return res.redirect('/profile');
 			})
 			.catch(err => {
@@ -113,6 +116,9 @@ router.post('/login_validation', function(req, res) {
 					if (rows[0].nb === 0) {
 						return res.redirect('/profile/create-profile');
 					} else {
+						if (req.session.user.age < 18) {
+							return res.redirect("/settings/change-birthdate");
+						}
 						return res.redirect('/');
 					}
 				});

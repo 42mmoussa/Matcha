@@ -4,10 +4,13 @@ var mod = require('./mod');
 
 router.get('/', function (req, res) {
     if (req.session.connect) {
-		iframe = req.query.iframe;
-		if (isNaN(iframe))
-			iframe = 0;
-		mod.pool.getConnection()
+      if (req.session.user.age < 18) {
+        return res.redirect("/settings/change-birthdate");
+      }
+  		iframe = req.query.iframe;
+  		if (isNaN(iframe))
+  			iframe = 0;
+  		mod.pool.getConnection()
 			.then(conn => {
 				conn.query("USE matcha")
 				.then(() => {

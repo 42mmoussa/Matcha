@@ -4,8 +4,11 @@ const mod = require('./mod');
 const uniqid = require('uniqid');
 
 router.get('/', function(req, res) {
-	if (req.session.connect) {	
-	mod.pool.getConnection()
+	if (req.session.connect) {
+		if (req.session.user.age < 18) {
+			return res.redirect("/settings/change-birthdate");
+		}
+		mod.pool.getConnection()
 		.then(conn => {
 		conn.query("USE matcha")
 		.then(() => {
@@ -34,7 +37,7 @@ router.get('/', function(req, res) {
 						" AND (";
 			let searchData = [];
 			let searchCol = [];
-			
+
 			if (/Heterosexual/.test(profile[0].orientation)) {
 				search += " (res.orientation LIKE ?"+
 				" AND res.gender = ?)";
