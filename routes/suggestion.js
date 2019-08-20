@@ -246,7 +246,6 @@ router.get('/:page', function(req, res) {
 					search += " LIMIT ?, ?;";
 					searchData.push(offset);
 					searchData.push(nbElementOnPage);
-					console.log(search + " | " + searchData);
 					return conn.query(search, searchData);
 				}).then((row) => {
 					resUsers = row;
@@ -274,8 +273,6 @@ router.get('/:page', function(req, res) {
 							}
 						}
 					}
-					console.log("ok");
-
 					return res.render('suggestion', {
 						tags: tags,
 						nbTags: tags.length,

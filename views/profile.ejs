@@ -91,6 +91,7 @@
 						<% if (locals.id != locals.session.user.id && locals.id != undefined) { %>
 							<div class="report"><a href="/report?id=<%= locals.id %>"><i class="glyphicon glyphicon-trash"></i></a></div>
 						<% } %>
+						</div>
 					  <% } else if (locals.pic >= 10 ) {%>
 						<div class="carousel-item active profile-pic">
 						<img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
@@ -101,14 +102,14 @@
 						<% } %>
 						</div>
 					  <% } else { %>
-					  <div class="carousel-item active profile-pic">
-						<img class="d-block w-100" src="/img/default.png" alt="First slide">
-						<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
-							<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
-						<% } else { %>
-							<div class="report"><a href="/report?id=<%= locals.id %>"><i class="glyphicon glyphicon-trash"></i></a></div>
-						<% } %>
-					  </div>
+						<div class="carousel-item active profile-pic">
+							<img class="d-block w-100" src="/img/default.png" alt="First slide">
+							<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
+								<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
+							<% } else { %>
+								<div class="report"><a href="/report?id=<%= locals.id %>"><i class="glyphicon glyphicon-trash"></i></a></div>
+							<% } %>
+						</div>
 					  <% } %>
 					  <% if (locals.pic >=10) {
 					  var i = -1;
@@ -118,8 +119,8 @@
 							<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
 								<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
 							<% } %>
-				</div>
-				<% } }%>
+						</div>
+					<% } }%>
 			</div>
 			<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
 				<span class="carousel-control-prev-icon" aria-hidden="true"></span>

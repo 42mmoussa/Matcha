@@ -218,7 +218,6 @@ router.get('/:page', function (req, res) {
 					searchData.unshift(me[0].lat, me[0].lng, me[0].lat, me[0].id_usr);
 					searchData.push(offset);
 					searchData.push(nbElementOnPage);
-					console.log(search + " | " + searchData);
 					return conn.query(search, searchData);
 				})
 				.then(row => {
