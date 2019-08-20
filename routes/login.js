@@ -4,7 +4,7 @@ const crypto			= require('crypto-js');
 const mod				= require('./mod');
 var today				= new Date();
 const passport			= require('passport');
-const passportSetup		= require('./oauth');
+require('./oauth');
 
 router.get('/', function (req, res) {
 	if (req.session.connect) {
@@ -51,7 +51,7 @@ router.get('/google/redirect', passport.authenticate('google'), function (req, r
 			})
 			.then(row => {
 				conn.end();
-				req.session.notif = 0;
+				req.session.notif = 1;
 				if (row.length === 0)
 					return res.redirect("/profile/create-profile");
 				req.session.notif = row[0].read;
@@ -72,7 +72,8 @@ router.get('/google/redirect', passport.authenticate('google'), function (req, r
 });
 
 router.post('/login_validation', function(req, res) {
-	var login		= req.body.uname.trim();
+	const ent       = require("ent");
+	var login		= ent.encode(req.body.uname.trim());
 	var pwd			= crypto.SHA512(req.body.pwd).toString();
 
 	if (login === "" || pwd === "") {

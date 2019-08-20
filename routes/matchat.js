@@ -72,9 +72,9 @@ router.get('/:id_usr', function (req, res) {
 
 router.post('/loadmore', function (req, res) {
 	if (req.session.connect) {
-
+		const ent          = require("ent");
 		let nbscroll = req.body.nbscroll * 50;
-		let key = req.body.room;
+		let key = ent.encode(req.body.room);
 
 		mod.pool.getConnection()
 			.then(conn => {

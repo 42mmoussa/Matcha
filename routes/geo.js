@@ -1,5 +1,5 @@
 const express           = require('express');
-var router              = express.Router();
+const router            = express.Router();
 const iplocation		= require("iplocation").default;
 const keys		        = require("./keys");
 const mod				= require('./mod');
@@ -79,13 +79,32 @@ router.post('/ip-location', function (req, res) {
                     iplocation(ip, [], (error, res1) => {
                         let location = res1;
                         if (location.latitude !== null && location.longitude !== null) {
-                            conn.query("UPDATE profiles SET lat = ?, lng = ? where id_usr = ?;", [location.latitude, location.longitude, req.session.user.id]);
+                            conn.query("UPDATE profiles SET lat = ?, lng = ? WHERE id_usr = ?;", [location.latitude, location.longitude, req.session.user.id]);
                         }
+                        conn.end();
                         res.send("ip-location: success");
                     });
                 })
             });
         });
+    } else {
+        return res.redirect("/login")
+    }
+});
+
+router.post('/city-location', function (req, res) {
+    if (req.session.connect) {
+      const ent          = require("ent");
+      city = ent.encode(req.body.city);
+      mod.pool.getConnection()
+      .then(conn => {
+          conn.query("USE matcha")
+          .then(() => {
+            conn.query("UPDATE profiles SET city = ? WHERE id_usr = ?;", [city, req.session.user.id]);
+            conn.end();
+            res.send("city-location: success");
+          });
+      });
     } else {
         return res.redirect("/login")
     }

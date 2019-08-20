@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+const express    = require('express');
+const router 	 = express.Router();
 const mod        = require('./mod');
 const crypto     = require('crypto-js');
 const nodemailer = require('nodemailer');

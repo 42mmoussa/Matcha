@@ -1,8 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const session = require('express-session');
-const crypto = require('crypto-js');
-const fs = require('fs');
 const mod = require('./mod');
 const keys = require('./keys');
 var	  today = new Date();
@@ -41,6 +38,7 @@ router.get('/', function(req, res) {
 							lat: rows[0].lat,
 							lng: rows[0].lng
 						},
+						city: rows[0].city,
 						key: keys.google.key
 					});
 				} else {
@@ -159,6 +157,7 @@ router.post('/modify', function(req, res) {
 	var fname          = req.body.fname;
 	var uname          = req.body.uname;
 	var bio            = req.body.bio;
+	var city           = req.body.city;
 	var orientation    = req.body.orientation;
 	tagexist = req.body.tags.split(',');
 	for(var i = 0; i < tagexist.length - 1; i++) {
@@ -176,18 +175,16 @@ router.post('/modify', function(req, res) {
 			orientation = 'Bisexual';
 	}
 
-	if (fname == "") {
+	if (fname == "" || mod.checkname(fname) === false) {
 	  fname = req.session.user.firstname;
 	}
-	if (lname == "") {
+	if (lname == "" || mod.checkname(lname) === false) {
 	  lname = req.session.user.lastname;
 	}
-	if (uname == "") {
-	  uname = req.session.user.lastname;
+	if (uname == "" || mod.checkuid(uname) === false) {
+	  uname = req.session.user.username;
 	}
-
-	else
-	  if (req.session.connect) {
+	if (req.session.connect) {
 		mod.pool.getConnection()
 		  .then((conn) => {
 			conn.query("USE matcha;")
@@ -234,7 +231,8 @@ router.post('/modify', function(req, res) {
 				conn.query("SELECT COUNT(*) as nb FROM profiles WHERE username = ?", [uname])
 				.then(rows => {
 					if (rows[0].nb == 0) {
-						conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ?, tags = ? WHERE id_usr = ?", [lname, fname, uname, orientation, bio, tags, req.session.user.id]);
+						conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ?, tags = ?, city = ? WHERE id_usr = ?",
+						[lname, fname, uname, orientation, bio, tags, city, req.session.user.id]);
 						req.session.user.firstname = fname;
 						req.session.user.lastname = lname;
 						req.session.user.username = uname;
@@ -245,7 +243,8 @@ router.post('/modify', function(req, res) {
 						conn.query("SELECT * from profiles WHERE username = ?", [uname])
 						.then(result => {
 							if (result[0].id_usr == req.session.user.id) {
-								conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ?, tags = ? WHERE id_usr = ?", [lname, fname, uname, orientation, bio, tags, req.session.user.id]);
+								conn.query("UPDATE profiles SET lastname = ?, firstname = ?, username = ?, orientation = ?, bio = ?, tags = ?, city = ? WHERE id_usr = ?",
+								[lname, fname, uname, orientation, bio, tags, city, req.session.user.id]);
 								req.session.user.firstname = fname;
 								req.session.user.lastname = lname;
 								req.session.user.username = uname;

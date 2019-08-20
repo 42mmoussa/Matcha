@@ -1,10 +1,8 @@
 const express    = require('express');
 const router     = express.Router();
-const session    = require('express-session');
 const mod        = require('./mod');
 const crypto     = require('crypto-js');
 const nodemailer = require('nodemailer');
-const dateFormat = require('dateformat');
 
 router.get('/', function (req, res) {
 	return res.render('signup', {
