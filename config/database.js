@@ -25,12 +25,10 @@ pool.getConnection()
    .then(conn => {
 
      conn.query("CREATE DATABASE IF NOT EXISTS matcha;")
-       .then((rows) => {
-         console.log(rows);
+       .then(() => {
          return conn.query("USE matcha");
        })
-       .then((res) => {
-         console.log(res);
+       .then(() => {
          conn.query(createDB);
          conn.query(confirm);
          conn.query(profiles);
@@ -44,6 +42,7 @@ pool.getConnection()
          conn.query(matchat);
          conn.query(notifications);
          conn.end();
+         console.log("New database created successfully\nExit with CTRL+C");
        })
        .catch(err => {
          //handle error

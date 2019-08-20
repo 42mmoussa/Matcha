@@ -197,7 +197,11 @@
 		i = -1;
 		while (++i < locals.nbUsers) {%>
 			  <a href="/profile?id=<%= locals.users[i].id_usr %>" class="user-search p-2">
-						<div class="picture" style="background-image: url('/img/<%= locals.users[i].id_usr %>/profile.jpg')"></div>
+			  			<% if (locals.users[i].id_usr <= 1000) { %>
+							  <div class="picture" style="background-image: url('/img/default.png')"></div>
+						<% } else { %>
+							<div class="picture" style="background-image: url('/img/<%= locals.users[i].id_usr %>/profile.jpg')"></div>
+						<% } %>
 						username: <%= locals.users[i].username %><br />
 						tags: <%= locals.users[i].tags %><br />
 						age: <%= locals.users[i].age %><br />

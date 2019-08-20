@@ -30,13 +30,19 @@ Mohamad MOUSSA : mmoussa@student.42.fr or (+33) 07.81.78.82.38 -->
   	<ul class="navbar-nav mr-auto">
 	<% if (locals.session.connect) { %>
   	  <li class="nav-item">
+  		<a class="nav-link" href="/profile">Your profile</a>
+	  </li>
+	  <li class="nav-item">
   		<a class="nav-link" href="/swipe">Swipe</a>
   	  </li>
   	  <li class="nav-item">
-  		<a class="nav-link" href="/profile">Your profile</a>
-  	  </li>
-  	  <li class="nav-item">
-  		<a class="nav-link" href="/matchat" style="margin-top: 4px;"><span class="glyphicon glyphicon-comment"></a>
+  		<a class="nav-link" href="/matchat" target="_blank">Ma'Chat</a>
+	  </li>
+	  <li class="nav-item">
+  		<a class="nav-link" href="/maps" target="_blank">Maps</a>
+	  </li>
+	  <li class="nav-item">
+  		<a class="nav-link" href="/suggest">Suggestions</a>
   	  </li>
   	  <li class="nav-item">
 		<a class="nav-link" href="/settings">Settings</a>

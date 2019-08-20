@@ -4,6 +4,9 @@ const mod = require('./mod');
 
 router.get('/', function (req, res) {
     if (req.session.connect) {
+      if (req.session.user.age < 18) {
+        return res.redirect("/settings/change-birthdate");
+      }
       res.redirect('/search/1');
   	} else {
   		  res.redirect('/login');
@@ -13,9 +16,9 @@ router.get('/', function (req, res) {
 
 router.get('/:page', function (req, res) {
 	let results = {};
-	
+
 	if (req.session.connect) {
-		
+
 		if (!isNaN(req.params.page) && req.params.page > 0) {
 
 			let nbElementOnPage = 20;
@@ -215,7 +218,6 @@ router.get('/:page', function (req, res) {
 					searchData.unshift(me[0].lat, me[0].lng, me[0].lat, me[0].id_usr);
 					searchData.push(offset);
 					searchData.push(nbElementOnPage);
-					console.log(search + " | " + searchData);
 					return conn.query(search, searchData);
 				})
 				.then(row => {
