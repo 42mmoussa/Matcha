@@ -23,25 +23,35 @@ router.get('/', function(req, res) {
 			})
 			.then((rows) => {
 				if (rows.length == 1) {
-					conn.end();
-					return res.render('profile', {
-						firstname: rows[0].firstname.charAt(0).toUpperCase() + rows[0].firstname.slice(1),
-						lastname: rows[0].lastname.charAt(0).toUpperCase() + rows[0].lastname.slice(1),
-						username: rows[0].username,
-						id: rows[0].id_usr,
-						age: mod.dateDiff(rows[0].birthday, today),
-						orientation: rows[0].orientation.charAt(0).toUpperCase() + rows[0].orientation.slice(1),
-						gender: rows[0].gender.charAt(0).toUpperCase() + rows[0].gender.slice(1),
-						bio: rows[0].bio,
-						pic: rows[0].pictures,
-						tags: rows[0].tags,
-						pop: rows[0].pop,
-						coords: {
-							lat: rows[0].lat,
-							lng: rows[0].lng
-						},
-						key: keys.google.key
-					});
+					conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+					.then(result => {
+						 if (result[0].blocked_user != null) {
+							 blocked_user = result[0].blocked_user.split(',');
+						 }
+						 else {
+							 blocked_user = result[0].blocked_user;
+						 }
+						conn.end();
+						return res.render('profile', {
+							firstname: rows[0].firstname.charAt(0).toUpperCase() + rows[0].firstname.slice(1),
+							lastname: rows[0].lastname.charAt(0).toUpperCase() + rows[0].lastname.slice(1),
+							username: rows[0].username,
+							id: rows[0].id_usr,
+							age: mod.dateDiff(rows[0].birthday, today),
+							orientation: rows[0].orientation.charAt(0).toUpperCase() + rows[0].orientation.slice(1),
+							gender: rows[0].gender.charAt(0).toUpperCase() + rows[0].gender.slice(1),
+							bio: rows[0].bio,
+							pic: rows[0].pictures,
+							tags: rows[0].tags,
+							pop: rows[0].pop,
+							coords: {
+								lat: rows[0].lat,
+								lng: rows[0].lng
+							},
+							key: keys.google.key,
+							blocked_user: blocked_user
+						});
+					})
 				} else {
 					conn.end();
 					if (id === req.session.user.id) {
@@ -285,8 +295,21 @@ router.post('/block_user', function(req, res) {
 				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
 				.then(rows => {
 					user_blocked = rows[0].blocked_user;
-					if (user_blocked != null)
+					if (user_blocked != null) {
+						user_blocked = user_blocked.split(',')
+						for (var i = 0; i < user_blocked.length; i++) {
+							if (user_blocked[i] == id_blocked) {
+								conn.end();
+								res.render("settings", {
+									popup: true,
+									popupTitle: "ERROR",
+									popupMsg: "This user was already blocked"
+								});
+							}
+						}
+						user_blocked = user_blocked.join(',') + ',';
 						user_blocked = user_blocked + id_blocked + ',';
+					}
 					else
 						user_blocked = id_blocked + ',';
 					conn.query("UPDATE profiles SET blocked_user = ? WHERE id_usr = ?", [user_blocked, req.session.user.id]);

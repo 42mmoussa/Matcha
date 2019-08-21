@@ -190,29 +190,58 @@
 						</div>
 						<span style="display: none;" id="save"></span>
 					</form>
-					<% if (locals.id != locals.session.user.id && locals.id != undefined) { %>
-						<button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModalCenter">Block This User</button>
-						<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-							<form method="post" action="/profile/block_user?id=<%= locals.id %>">
-							<div class="modal-dialog modal-dialog-centered" role="document">
-							  <div class="modal-content">
-								<div class="modal-header">
-								  <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
-								  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								  </button>
+					<% if (locals.id != locals.session.user.id && locals.id != undefined) {
+						var j = 0;
+						if (locals.blocked_user != null) {
+						for (var i = 0; i < locals.blocked_user.length; i++) {
+							if (locals.blocked_user[i] == locals.id) { 
+								j = 1;%>
+								<button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#exampleModalCenter">Unblock This User</button>
+								<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+									<form method="post" action="/settings/unblock?id=<%= locals.id %>">
+										<div class="modal-dialog modal-dialog-centered" role="document">
+											<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="exampleModalCenterTitle">Unblock This User</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body">  
+											Are you sure you want to unblock <b><%= locals.lastname %> <%= locals.firstname %></b> ?
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+												<button type="submit" class="btn btn-outline-warning">Unblock It</button>
+											</div>
+											</div>
+										</div>
+									</form>
 								</div>
-								<div class="modal-body">  
-								Are you sure you want to block <b><%= locals.lastname %> <%= locals.firstname %></b> ?
+							<% }}} if (j == 0){%>
+								<button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModalCenter">Block This User</button>
+								<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+									<form method="post" action="/profile/block_user?id=<%= locals.id %>">
+										<div class="modal-dialog modal-dialog-centered" role="document">
+											<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="exampleModalCenterTitle">Block This User</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body">  
+											Are you sure you want to block <b><%= locals.lastname %> <%= locals.firstname %></b> ?
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+												<button type="submit" class="btn btn-outline-danger">Block It</button>
+											</div>
+											</div>
+										</div>
+									</form>
 								</div>
-								<div class="modal-footer">
-								  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-								  <button type="submit" class="btn btn-outline-danger">Block It</button>
-								</div>
-							  </div>
-							</div>
-						</form>
-						  </div>
+							<% } %>
 					<% } %>
 				</fieldset>
 		</div>
