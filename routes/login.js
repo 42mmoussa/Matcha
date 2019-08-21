@@ -160,7 +160,6 @@ router.get('/confirm-acc', function (req, res) {
 		return conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ? AND confirmkey = ?", [id_usr, crypto.SHA512(confirmkey).toString()]);
 		})
 		.then((row) => {
-		console.log(row[0]);
 		if (row[0].nb === 1) {
 			return conn.query("SELECT * FROM users WHERE id_usr = ?", [id_usr]);
 		} else {

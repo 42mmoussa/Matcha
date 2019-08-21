@@ -40,9 +40,28 @@ router.post('/confirm_report', function (req, res) {
 		.then(conn => {
 			conn.query("USE matcha")
 			.then(() => {
-				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.query.id])
+				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
 				.then(rows => {
-					if (rows[0]) {
+					if (rows.length !== 0) {
+						already_blocked = rows[0].blocked_user.split(',');
+						if (already_blocked != null) {
+							for (var i = 0; i < already_blocked.length; i++) {
+								if (already_blocked[i] == id_blocked) {
+									conn.end();
+									res.render("settings", {
+										popup: true,
+										popupTitle: "ERROR",
+										popupMsg: "This user was already blocked"
+									});
+								}
+							}
+							already_blocked = already_blocked.join(',') + ',';
+							new_blocked = already_blocked + req.query.id + ',';
+						}
+						else {
+							new_blocked = req.query.id + ',';
+						}
+						conn.query("UPDATE profiles SET blocked_user = ? WHERE id_usr = ?", [new_blocked, req.session.user.id]);
 						conn.end();
 						var transporter = nodemailer.createTransport({
 							service: 'gmail',

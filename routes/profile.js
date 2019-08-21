@@ -7,7 +7,6 @@ var	  today = new Date();
 router.get('/', function(req, res) {
 	if (req.session.connect) {
 		if (req.session.user.age < 18) {
-			console.log(req.session.user.age);
 			return res.redirect("/settings/change-birthdate");
 		}
 		id = req.query.id;
@@ -24,10 +23,16 @@ router.get('/', function(req, res) {
 					conn.query("SELECT * FROM likes WHERE id_usr = ? AND id_liked = ?", [req.session.user.id, id])
 					.then(like => {
 						let liked = like.length > 0 ? 'green' : 'red';
+						if (rows[0].blocked_user != null) {
+							blocked_user = rows[0].blocked_user.split(',');
+						}
+						else {
+							blocked_user = rows[0].blocked_user;
+						}
 						conn.end();
 						return res.render('profile', {
-							firstname: rows[0].firstname,
-							lastname: rows[0].lastname,
+							firstname: rows[0].firstname.charAt(0).toUpperCase() + rows[0].firstname.slice(1),
+							lastname: rows[0].lastname.charAt(0).toUpperCase() + rows[0].lastname.slice(1),
 							username: rows[0].username,
 							id: rows[0].id_usr,
 							age: mod.dateDiff(rows[0].birthday, today),
@@ -43,7 +48,8 @@ router.get('/', function(req, res) {
 								lng: rows[0].lng
 							},
 							city: rows[0].city,
-							key: keys.google.key
+							key: keys.google.key,
+							blocked_user: blocked_user
 						});
 					})
 				} else {
@@ -290,10 +296,23 @@ router.post('/block_user', function(req, res) {
 				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
 				.then(rows => {
 					user_blocked = rows[0].blocked_user;
-					if (user_blocked != null)
-						user_blocked = user_blocked + ',' + id_blocked;
+					if (user_blocked != null) {
+						user_blocked = user_blocked.split(',')
+						for (var i = 0; i < user_blocked.length; i++) {
+							if (user_blocked[i] == id_blocked) {
+								conn.end();
+								res.render("settings", {
+									popup: true,
+									popupTitle: "ERROR",
+									popupMsg: "This user was already blocked"
+								});
+							}
+						}
+						user_blocked = user_blocked.join(',') + ',';
+						user_blocked = user_blocked + id_blocked + ',';
+					}
 					else
-						user_blocked = id_blocked;
+						user_blocked = id_blocked + ',';
 					conn.query("UPDATE profiles SET blocked_user = ? WHERE id_usr = ?", [user_blocked, req.session.user.id]);
 					conn.end();
 					res.render("settings", {

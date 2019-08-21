@@ -1,0 +1,35 @@
+<% include templates/header.ejs %>
+<link rel="stylesheet" href="/css/body.css">
+<section class="container">
+	<h3>Manage Blocked Users</h3>
+	<% if (locals.warning) { %>
+		<div class="alert alert-warning" role="alert">
+			<% warning %>
+		</div>
+	<% } %>
+	<% if (locals.success) { %>
+		<div class="alert alert-success" role="alert">
+			<%= success %>
+		</div>
+	<% } %>
+	<% if (locals.error) { %>
+		<div class="alert alert-danger" role="alert">
+			<%= error %>
+		</div>
+	<% } %>
+	<hr />
+	<% if(locals.blocked_users != null) {
+		for(var i = 0; i < locals.blocked_users.length; i++) { %>
+		<form method="POST" action="/settings/unblock?id=<%= locals.blocked_users[i].id_usr %>">
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label"><a href="/profile?id=<%= locals.blocked_users[i].id_usr %>"> <%= locals.blocked_users[i].firstname %> <%= locals.blocked_users[i].lastname %></a></label>
+				<div class="col-sm-10">
+					<button type="submit" id="unblock<%= locals.blocked_users[i].id_usr %>" class="btn btn-outline-warning">Unblock This User</button>
+				</div>
+			</div>
+		</form>
+		<hr />
+	<% }} %>
+</section>
+
+<% include templates/footer.ejs %>
