@@ -163,6 +163,9 @@ router.post('/like', function(req, res) {
 		if (req.session.connect) {
 				let id = req.body.id;
 				let username = req.body.username;
+				if (id == req.session.user.id) {
+						return res.send(false);
+				}
 				mod.pool.getConnection(
 				).then(conn => {
 						conn.query("USE matcha")
@@ -170,12 +173,13 @@ router.post('/like', function(req, res) {
 							return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id]);
 						})
 						.then((row) => {
-							conn.query("UPDATE profiles SET pop = pop + (40 / (1 + POW(10, (pop - ?) /40))) where id_usr = ?", [row[0].pop, id]);
+							conn.query("DELETE FROM dislikes WHERE id_usr = ? AND id_disliked = ?", [req.session.user.id, id]);
+							conn.query("UPDATE profiles SET pop = pop + (20 / (1 + POW(10, (pop - ?) /20))) where id_usr = ?", [row[0].pop, id]);
 							return conn.query("INSERT INTO likes(id_usr, id_liked) VALUES(?, ?)", [req.session.user.id, id]);
 						}).then((row) => {
 							return conn.query("SELECT COUNT(*) as `count` FROM likes WHERE id_usr = ? AND id_liked = ?", [id, req.session.user.id])
 						}).then((row) => {
-								if (row[0].count === 1) {
+								if (row[0].count > 0) {
 									conn.query("INSERT INTO matchat(`id_usr1`, `id_usr2`, `key`) VALUES(?, ?, ?)", [req.session.user.id, id, uniqid()]);
 									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [id, req.session.user.id, req.session.user.username, "/matchat/" + req.session.user.id, "You just matched !", "Match with: "]);
 									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [req.session.user.id, id, username, "/matchat/" + id, "You just matched !", "Match with: "]);
@@ -209,7 +213,9 @@ router.post('/dislike', function(req, res) {
 				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id]);
 			})
 			.then((row) => {
-				conn.query("UPDATE profiles SET pop = GREATEST(pop - (40 / (1 + POW(10, (? - pop) /40))), 0) where id_usr = ?", [row[0].pop, id]);
+				conn.query("DELETE FROM likes WHERE id_usr = ? AND id_liked = ?", [req.session.user.id, id]);
+				conn.query("DELETE FROM matchat WHERE (id_usr1 = ? AND id_usr2 = ?) OR (id_usr1 = ? AND id_usr2 = ?)", [req.session.user.id, id, id, req.session.user.id]);
+				conn.query("UPDATE profiles SET pop = GREATEST(pop - (20 / (1 + POW(10, (? - pop) /20))), 0) where id_usr = ?", [row[0].pop, id]);
 				conn.query("INSERT INTO dislikes(id_usr, id_disliked) VALUES(?, ?)", [req.session.user.id, id]);
 				conn.end();
 				return true;

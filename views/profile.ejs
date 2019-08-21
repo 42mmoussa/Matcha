@@ -60,7 +60,7 @@
 </script>
 
 <section class="container">
-	<h3>Your Profile <% if (locals.id != locals.session.user.id) { %><button id="status" class="offline"></button> <span id="last-con"><span><% } %> <a href="#" id="edit-profile"><% if (locals.id == locals.session.user.id || locals.id == undefined) { %><span class="glyphicon glyphicon-edit"></span><% } %></a></h3>
+	<h3><%= locals.lastname %> <%= locals.firstname %> <% if (locals.id != locals.session.user.id) { %><button id="status" class="offline"></button> <span id="last-con"><span><% } %> <a href="#" id="edit-profile"><% if (locals.id == locals.session.user.id || locals.id == undefined) { %><span class="glyphicon glyphicon-edit"></span><% } %></a></h3>
 	<% if (locals.warning) { %>
 		<div class="alert alert-warning" role="alert">
 			<%= warning %>
@@ -78,6 +78,11 @@
 	<% } %>
 	<div class="info">
 		<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+					<% if (locals.id != locals.session.user.id) { %>
+						<div id="like">
+							<button id="likeButton" class="like <%= locals.like %>"> <% if (locals.like == "green") { %> Unlike <% } else { %> Like <% } %> </button>
+						</div>
+					<% } %>
 					<ol class="carousel-indicators">
 						<% if (locals.pic >= 10) { %>
 							<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -208,7 +213,7 @@
 									<span aria-hidden="true">&times;</span>
 								  </button>
 								</div>
-								<div class="modal-body">  
+								<div class="modal-body">
 								Are you sure you want to block <b><%= locals.lastname %> <%= locals.firstname %></b> ?
 								</div>
 								<div class="modal-footer">
@@ -264,6 +269,70 @@
 				}
 			});
 
+		var likeVal = "<%- locals.like %>" == "green" ? "unlike" : "like";
+		$("#likeButton").click(function () {
+				var id = "<%- locals.id %>";
+				var username = "<%- locals.username %>";
+				if (likeVal == "unlike") {
+					likeVal = "like";
+					$("#likeButton").removeClass("green");
+					$("#likeButton").addClass("red");
+					$("#likeButton").html("Like");
+					$.ajax({
+						type: 'POST',
+						url: '/swipe/dislike',
+						dataType: 'text',
+						data: {id: id, username: username}
+					})
+				} else {
+					likeVal = "unlike";
+					$("#likeButton").removeClass("red");
+					$("#likeButton").addClass("green");
+					$("#likeButton").html("Unlike");
+					$.ajax({
+						type: 'POST',
+						url: '/swipe/like',
+						dataType: 'text',
+						data: {id: id, username: username}
+					}).done(function(data) {
+						if (data === 'match') {
+							data = {
+								link: "/matchat/",
+								msg: "You just matched !",
+								title: "Match with: ",
+								from: {
+									username: username,
+									id: id
+								}
+							};
+							insertnotif(data);
+							data = {
+								id: id,
+								link: "/matchat/",
+								msg: "You just matched !",
+								title: "Match with: ",
+								from: {
+									username: "<%- locals.session.user.username %>",
+									id: "<%- locals.session.user.id %>"
+								}
+							};
+							socket.emit("send_notif", data);
+						} else if (data === 'liked') {
+							socket.emit("send_notif",
+							{
+								id: id,
+								link: "/profile?id=",
+								msg: "This user liked you",
+								title: "Like from: ",
+								from: {
+									username: "<%- locals.session.user.username %>",
+									id: "<%- locals.session.user.id %>"
+								}
+							});
+						}
+					});
+				}
+			});
 	<% } %>
 
 	<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
