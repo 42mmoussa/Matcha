@@ -19,19 +19,24 @@ router.get('/', function(req, res) {
 			})
 			.then((rows) => {
 				if (rows[0]) {
-					conn.end();
-					return res.render('profile', {
-						firstname: rows[0].firstname,
-						lastname: rows[0].lastname,
-						username: rows[0].username,
-						id: rows[0].id_usr,
-						age: mod.dateDiff(rows[0].birthday, today),
-						orientation: rows[0].orientation.charAt(0).toUpperCase() + rows[0].orientation.slice(1),
-						gender: rows[0].gender.charAt(0).toUpperCase() + rows[0].gender.slice(1),
-						bio: rows[0].bio,
-						pic: rows[0].pictures,
-						tags: rows[0].tags
-					});
+					conn.query("SELECT * FROM likes WHERE id_usr = ? AND id_liked = ?", [req.session.user.id, id])
+					.then(like => {
+						let liked = like.length > 0 ? 'green' : 'red';
+						conn.end();
+						return res.render('profile', {
+							firstname: rows[0].firstname,
+							lastname: rows[0].lastname,
+							username: rows[0].username,
+							id: rows[0].id_usr,
+							age: mod.dateDiff(rows[0].birthday, today),
+							orientation: rows[0].orientation.charAt(0).toUpperCase() + rows[0].orientation.slice(1),
+							gender: rows[0].gender.charAt(0).toUpperCase() + rows[0].gender.slice(1),
+							bio: rows[0].bio,
+							pic: rows[0].pictures,
+							tags: rows[0].tags,
+							like: liked
+						});
+					})
 				} else {
 					if (id === req.session.user.id) {
 						conn.end();

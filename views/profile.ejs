@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="/css/tag.css">
 
 <section class="container">
-	<h3>Your Profile <% if (locals.id != locals.session.user.id) { %><button id="status" class="offline"></button> <span id="last-con"><span><% } %> <a href="#" id="edit-profile"><% if (locals.id == locals.session.user.id || locals.id == undefined) { %><span class="glyphicon glyphicon-edit"></span><% } %></a></h3>
+	<h3><%= locals.lastname %> <%= locals.firstname %> <% if (locals.id != locals.session.user.id) { %><button id="status" class="offline"></button> <span id="last-con"><span><% } %> <a href="#" id="edit-profile"><% if (locals.id == locals.session.user.id || locals.id == undefined) { %><span class="glyphicon glyphicon-edit"></span><% } %></a></h3>
 	<% if (locals.warning) { %>
 		<div class="alert alert-warning" role="alert">
 			<%= warning %>
@@ -21,6 +21,11 @@
 	<% } %>
 	<div class="info">
 			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+					<% if (locals.id != locals.session.user.id) { %>
+						<div id="like">
+							<button id="<%= locals.like %>" class="like <%= locals.like %>"></button>
+						</div>
+					<% } %>
 					<ol class="carousel-indicators">
 						<% if (locals.pic >= 10) { %>
 							<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -159,7 +164,77 @@
 					}
 				}
 			});
-			
+
+$("#like #red").click(function () {
+		console.log("ok");
+		var id = "<%- locals.id %>";
+		var username = "<%- locals.username %>";
+		$("#like #red").html("Unlike");
+		$(".red").toggleClass("green");
+		$("#red").attr("id","geen");
+		console.log(username);
+		$.ajax({
+			type: 'POST',
+			url: '/swipe/like',
+			dataType: 'text',
+			data: {id: id, username: username}
+		}).done(function(data) {
+			if (data === 'match') {
+				console.log("You matched (+notif to match person)");
+				data = {
+					link: "/matchat/",
+					msg: "You just matched !",
+					title: "Match with: ",
+					from: {
+						username: username,
+						id: id
+					}
+				};
+				insertnotif(data);
+				data = {
+					id: id,
+					link: "/matchat/",
+					msg: "You just matched !",
+					title: "Match with: ",
+					from: {
+						username: "<%- locals.session.user.username %>",
+						id: "<%- locals.session.user.id %>"
+					}
+				};
+				socket.emit("send_notif", data);
+			} else if (data === 'liked') {
+				console.log("You liked (+notif to liked person)");
+				socket.emit("send_notif",
+				{
+					id: id,
+					link: "/profile?id=",
+					msg: "This user liked you",
+					title: "Like from: ",
+					from: {
+						username: "<%- locals.session.user.username %>",
+						id: "<%- locals.session.user.id %>"
+					}
+				});
+			}
+		});
+	});
+
+	$("#like #green").click(function () {
+			console.log("ok");
+			$("#like #green").html("Unlike");
+			$(".green").toggleClass("red");
+			$("#green").attr("id","red");
+			var id = "<%- locals.id %>";
+			var username = "<%- locals.username %>";
+			console.log(username);
+			$.ajax({
+				type: 'POST',
+				url: '/swipe/dislike',
+				dataType: 'text',
+				data: {id: id, username: username}
+			})
+		});
+
 	<% } %>
 
 	<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
@@ -186,7 +261,7 @@
 				}
 			}
 
-			
+
 			editProfile.click(function () {
 					editProfile.remove();
 					staticName.replaceWith('<input type="text" class="form-control" id="lname" name="lname" placeholder="Nom de famille" value="<%= locals.lastname %>" onkeyup="validator(this)"><input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" value="<%= locals.firstname %>" onkeyup="validator(this)">');

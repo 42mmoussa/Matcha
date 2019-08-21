@@ -4,7 +4,7 @@ const mod = require('./mod');
 const uniqid = require('uniqid');
 
 router.get('/', function(req, res) {
-	if (req.session.connect) {	
+	if (req.session.connect) {
 	mod.pool.getConnection()
 		.then(conn => {
 		conn.query("USE matcha")
@@ -34,7 +34,7 @@ router.get('/', function(req, res) {
 						" AND (";
 			let searchData = [];
 			let searchCol = [];
-			
+
 			if (/Heterosexual/.test(profile[0].orientation)) {
 				search += " (res.orientation LIKE ?"+
 				" AND res.gender = ?)";
@@ -167,6 +167,7 @@ router.post('/like', function(req, res) {
 							return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id]);
 						})
 						.then((row) => {
+							conn.query("DELETE FROM dislikes WHERE id_usr = ? AND id_disliked = ?", [req.session.user.id, id]);
 							conn.query("UPDATE profiles SET pop = pop + (40 / (1 + POW(10, (pop - ?) /40))) where id_usr = ?", [row[0].pop, id]);
 							return conn.query("INSERT INTO likes(id_usr, id_liked) VALUES(?, ?)", [req.session.user.id, id]);
 						}).then((row) => {
@@ -206,6 +207,8 @@ router.post('/dislike', function(req, res) {
 				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id]);
 			})
 			.then((row) => {
+				conn.query("DELETE FROM likes WHERE id_usr = ? AND id_liked = ?", [req.session.user.id, id]);
+				conn.query("DELETE FROM matchat WHERE (id_usr1 = ? AND id_usr2 = ?) OR (id_usr1 = ? AND id_usr2 = ?)", [req.session.user.id, id, id, req.session.user.id]);
 				conn.query("UPDATE profiles SET pop = GREATEST(pop - (40 / (1 + POW(10, (? - pop) /40))), 0) where id_usr = ?", [row[0].pop, id]);
 				conn.query("INSERT INTO dislikes(id_usr, id_disliked) VALUES(?, ?)", [req.session.user.id, id]);
 				conn.end();
