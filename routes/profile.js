@@ -307,7 +307,7 @@ router.post('/block_user', mod.sanitizeInputForXSS, function(req, res) {
 								});
 							}
 						}
-						user_blocked = user_blocked.join(',') + ',';
+						user_blocked = user_blocked.join(',');
 						user_blocked = user_blocked + id_blocked + ',';
 					}
 					else

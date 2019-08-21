@@ -78,6 +78,16 @@ router.get('/', mod.sanitizeInputForXSS, function(req, res) {
 
 			search += ")";
 
+			if (profile[0].blocked_user != null) {
+				blockedUsers = profile[0].blocked_user.split(',');
+				blockedUsers.pop();
+				blockedUsers.forEach(function(element) {
+					search += " AND (res.id_usr != ?)";
+					searchData.push(element);
+					searchCol.push("BlockedUser");
+				});
+			}
+
 			let first = 0;
 			if (searchCol.length > 0) {
 				searchCol.forEach(function (element) {

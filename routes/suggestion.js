@@ -159,6 +159,15 @@ router.get('/:page', mod.sanitizeInputForXSS, function(req, res) {
 						searchData.push(maxdist);
 						searchCol.push("filterDistance");
 					}
+          if (profile[0].blocked_user != null) {
+            blockedUsers = profile[0].blocked_user.split(',');
+            blockedUsers.pop();
+            blockedUsers.forEach(function(element) {
+              search += " AND (res.id_usr != ?)";
+              searchData.push(element);
+  						searchCol.push("BlockedUser");
+            });
+          }
 
 					let first = 0;
 
