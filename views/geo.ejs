@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Simple Map</title>
+    <title>Map'tcha</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <style>
@@ -58,7 +58,7 @@
 		myLatLng = {
 			lat: lat,
 			lng: lng
-		};		
+		};
 
         map = new google.maps.Map(document.getElementById('map'), {
             center: myLatLng,
@@ -155,12 +155,12 @@
                     lng:  users[i].lng
 				};
 				let markers = [];
-				
+
                 if ((typeof myLatLng.lat == "number" && users[i].pictures > 0) || (users[i].id_usr === <%- locals.session.user.id %> && myLoc !== undefined)) {
                     icon= "/img/loc.png";
                     if (users[i].id_usr === <%- locals.session.user.id %>) {
 						icon= "/img/myloc.png";
-						
+
 						if (myLoc !== undefined) {
 							myLatLng = {
 								lat:  myLoc.coords.latitude,
@@ -187,7 +187,7 @@
 						'<img src="/img/' + users[i].id_usr + '/profile.jpg" style="max-width: 150px;"/>'+
 						'</div>'+
 						'</div>';
-					
+
 					makeInfoWindowEvent(map, infowindow, infoUsr, marker);
 
     				markers.push(marker);

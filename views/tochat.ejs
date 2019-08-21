@@ -50,29 +50,30 @@
 				</button>
 
 			</div>
-				<span id="userinfo" style="margin: 0 auto;"> <span id='username'></span></span>
+				<span id="userinfo" style="margin: 0 auto; color: white;"> <span id='username'></span></span>
 		</nav>
 		<iframe frameborder="0" id='ifr'></iframe>
 </div>
 
 
-</div>  
+</div>
 </section>
 <script>
 $(document).ready(function () {
     $('.menuToggle').on('click', function () {
         $('#sidebar').toggleClass('active');
         $('#menubtn').toggleClass('glyphicon glyphicon-menu-right');
-		$('#menubtn').toggleClass('glyphicon glyphicon-menu-left');
+		    $('#menubtn').toggleClass('glyphicon glyphicon-menu-left');
 	});
-	
+
 	$('.userChoice').on('click', function () {
 		let value = this.text;
 		let id = this.id;
+    $('title').html(value);
 		$('#userImage').remove();
 		$('#userinfo').prepend("<img id='userImage' src='/img/" + id + "/profile.jpg'/>");
 		$('#username').html(value);
-    });
+  });
 
 });
 </script>
