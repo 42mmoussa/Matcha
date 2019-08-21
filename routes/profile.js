@@ -71,44 +71,44 @@ router.get('/', function(req, res) {
 });
 
 router.get('/create-profile', function(req, res) {
-		if (req.session.connect)
-		{
-			mod.pool.getConnection()
-			.then((conn) => {
-				conn.query("USE matcha")
-				.then(() => {
-					return conn.query("SELECT COUNT(*) as nb FROM profiles WHERE id_usr = ?", req.session.user.id)
-				})
-				.then((rows) => {
-					if (rows[0].nb !== 0) {
-						conn.end();
-						return res.redirect('/');
-					} else {
-						conn.query("SELECT * FROM users WHERE id_usr = ?", req.session.user.id)
-						.then((info) => {
-							let birthday = new Date(info[0].birthday);
-							conn.end();
-							return res.render('create-profile', {
-								age: mod.dateDiff(birthday, today)
-							});
-						});
-					}
-				});
+	if (req.session.connect)
+	{
+		mod.pool.getConnection()
+		.then((conn) => {
+			conn.query("USE matcha")
+			.then(() => {
+				return conn.query("SELECT COUNT(*) as nb FROM profiles WHERE id_usr = ?", req.session.user.id)
 			})
-		} else {
-			return res.redirect('/');
-		}
-	});
+			.then((rows) => {
+				if (rows[0].nb !== 0) {
+					conn.end();
+					return res.redirect('/');
+				} else {
+					conn.query("SELECT * FROM users WHERE id_usr = ?", req.session.user.id)
+					.then((info) => {
+						let birthday = new Date(info[0].birthday);
+						conn.end();
+						return res.render('create-profile', {
+							age: mod.dateDiff(birthday, today)
+						});
+					});
+				}
+			});
+		})
+	} else {
+		return res.redirect('/');
+	}
+});
 
-	router.post('/submit-create', function(req, res) {
-		var name           = req.body.staticName;
-		var username       = req.body.staticUsername;
-		var gender         = req.body.gender;
-		var orientation    = req.body.orientation;
-		var bio            = req.body.bio;
-		var photo          = req.body.photo;
+	router.post('/submit-create', mod.sanitizeInputForXSS, function(req, res) {
+		var name           = mod.sanitize(req.body.staticName);
+		var username       = mod.sanitize(req.body.staticUsername);
+		var gender         = mod.sanitize(req.body.gender);
+		var orientation    = mod.sanitize(req.body.orientation);
+		var bio            = mod.sanitize(req.body.bio);
+		var photo          = mod.sanitize(req.body.photo);
 		var birthday       = new Date(req.session.user.birthday);
-		tagexist = req.body.tags.split(',');
+		tagexist = mod.sanitize(req.body.tags).split(',');
 		for(var i = 0; i < tagexist.length - 1; i++) {
 			for(var j = i + 1; j < tagexist.length; j++) {
 				if (tagexist[i] == tagexist[j]) {
@@ -163,14 +163,14 @@ router.get('/create-profile', function(req, res) {
 		}
 });
 
-router.post('/modify', function(req, res) {
-	var lname          = req.body.lname;
-	var fname          = req.body.fname;
-	var uname          = req.body.uname;
-	var bio            = req.body.bio;
-	var city           = req.body.city;
-	var orientation    = req.body.orientation;
-	tagexist = req.body.tags.split(',');
+router.post('/modify', mod.sanitizeInputForXSS, function(req, res) {
+	var lname          = mod.sanitize(req.body.lname);
+	var fname          = mod.sanitize(req.body.fname);
+	var uname          = mod.sanitize(req.body.uname);
+	var bio            = mod.sanitize(req.body.bio);
+	var city           = mod.sanitize(req.body.city);
+	var orientation    = mod.sanitize(req.body.orientation);
+	tagexist = mod.sanitize(req.body.tags).split(',');
 	for(var i = 0; i < tagexist.length - 1; i++) {
 		for(var j = i + 1; j < tagexist.length; j++) {
 			if (tagexist[i] == tagexist[j]) {
@@ -278,8 +278,8 @@ router.post('/modify', function(req, res) {
 	}
 });
 
-router.post('/block_user', function(req, res) {
-	var id_blocked = req.query.id;
+router.post('/block_user', mod.sanitizeInputForXSS, function(req, res) {
+	var id_blocked = mod.sanitize(req.query.id);
 
 	if (id_blocked == req.session.user.id) {
 		res.render('settings', {

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mod = require('./mod');
 
-router.get('/', function (req, res) {
+router.get('/', mod.sanitizeInputForXSS, function (req, res) {
     if (req.session.connect) {
       if (req.session.user.age < 18) {
         return res.redirect("/settings/change-birthdate");
@@ -13,7 +13,7 @@ router.get('/', function (req, res) {
   	}
 });
 
-router.get('/:page', function(req, res) {
+router.get('/:page', mod.sanitizeInputForXSS, function(req, res) {
 	if (req.session.connect) {
 		if (!isNaN(req.params.page) && req.params.page > 0) {
 
@@ -89,15 +89,17 @@ router.get('/:page', function(req, res) {
 
 					search += " OR res.Dist < 10";
 
-					let tabTags = profile[0].tags.split(",");
-					tabTags.pop();
+					if (profile[0].tags != null) {
+							let tabTags = profile[0].tags.split(",");
+							tabTags.pop();
 
-					if (tabTags.length > 0) {
-						tabTags.forEach(function (element) {
-							search += " OR res.tags LIKE ?";
-							searchData.push("%" + element + ",%");
-							searchCol.push("tags");
-						});
+						if (tabTags.length > 0) {
+							tabTags.forEach(function (element) {
+								search += " OR res.tags LIKE ?";
+								searchData.push("%" + element + ",%");
+								searchCol.push("tags");
+							});
+						}
 					}
 
 					search += " OR res.pop BETWEEN ? - 100 AND ? + 100";

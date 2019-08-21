@@ -32,7 +32,7 @@ router.get('/', function (req, res) {
 	}
 });
 
-router.post('/confirm_report', function (req, res) {
+router.post('/confirm_report', mod.sanitizeInputForXSS, function (req, res) {
 	if (!req.session.connect)
 		return res.render("index");
 	if (req.query.id){

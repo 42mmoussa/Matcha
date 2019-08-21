@@ -3,7 +3,7 @@ const router = express.Router();
 const mod = require('./mod');
 const uniqid = require('uniqid');
 
-router.get('/', function(req, res) {
+router.get('/', mod.sanitizeInputForXSS, function(req, res) {
 	if (req.session.connect) {
 		if (req.session.user.age < 18) {
 			return res.redirect("/settings/change-birthdate");
@@ -169,10 +169,10 @@ router.get('/', function(req, res) {
 	}
 });
 
-router.post('/like', function(req, res) {
+router.post('/like', mod.sanitizeInputForXSS, function(req, res) {
 		if (req.session.connect) {
-				let id = req.body.id;
-				let username = req.body.username;
+				let id = mod.sanitize(req.body.id);
+				let username = mod.sanitize(req.body.username);
 				if (id == req.session.user.id) {
 						return res.send(false);
 				}
@@ -213,9 +213,9 @@ router.post('/like', function(req, res) {
 		}
 });
 
-router.post('/dislike', function(req, res) {
+router.post('/dislike', mod.sanitizeInputForXSS, function(req, res) {
 	if (req.session.connect) {
-		let id = req.body.id;
+		let id = mod.sanitize(req.body.id);
 		mod.pool.getConnection()
 		.then(conn => {
 			conn.query("USE matcha")
@@ -244,9 +244,9 @@ router.post('/dislike', function(req, res) {
 	}
 });
 
-router.post('/fav', function(req, res) {
+router.post('/fav', mod.sanitizeInputForXSS, function(req, res) {
 	if (req.session.connect) {
-		let id = req.body.id;
+		let id = mod.sanitize(req.body.id);
 		mod.pool.getConnection()
 		.then(conn => {
 			conn.query("USE matcha")

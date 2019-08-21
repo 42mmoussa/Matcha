@@ -56,9 +56,9 @@ router.get('/', function (req, res) {
 	}
 });
 
-router.post('/confirm', function (req, res) {
-	var pwd			= req.body.pwd;
-	var pwdConf		= req.body.pwdConf;
+router.post('/confirm', mod.sanitizeInputForXSS, function (req, res) {
+	var pwd			= mod.sanitize(req.body.pwd);
+	var pwdConf		= mod.sanitize(req.body.pwdConf);
 
 	if (pwd === "" || pwdConf === "") {
 		return res.render('change-password', {
