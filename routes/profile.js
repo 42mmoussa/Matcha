@@ -316,6 +316,14 @@ router.post('/block_user', mod.sanitizeInputForXSS, function(req, res) {
 					else
 						user_blocked = id_blocked + ',';
 					conn.query("UPDATE profiles SET blocked_user = ? WHERE id_usr = ?", [user_blocked, req.session.user.id]);
+					conn.query("DELETE FROM messages WHERE key LIKE (SELECT key FROM matchat WHERE (id_usr1 = ? AND id_usr2 = ?) OR (id_usr1 = ? AND id_usr2 = ?)", [req.session.user.id, id_blocked, id_blocked, req.session.user.id]);
+					conn.query("DELETE FROM matchat WHERE (id_usr1 = ? AND id_usr2 = ?) OR (id_usr1 = ? AND id_usr2 = ?)", [req.session.user.id, id_blocked, id_blocked, req.session.user.id]);
+					conn.query("DELETE FROM likes WHERE id_liked = ? AND id_usr = ?", [req.session.user.id, id_blocked]);
+					conn.query("DELETE FROM likes WHERE id_liked = ? AND id_usr = ?", [id_blocked, req.session.user.id]);
+					conn.query("DELETE FROM dislikes WHERE id_disliked AND id_usr = ?", [req.session.user.id, id_blocked]);
+					conn.query("DELETE FROM dislikes WHERE id_disliked = ? AND id_usr = ?", [id_blocked, req.session.user.id]);
+					conn.query("DELETE FROM favorites WHERE id_usr = ? AND id_favorited", [req.session.user.id, id_blocked]);
+					conn.query("DELETE FROM favorites WHERE id_usr = ? AND id_favorited", [id_blocked, req.session.user.id]);
 					conn.end();
 					res.render("settings", {
 						popup: true,
