@@ -4,7 +4,7 @@ const mod        = require('./mod');
 const crypto     = require('crypto-js');
 const nodemailer = require('nodemailer');
 
-router.get('/', function (req, res, next) {
+router.get('/', mod.sanitizeInputForXSS, function (req, res, next) {
 	if (req.session.connect) {
 		mod.pool.getConnection()
 		  .then((conn) => {
@@ -44,7 +44,7 @@ router.get('/confirm-password', function (req, res) {
 	}
 });
 
-router.get('/change-gender', function (req, res) {
+router.get('/change-gender', mod.sanitizeInputForXSS, function (req, res) {
 	if (req.session.connect) {
 		return res.render('change-gender', {
 		});
@@ -58,7 +58,7 @@ router.get('/change-gender', function (req, res) {
 	}
 });
 
-router.post('/delete', function(req, res) {
+router.post('/delete', mod.sanitizeInputForXSS, function(req, res) {
 	if (req.session.connect) {
 		mod.pool.getConnection()
 		  .then((conn) => {
@@ -105,7 +105,7 @@ router.post('/delete', function(req, res) {
 	}
 });
 
-router.post('/change-gender/confirm', function(req, res) {
+router.post('/change-gender/confirm', mod.sanitizeInputForXSS, function(req, res) {
 	if ((req.body.gender != "man" && req.body.gender != "woman") || req.body.gender == undefined) {
 		return res.render('change-gender', {
 			warning: "Veuillez rentrer un genre valide"
@@ -178,7 +178,7 @@ router.get('/change-mail', function(req,res) {
 	}
 })
 
-router.post('/change-mail/confirm', function(req, res) {
+router.post('/change-mail/confirm', mod.sanitizeInputForXSS, function(req, res) {
 	if (!req.session.connect) {
 		return res.render('login', {
 			popupTitle: "Login",
@@ -260,7 +260,7 @@ router.post('/change-mail/confirm', function(req, res) {
 	}
 });
 
-router.get('/change-birthdate', function(req,res) {
+router.get('/change-birthdate', mod.sanitizeInputForXSS, function(req,res) {
 	if (req.session.connect) {
 		return res.render('change-birthdate', {
 		});
@@ -274,7 +274,7 @@ router.get('/change-birthdate', function(req,res) {
 	}
 })
 
-router.post('/change-birthdate/confirm', function(req, res) {
+router.post('/change-birthdate/confirm', mod.sanitizeInputForXSS, function(req, res) {
 	if (!req.session.connect) {
 		return res.render('login', {
 			popupTitle: "Login",
@@ -283,7 +283,7 @@ router.post('/change-birthdate/confirm', function(req, res) {
 		});
 	}
 	else {
-		var birthday       = new Date(req.body.date.trim());
+		var birthday       = new Date(mod.sanitize(req.body.date.trim()));
 		var today          = new Date();
 
 		if (mod.dateDiff(birthday, today) < 18 || mod.dateDiff(birthday, today) > 90) {
@@ -312,7 +312,7 @@ router.post('/change-birthdate/confirm', function(req, res) {
 	}
 });
 
-router.get('/blocked-users', function(req, res) {
+router.get('/blocked-users', mod.sanitizeInputForXSS, function(req, res) {
 	if (req.session.connect) {
 		var blocked_users;
 		mod.pool.getConnection()

@@ -71,10 +71,10 @@ router.get('/google/redirect', passport.authenticate('google'), function (req, r
 	})
 });
 
-router.post('/login_validation', function(req, res) {
+router.post('/login_validation', mod.sanitizeInputForXSS, function(req, res) {
 	const ent       = require("ent");
-	var login		= ent.encode(req.body.uname.trim());
-	var pwd			= crypto.SHA512(req.body.pwd).toString();
+	var login		= mod.sanitize(req.body.uname.trim());
+	var pwd			= crypto.SHA512(mod.sanitize(req.body.pwd)).toString();
 
 	if (login === "" || pwd === "") {
 		return res.render('login', {

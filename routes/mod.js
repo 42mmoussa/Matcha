@@ -1,5 +1,6 @@
 const mariadb = require('mariadb');
 const keys = require('./keys');
+const ent = require('ent');
 
 const pool = mariadb.createPool({
   host: 'localhost',
@@ -7,6 +8,23 @@ const pool = mariadb.createPool({
   password: keys.mariadb.password,
   port: '3306',
 });
+
+function sanitize(string) {
+	return ent.encode(string);
+}
+
+function sanitizeInputForXSS(req, res, next) {
+	let queryKeys = Object.keys(req.query);
+	let paramKeys = Object.keys(req.params);
+	queryKeys.forEach(key => {
+		req.query[key] = sanitize(req.query[key]);
+	});
+	paramKeys.forEach(key => {
+		req.params[key] = sanitize(req.params[key]);
+	});
+
+	next();
+}
 
 function checkuid(username) {
 	var regex = /^[a-zA-Z0-9]+$/;
@@ -81,4 +99,4 @@ function ageToDate(age) {
   return strDate;
 }
 
-module.exports = {checkemail, checkuid, checkname, checkpwd, pool, randomString, dateDiff, checkdate, insert, ageToDate};
+module.exports = {sanitize, checkemail, checkuid, checkname, checkpwd, pool, randomString, dateDiff, checkdate, insert, ageToDate, sanitizeInputForXSS};
