@@ -106,9 +106,8 @@ router.get('/create-profile', function(req, res) {
 		var gender         = mod.sanitize(req.body.gender);
 		var orientation    = mod.sanitize(req.body.orientation);
 		var bio            = mod.sanitize(req.body.bio);
-		var photo          = mod.sanitize(req.body.photo);
 		var birthday       = new Date(req.session.user.birthday);
-		tagexist = mod.sanitize(req.body.tags).split(',');
+		tagexist = req.body.tags.split(',');
 		for(var i = 0; i < tagexist.length - 1; i++) {
 			for(var j = i + 1; j < tagexist.length; j++) {
 				if (tagexist[i] == tagexist[j]) {
@@ -170,7 +169,7 @@ router.post('/modify', mod.sanitizeInputForXSS, function(req, res) {
 	var bio            = mod.sanitize(req.body.bio);
 	var city           = mod.sanitize(req.body.city);
 	var orientation    = mod.sanitize(req.body.orientation);
-	tagexist = mod.sanitize(req.body.tags).split(',');
+	tagexist = req.body.tags.split(',');
 	for(var i = 0; i < tagexist.length - 1; i++) {
 		for(var j = i + 1; j < tagexist.length; j++) {
 			if (tagexist[i] == tagexist[j]) {
