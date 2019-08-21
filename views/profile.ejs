@@ -78,11 +78,11 @@
 	<% } %>
 	<div class="info">
 		<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-					<% if (locals.id != locals.session.user.id) { 
+					<% if (locals.id != locals.session.user.id) {
 						var j = 0;
 						if (locals.blocked_user != null) {
 						for (var i = 0; i < locals.blocked_user.length; i++) {
-							if (locals.blocked_user[i] == locals.id) { 
+							if (locals.blocked_user[i] == locals.id) {
 								j = 1;
 							}}} if (j == 0) {%>
 							<div id="like">
@@ -104,14 +104,14 @@
 					  <div class="carousel-inner">
 					  <% if (locals.id < 1001) { %>
 						<div class="carousel-item active profile-pic">
-						<img class="d-block w-100" src="/img/default.png" alt="First slide">
+						<img class="d-block w-100 image_profile" src="/img/default.png" alt="First slide">
 						<% if (locals.id != locals.session.user.id && locals.id != undefined) { %>
 							<div class="report"><a href="/report?id=<%= locals.id %>"><i class="glyphicon glyphicon-trash"></i></a></div>
 						<% } %>
 						</div>
 					  <% } else if (locals.pic >= 10 ) {%>
 						<div class="carousel-item active profile-pic">
-						<img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
+						<img class="d-block w-100 image_profile" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
 						<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
 							<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
 						<% } else { %>
@@ -211,7 +211,7 @@
 						var j = 0;
 						if (locals.blocked_user != null) {
 						for (var i = 0; i < locals.blocked_user.length; i++) {
-							if (locals.blocked_user[i] == locals.id) { 
+							if (locals.blocked_user[i] == locals.id) {
 								j = 1;%>
 								<button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#exampleModalCenter">Unblock This User</button>
 								<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -224,7 +224,7 @@
 												<span aria-hidden="true">&times;</span>
 												</button>
 											</div>
-											<div class="modal-body">  
+											<div class="modal-body">
 											Are you sure you want to unblock <b><%= locals.lastname %> <%= locals.firstname %></b> ?
 											</div>
 											<div class="modal-footer">
@@ -247,7 +247,7 @@
 												<span aria-hidden="true">&times;</span>
 												</button>
 											</div>
-											<div class="modal-body">  
+											<div class="modal-body">
 											Are you sure you want to block <b><%= locals.lastname %> <%= locals.firstname %></b> ?
 											</div>
 											<div class="modal-footer">
@@ -403,7 +403,7 @@
 				}
 			<% } %>
 
-			
+
 			editProfile.click(function () {
 					editProfile.remove();
 					staticName.replaceWith('<input type="text" class="form-control" id="lname" name="lname" placeholder="Nom de famille" value="<%= locals.lastname %>" onkeyup="validator(this)"><input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" value="<%= locals.firstname %>">');

@@ -5,7 +5,7 @@ module.exports = {
         key: 'AIzaSyAuwVt9oGRw5-eU380Z_rjAsZWCPOVs2qU'
     },
     mariadb: {
-        user: 'atelli',
-        password: '123456'
+        user: 'root',
+        password: ''
     }
 }
