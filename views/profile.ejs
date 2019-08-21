@@ -2,6 +2,57 @@
 <link rel="stylesheet" href="/css/profile.css">
 <link rel="stylesheet" href="/css/tag.css">
 
+<script>
+	function displayLocation(latitude,longitude){
+        var request = new XMLHttpRequest();
+
+        var method = 'GET';
+        var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+latitude+','+longitude+'&key=<%- locals.key %>';
+        var async = true;
+
+        request.open(method, url, async);
+        request.onreadystatechange = function(){
+          if(request.readyState == 4 && request.status == 200){
+            var data = JSON.parse(request.responseText);
+            var address = data.results[0];
+            var arrAddress = address.address_components;
+			var itemRoute='';
+			var itemLocality='';
+			var itemCountry='';
+			var itemPc='';
+			var itemSnumber='';
+
+			// iterate through address_component array
+			$.each(arrAddress, function (i, address_component) {
+
+				if (address_component.types[0] == "route"){
+					itemRoute = address_component.long_name;
+				}
+
+				if (address_component.types[0] == "locality"){
+					itemLocality = address_component.long_name;
+				}
+
+				if (address_component.types[0] == "country"){
+					itemCountry = address_component.long_name;
+				}
+
+				if (address_component.types[0] == "postal_code_prefix"){
+					itemPc = address_component.long_name;
+				}
+
+				if (address_component.types[0] == "street_number"){
+					itemSnumber = address_component.long_name;
+				}
+			});
+			$("#city").html(itemLocality + ", " + itemCountry);
+          }
+        };
+        request.send();
+    };
+
+</script>
+
 <section class="container">
 	<h3><%= locals.lastname %> <%= locals.firstname %> <% if (locals.id != locals.session.user.id) { %><button id="status" class="offline"></button> <span id="last-con"><span><% } %> <a href="#" id="edit-profile"><% if (locals.id == locals.session.user.id || locals.id == undefined) { %><span class="glyphicon glyphicon-edit"></span><% } %></a></h3>
 	<% if (locals.warning) { %>
@@ -20,108 +71,120 @@
 		</div>
 	<% } %>
 	<div class="info">
-			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-					<% if (locals.id != locals.session.user.id) { %>
-						<div id="like">
-							<button id="<%= locals.like %>" class="like <%= locals.like %>"></button>
-						</div>
-					<% } %>
-					<ol class="carousel-indicators">
-						<% if (locals.pic >= 10) { %>
-							<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-						<% } %>
-						<% if (locals.pic >= 10) {
-						var i = -1;
-						while (++i < locals.pic % 10) { %>
-						  <li data-target="#carouselExampleIndicators" data-slide-to="<% i + 1 %>"></li>
-						<% }} else { %>
-							<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-						<% } %>
-					  </ol>
-					  <div class="carousel-inner">
-					  <% if (locals.pic >= 10 ) {%>
-						<div class="carousel-item active profile-pic">
-						<img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
-						<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
-							<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
-						<% } %>
-						</div>
-					  <% } else { %>
-					  <div class="carousel-item active profile-pic">
-						<img class="d-block w-100" src="/img/default.png" alt="First slide">
-						<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
-							<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
-						<% } %>
-					  </div>
-					  <% } %>
-					  <% if (locals.pic >=10) {
-					  var i = -1;
-					  while (++i < locals.pic % 10) { %>
-						<div class="carousel-item profile-pic">
-							<img class="d-block w-100" src="/img/<%= locals.id %>/image<%= i + 1 %>.jpg" alt="First slide">
-							<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
-								<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
-							<% } %>
-						</div>
-						<% } }%>
-					</div>
-					<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-						<span class="sr-only">Previous</span>
-					</a>
-					<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-						<span class="carousel-control-next-icon" aria-hidden="true"></span>
-						<span class="sr-only">Next</span>
-					</a>
+		<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+			<% if (locals.id != locals.session.user.id) { %>
+				<div id="like">
+					<button id="<%= locals.like %>" class="like <%= locals.like %>"></button>
 				</div>
-				<div class="user-profile">
-					<fieldset>
-						<form method="post" action="/profile/modify" id="form-profile">
-							<div class="row">
-								<label for="staticName" class="col-sm-3 col-form-label"><b>Name</b></label>
-								<div class="col-sm-10">
-									<p class="text-left" id="staticName"><%= locals.lastname %> <%= locals.firstname %></p>
-								</div>
+			<% } %>
+			<ol class="carousel-indicators">
+				<% if (locals.pic >= 10) { %>
+					<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+				<% } %>
+				<% if (locals.pic >= 10) {
+				var i = -1;
+				while (++i < locals.pic % 10) { %>
+					<li data-target="#carouselExampleIndicators" data-slide-to="<% i + 1 %>"></li>
+				<% }} else { %>
+					<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+				<% } %>
+			</ol>
+			<div class="carousel-inner">
+				<% if (locals.pic >= 10 ) {%>
+				<div class="carousel-item active profile-pic">
+				<img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
+				<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
+					<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
+				<% } %>
+				</div>
+				<% } else { %>
+				<div class="carousel-item active profile-pic">
+				<img class="d-block w-100" src="/img/default.png" alt="First slide">
+				<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
+					<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
+				<% } %>
+				</div>
+				<% } %>
+				<% if (locals.pic >=10) {
+				var i = -1;
+				while (++i < locals.pic % 10) { %>
+				<div class="carousel-item profile-pic">
+					<img class="d-block w-100" src="/img/<%= locals.id %>/image<%= i + 1 %>.jpg" alt="First slide">
+					<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
+						<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
+					<% } %>
+				</div>
+				<% } }%>
+			</div>
+			<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="sr-only">Previous</span>
+			</a>
+			<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="sr-only">Next</span>
+			</a>
+		</div>
+		<div class="user-profile">
+				<fieldset>
+					<form method="post" action="/profile/modify" id="form-profile">
+						<div class="row">
+							<img src="/img/flame.png" style="width: 80px;"/>
+							<div class="col-sm-10" id="pop-score">
+								<span class="text-left"><%= locals.pop %></span>
 							</div>
-							<div class="row">
-								<label for="staticUsername" class="col-sm-4 col-form-label"><b>Username</b></label>
-								<div class="col-sm-10">
-									<p class="text-left" id="staticUsername"><%= locals.username %></p>
-								</div>
+						</div>
+						<div class="row">
+							<label for="staticName" class="col-sm-3 col-form-label"><b>Name</b></label>
+							<div class="col-sm-10">
+								<p class="text-left" id="staticName"><%= locals.lastname %> <%= locals.firstname %></p>
 							</div>
-							<div class="row">
-								<label for="staticAge" class="col-sm-4 col-form-label"><b>Age</b></label>
-								<div class="col-sm-10">
-							<p class="text-left" id="staticAge"><%= locals.age %></p>
 						</div>
-					</div>
-					<div class="row">
-						<label for="gender" class="col-sm-4 col-form-label"><b>Gender</b></label>
-						<div class="col-sm-10">
-							<p class="text-left" id="gender"><%= locals.gender %></p>
+						<div class="row">
+							<label for="staticUsername" class="col-sm-4 col-form-label"><b>Username</b></label>
+							<div class="col-sm-10">
+								<p class="text-left" id="staticUsername"><%= locals.username %></p>
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<label for="orientation" class="col-sm-3 col-form-label"><b>Orientation</b></label>
-						<div class="col-sm-12">
-							<p class="text-left" id="orientation"><%= locals.orientation %></p>
+						<div class="row">
+							<label for="staticAge" class="col-sm-4 col-form-label"><b>Age</b></label>
+							<div class="col-sm-10">
+								<p class="text-left" id="staticAge"><%= locals.age %></p>
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<label for="bio" class="col-sm-3 col-form-label"><b>Biography</b></label>
-						<div class="col-sm-12">
-							<p class="text-left" id="bio"><%= locals.bio %></p>
+						<div class="row">
+							<label for="gender" class="col-sm-4 col-form-label"><b>Gender</b></label>
+							<div class="col-sm-10">
+								<p class="text-left" id="gender"><%= locals.gender %></p>
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<label for="tags" class="col-sm-3 col-form-label"><b>Tags</b></label>
-						<div class="col-sm-12">
-							<p class="text-left" id="tags"></p>
+						<div class="row">
+							<label for="orientation" class="col-sm-3 col-form-label"><b>Orientation</b></label>
+							<div class="col-sm-12">
+								<p class="text-left" id="orientation"><%= locals.orientation %></p>
+							</div>
 						</div>
-					</div>
-					<span style="display: none;" id="save"></span>
-				</form>
-			</fieldset>
+						<div class="row">
+							<label for="bio" class="col-sm-3 col-form-label"><b>Biography</b></label>
+							<div class="col-sm-12">
+								<p class="text-left" id="bio"><%= locals.bio %></p>
+							</div>
+						</div>
+						<div class="row">
+							<label for="tags" class="col-sm-3 col-form-label"><b>Tags</b></label>
+							<div class="col-sm-12">
+								<p class="text-left" id="tags"></p>
+							</div>
+						</div>
+						<div class="row">
+							<label for="city" class="col-sm-4 col-form-label"><b>Location</b></label>
+							<div class="col-sm-10">
+								<p class="text-left" id="city"></p>
+							</div>
+						</div>
+						<span style="display: none;" id="save"></span>
+					</form>
+				</fieldset>
 		</div>
 	</div>
 	<script src="/js/tag.js"></script>
@@ -284,9 +347,28 @@ $("#like #red").click(function () {
 							<button type="submit" class="btn btn-outline-success">Modify</button>
 						</div>
 					</div>`)
-				});
+			});
 		})
-		<% } %>
+	<% } %>
+
+	$(document).ready(function() {
+			if ("<%- locals.coords.lat %>" !== "") {
+				displayLocation("<%- locals.coords.lat %>", "<%- locals.coords.lng %>");
+			}
+
+			var rgbToHex = function (rgb) {
+				var hex = Number(rgb).toString(16);
+				if (hex.length < 2) {
+					hex = "0" + hex;
+				}
+				return hex;
+			};
+
+			let popScore = $("#pop-score span").html();
+			let red = (popScore / 200) * 255 > 255 ? 255: parseInt((popScore / 200) * 255);
+			let blue = parseInt(255 - red);
+			$("#pop-score span").css("color", rgbToHex(red) + rgbToHex(0) + rgbToHex(blue));
+	});
 </script>
 
 

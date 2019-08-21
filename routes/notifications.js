@@ -6,6 +6,9 @@ let data;
 
 router.get('/', function (req, res) {
     if (req.session.connect) {
+      if (req.session.user.age < 18) {
+        return res.redirect("/settings/change-birthdate");
+      }
       res.redirect('/notifications/1');
   	} else {
   		  res.redirect('/login');

@@ -299,7 +299,7 @@ router.post('/change-birthdate/confirm', function(req, res) {
 					age = mod.dateDiff(birthday, today);
 					conn.query("UPDATE users SET birthday = ? WHERE id_usr = ?", [birthday, req.session.user.id]);
 					conn.query("UPDATE profiles SET birthday = ? WHERE id_usr = ?", [birthday, req.session.user.id]);
-					req.session.age = age;
+					req.session.user.age = age;
 					conn.end();
 					return res.render('settings', {
 						popupTitle: "Birthdate",

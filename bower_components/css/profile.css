@@ -112,3 +112,9 @@
 .red:after {
   content: 'Like';
 }
+
+#pop-score {
+	display: contents;
+    font-weight: 800;
+    font-size: xx-large;
+}

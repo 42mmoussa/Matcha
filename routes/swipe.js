@@ -5,7 +5,10 @@ const uniqid = require('uniqid');
 
 router.get('/', function(req, res) {
 	if (req.session.connect) {
-	mod.pool.getConnection()
+		if (req.session.user.age < 18) {
+			return res.redirect("/settings/change-birthdate");
+		}
+		mod.pool.getConnection()
 		.then(conn => {
 		conn.query("USE matcha")
 		.then(() => {
