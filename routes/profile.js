@@ -10,7 +10,6 @@ var	  today = new Date();
 router.get('/', function(req, res) {
 	if (req.session.connect) {
 		if (req.session.user.age < 18) {
-			console.log(req.session.user.age);
 			return res.redirect("/settings/change-birthdate");
 		}
 		id = req.query.id;
@@ -287,9 +286,9 @@ router.post('/block_user', function(req, res) {
 				.then(rows => {
 					user_blocked = rows[0].blocked_user;
 					if (user_blocked != null)
-						user_blocked = user_blocked + ',' + id_blocked;
+						user_blocked = user_blocked + id_blocked + ',';
 					else
-						user_blocked = id_blocked;
+						user_blocked = id_blocked + ',';
 					conn.query("UPDATE profiles SET blocked_user = ? WHERE id_usr = ?", [user_blocked, req.session.user.id]);
 					conn.end();
 					res.render("settings", {

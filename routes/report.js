@@ -43,7 +43,10 @@ router.post('/confirm_report', function (req, res) {
 			.then(() => {
 				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.query.id])
 				.then(rows => {
-					if (rows[0]) {
+					if (rows.length !== 0) {
+						already_blocked = rows[0].blocked_user;
+						new_blocked = already_blocked + req.query.id + ',';
+						conn.query("UPDATE profiles SET blocked_user = ? WHERE id_usr = ?", [new_blocked, req.session.id]);
 						conn.end();
 						var transporter = nodemailer.createTransport({
 							service: 'gmail',

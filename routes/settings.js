@@ -310,6 +310,56 @@ router.post('/change-birthdate/confirm', function(req, res) {
 			})
 		}
 	}
+});
+
+router.get('/blocked-users', function(req, res) {
+	if (req.session.connect) {
+		var blocked_users;
+		mod.pool.getConnection()
+		.then(conn => {
+			conn.query("USE matcha;")
+			.then(() => {
+				conn.query("SELECT * from profiles where id_usr = ?", [req.session.user.id])
+				.then(rows => {
+					if (rows.length !== 0) {
+						blocked_users = rows[0].blocked_user
+						conn.end();
+						blocked_users = blocked_users.split(',');
+						for(var i = 0; i < blocked_users.length; i++) {
+							if (blocked_users[i] == '') {
+								blocked_users.splice(i, 1);
+								i--;
+							}
+						}
+						return res.render('blocked-users', {
+							blocked_users: blocked_users
+						});
+					}
+					else {
+						conn.query("SELECT * FROM users WHERE id_usr = ?", req.session.user.id)
+						.then((info) => {
+							let birthday = new Date(info[0].birthday);
+							conn.end();
+							var today = new Date();
+							return res.render('create-profile', {
+								age: mod.dateDiff(birthday, today),
+								popup: true,
+								popupMsg: "Please create a profile",
+								popup: "ERROR"
+							});
+						});
+					}
+				})
+			})
+		})
+	}
+	else {
+		return res.render('login', {
+			popupTitle: "Login",
+			popupMsg: "Please login",
+			popup: true
+		});
+	}
 })
 
 module.exports = router;

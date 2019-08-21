@@ -272,17 +272,25 @@
 			tagsSplit =	"<%= locals.tags %>".split(',');
 			userProfile = $("#user-profile");
 			save = $("#save");
-
 			for(var i = 0; i < tagsSplit.length; i++) {
-				if (i < tagsSplit.length - 1) {
-					tags.append('<a class="tag" href="#">' + tagsSplit[i] + '</a> &nbsp');
-					save.append('<p class="save" style="display:none;">' + tagsSplit[i] + '</p>')
-				}
-				else {
-					tags.append('<a class="tag" href="#">' + tagsSplit[i] + '</a>');
-					save.append('<p class="save" style="display:none;">' + tagsSplit[i] + '</p>')
+				if (tagsSplit[i] == "") {
+					tagsSplit.splice(i, 1);
+					i--;
 				}
 			}
+
+			<% if (locals.tags != null) { %>
+				for(var i = 0; i < tagsSplit.length; i++) {
+					if (i < tagsSplit.length - 1) {
+						tags.append('<a class="tag" href="#">' + tagsSplit[i] + '</a> &nbsp');
+						save.append('<p class="save" style="display:none;">' + tagsSplit[i] + '</p>')
+					}
+					else {
+						tags.append('<a class="tag" href="#">' + tagsSplit[i] + '</a>');
+						save.append('<p class="save" style="display:none;">' + tagsSplit[i] + '</p>')
+					}
+				}
+			<% } %>
 
 			
 			editProfile.click(function () {
@@ -299,9 +307,11 @@
 					tags.replaceWith('<div class="tags-input" data-name="tags" id="tags"></div>');
 					tags = $("#tags");
 					$.getScript("/js/tag.js");
-					for(var i = 0; i < tagsSplit.length; i++) {
-						tags.append('<span class="tag">' + tagsSplit[i] +'</span>');
-					}
+					<% if (locals.tags != null) { %>
+						for(var i = 0; i < tagsSplit.length; i++) {
+								tags.append('<span class="tag">' + tagsSplit[i] +'</span>');
+						}
+					<% } %>
 					$('#form-profile').append(`<div class="row">
 						<div class="col-sm-3 col-form-label">
 							<button type="submit" class="btn btn-outline-success">Modify</button>

@@ -41,7 +41,6 @@
 			element: document.getElementsByClassName("tag")[i],
 		};
 
-		console.log(test.element);
 		let closeBtn = document.createElement('span');
 		closeBtn.classList.add('close');
 		closeBtn.addEventListener('click', function () {

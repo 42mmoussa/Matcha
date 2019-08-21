@@ -40,9 +40,11 @@ pool.getConnection()
          conn.query(favorites);
          conn.query(messages);
          conn.query(matchat);
-         conn.query(notifications);
-         conn.end();
-         console.log("New database created successfully\nExit with CTRL+C");
+         conn.query(notifications)
+		 .then(() => {
+			conn.end();
+			process.exit(console.log("New database created successfully\n"));
+		 });
        })
        .catch(err => {
          //handle error
