@@ -150,13 +150,27 @@
 		</div>
 		<div class="user-profile">
 				<fieldset>
-					<form method="post" action="/profile/modify" id="form-profile">
+					<div class="row">
+						<img src="/img/flame.png" style="width: 80px;"/>
+						<div class="col-sm-10" id="pop-score">
+							<span class="text-left"><%= locals.pop %></span>
+						</div>
+					</div>
+					<% if (locals.id != locals.session.user.id && locals.id != undefined && locals.loved == "1") { %>
 						<div class="row">
-							<img src="/img/flame.png" style="width: 80px;"/>
-							<div class="col-sm-10" id="pop-score">
-								<span class="text-left"><%= locals.pop %></span>
+							<div class="col-sm-10" id="loved">
+								<i class="glyphicon glyphicon-heart-empty"></i><span class="text-left"> This user liked you !</span>
 							</div>
 						</div>
+					<% } %>
+					<% if (locals.id != locals.session.user.id && locals.id != undefined && locals.loved == "2") { %>
+						<div class="row">
+							<div class="col-sm-10" id="loved">
+								<i class="glyphicon glyphicon-heart"></i><span class="text-left"> You matched with this user !</span>
+							</div>
+						</div>
+					<% } %>
+					<form method="post" action="/profile/modify" id="form-profile">
 						<div class="row">
 							<label for="staticName" class="col-sm-3 col-form-label"><b>Name</b></label>
 							<div class="col-sm-10">
