@@ -17,7 +17,7 @@ router.post('/signup_validation', mod.sanitizeInputForXSS, function (req, res) {
 	var pwd            = mod.sanitize(req.body.pwd.trim());
 	var pwdConf        = mod.sanitize(req.body.confpwd.trim());
 	var email          = mod.sanitize(req.body.email.trim());
-	var birthday       = new Date(rmod.sanitize(eq.body.date.trim()));
+	var birthday       = new Date(mod.sanitize(req.body.date.trim()));
 	var today          = new Date();
 	var confirm        = 0;
 	var confirmKey     = mod.randomString(50, '0123456789abcdefABCDEF');
