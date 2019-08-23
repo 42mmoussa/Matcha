@@ -13,7 +13,7 @@ router.get('/', mod.sanitizeInputForXSS, function (req, res) {
   	}
 });
 
-router.get('/:page', mod.sanitizeInputForXSS, function(req, res) {
+router.get('/:page', function(req, res) {
 	if (req.session.connect) {
 		if (!isNaN(req.params.page) && req.params.page > 0) {
 

@@ -14,7 +14,7 @@ CREATE TABLE `profiles` (
 		`lat`			float,
 		`lng`			float,
 		`read`		    int(1) NOT NULL DEFAULT 1,
-    `city`		    text,
+    	`city`		    text,
 		`blocked_user`  text,
 		CONSTRAINT profiles_PK PRIMARY KEY (`id_profile`),
 		CONSTRAINT profiles_users_FK FOREIGN KEY (`id_usr`) REFERENCES users(`id_usr`) ON DELETE CASCADE

@@ -80,8 +80,7 @@
           <%}%>
           <li class="page-item"><a class="page-link" href="/notifications/<%= locals.page - 1 %>"><%= locals.page - 1 %></a></li>
       <%}
-      while  (++i < locals.count && i < locals.page + 2) {
-        console.log(i);%>
+      while  (++i < locals.count && i < locals.page + 2) { %>
         <li class="page-item"><a class="page-link" href="/notifications/<%= i %>"><%= i %></a></li>
       <% }
       if (locals.count > 1) {

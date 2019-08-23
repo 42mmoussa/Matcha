@@ -24,27 +24,23 @@ router.get('/', function (req, res) {
 				if (req.query.confirmkey) {
 					return conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ? AND confirmkey = ?", [id_usr, crypto.SHA512(confirmkey).toString()]);
 				}
-				else {
-					return conn.query("SELECT COUNT(*) as nb FROM users where id_usr = ?", [req.session.user.id]);
-				}
+				return conn.query("SELECT COUNT(*) as nb FROM users where id_usr = ?", [req.session.user.id]);
 			})
 			.then((row) => {
 				if (row[0].nb === 1) {
 					return conn.query("SELECT * FROM users WHERE id_usr = ?", [id_usr]);
-				} else {
-					conn.end();
-					return res.render('index', {
-						popupTitle: "Request",
-						popupMsg: "Your request expired",
-						popup: true
-					});
 				}
+				conn.end();
+				return res.render('index', {
+					popupTitle: "Request",
+					popupMsg: "Your request expired",
+					popup: true
+				});
 			})
 			.then((result) => {
 				conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
 				conn.end();
-				return res.render('change-password', {
-				});
+				return res.render('change-password');
 			})
 		})
 	} else {

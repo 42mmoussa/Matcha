@@ -78,7 +78,7 @@
 	<% } %>
 	<div class="info">
 		<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-					<% if (locals.id != locals.session.user.id) {
+					<% if (locals.id != locals.session.user.id && !locals.amIBlocked) {
 						var j = 0;
 						if (locals.blocked_user != null) {
 						for (var i = 0; i < locals.blocked_user.length; i++) {
@@ -318,7 +318,34 @@
 						url: '/swipe/dislike',
 						dataType: 'text',
 						data: {id: id, username: username}
-					})
+					}).done(function(data) {
+						if (data === 'stopedMatch') {
+							data = {
+								link: "/matchat/",
+								msg: "You stoped matching.",
+								title: "With: ",
+								from: {
+									username: username,
+									id: id
+								},
+								type: "unmatch"
+							};
+							insertnotif(data);
+							data = {
+								id: id,
+								username: username,
+								link: "/matchat/",
+								msg: "You stoped matching.",
+								title: "With: ",
+								from: {
+									username: "<%- locals.session.user.username %>",
+									id: "<%- locals.session.user.id %>"
+								},
+								type: "unmatch"
+							};
+							socket.emit("send_notif", data);
+						}
+					});
 				} else {
 					likeVal = "unlike";
 					$("#likeButton").removeClass("red");
@@ -364,6 +391,8 @@
 									id: "<%- locals.session.user.id %>"
 								}
 							});
+						} else if (data === 'needpic') {
+							window.location.replace("/change-picture");
 						}
 					});
 				}

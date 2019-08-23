@@ -8,6 +8,7 @@ CREATE TABLE `users` (
 		`email` varchar(100) NOT NULL,
 		`confirm` int(1) NOT NULL,
 		`birthday` date NOT NULL,
+		`notif`			int(1) NOT NULL DEFAULT 1,
 		CONSTRAINT users_PK PRIMARY KEY (`id_usr`),
 		UNIQUE KEY `username` (`username`),
 		UNIQUE KEY `email` (`email`)

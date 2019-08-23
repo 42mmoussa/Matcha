@@ -22,6 +22,18 @@
 	<% } %>
 	<fieldset class="form-group">
 		<div class="row">
+			<label for="switch-notif" class="col-sm-3 col-form-label"><b>on/off notifications</b></label>
+			<div class="col-sm-10">
+				<a role="button" href="settings/switch-notif" id="switch-notif" name="switch-notif" class="btn btn-outline-primary">
+				<% if (locals.session.user.notif == 1) { %>
+					On
+				<% } else { %>
+					Off
+				<% } %>
+				</a>
+			</div>
+		</div>
+		<div class="row">
 			<label for="change-password" class="col-sm-3 col-form-label"><b>Change Password</b></label>
 			<div class="col-sm-10">
 				<a role="button" href="/change-password" id="change-password" name="change-password" class="btn btn-outline-primary">Change your Password</a>

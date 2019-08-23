@@ -35,6 +35,7 @@ router.get('/', function (req, res) {
                             key: keys.google.key
                         });
                     });
+                    conn.end();
                 })
                 .catch(err => {
                     console.log(err);

@@ -17,6 +17,8 @@ router.get('/', mod.sanitizeInputForXSS, function(req, res) {
 			if (profile.length === 0) {
 				conn.end();
 				return res.redirect("/profile/create-profile");
+			} else if (profile[0].pictures == 0) {
+				throw "needpic";
 			}
 			let b = 0;
 
@@ -159,7 +161,10 @@ router.get('/', mod.sanitizeInputForXSS, function(req, res) {
 		.catch(err => {
 			console.log(err);
 			conn.end();
-			return res.redirect("/")
+			if (err = "needpic") {
+				return res.redirect("/change-picture?error=needpic");
+			}
+			return res.redirect("/");
 		});
 	}).catch(err => {
 		//not connected
@@ -180,9 +185,22 @@ router.post('/like', mod.sanitizeInputForXSS, function(req, res) {
 				).then(conn => {
 						conn.query("USE matcha")
 						.then(() => {
+							return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [id]);
+						})
+						.then((row) => {
+							if (row[0].blocked_user != null) {
+								let blockedUsers = row[0].blocked_user.split(',');
+								blockedUsers.pop();
+								if (blockedUsers.includes(req.session.user.id.toString())) {
+									throw "You can't like this user";
+								}
+							}
 							return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id]);
 						})
 						.then((row) => {
+							if (row[0].pictures == 0) {
+								throw 'needpic';
+							}
 							conn.query("DELETE FROM dislikes WHERE id_usr = ? AND id_disliked = ?", [req.session.user.id, id]);
 							conn.query("UPDATE profiles SET pop = pop + (20 / (1 + POW(10, (pop - ?) /20))) where id_usr = ?", [row[0].pop, id]);
 							return conn.query("INSERT INTO likes(id_usr, id_liked) VALUES(?, ?)", [req.session.user.id, id]);
@@ -201,8 +219,8 @@ router.post('/like', mod.sanitizeInputForXSS, function(req, res) {
 									res.send('liked');
 								}
 						}).catch(err => {
-							console.log(err);
-							res.send(false);
+							conn.end();
+							res.send(err);
 						});
 				}).catch(err => {
 					console.log(err);
@@ -216,10 +234,17 @@ router.post('/like', mod.sanitizeInputForXSS, function(req, res) {
 router.post('/dislike', mod.sanitizeInputForXSS, function(req, res) {
 	if (req.session.connect) {
 		let id = mod.sanitize(req.body.id);
+		var wasHeMatching = true;
 		mod.pool.getConnection()
 		.then(conn => {
 			conn.query("USE matcha")
 			.then(() => {
+				return conn.query("SELECT * FROM matchat WHERE (id_usr1 = ? AND id_usr2 = ?) OR (id_usr1 = ? AND id_usr2 = ?)", [req.session.user.id, id, id, req.session.user.id]);
+			})
+			.then((row) => {
+				if (row.length > 0) {
+					wasHeMatching = "stopedMatch";
+				}
 				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id]);
 			})
 			.then((row) => {
@@ -228,7 +253,7 @@ router.post('/dislike', mod.sanitizeInputForXSS, function(req, res) {
 				conn.query("UPDATE profiles SET pop = GREATEST(pop - (20 / (1 + POW(10, (? - pop) /20))), 0) where id_usr = ?", [row[0].pop, id]);
 				conn.query("INSERT INTO dislikes(id_usr, id_disliked) VALUES(?, ?)", [req.session.user.id, id]);
 				conn.end();
-				return true;
+				return res.send(wasHeMatching);
 			}).catch(err => {
 				console.log(err);
 				conn.end();
@@ -238,7 +263,6 @@ router.post('/dislike', mod.sanitizeInputForXSS, function(req, res) {
 			console.log(err);
 			res.send(false);
 		});
-		res.send(true);
 	} else {
 		return res.redirect('/login');
 	}

@@ -475,6 +475,29 @@ router.post('/unblock', function(req, res) {
 			popup: true
 		});
 	}
-})
+});
+
+router.get('/switch-notif', function(req, res) {
+	if (req.session.connect) {
+		mod.pool.getConnection()
+			.then(conn => {
+				conn.query("USE matcha;")
+				.then(() => {
+					conn.query("UPDATE users SET notif = IF ( notif = 1, 0, 1) WHERE id_usr = ?;", [req.session.user.id]);
+					req.session.user.notif = req.session.user.notif == 0 ? 1 : 0;
+					conn.end();
+					return res.redirect("/settings");
+				})
+			})
+	}
+	else {
+		return res.render('login', {
+			popupTitle: "Login",
+			popupMsg: "Please login",
+			popup: true
+		});
+	}
+});
+
 
 module.exports = router;

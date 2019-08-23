@@ -69,12 +69,10 @@ passport.use(
                 return conn.query('SELECT * FROM `users` WHERE `username` LIKE ?', [queryUname]);
             })
             .then((row) => {
-                console.log(row.length);
                 if (row.length != 0) {
                     let verif = 0;
                     numberVerif = 0;
                     while (verif === 0) {
-                        console.log(numberVerif);
                         ++numberVerif;
                         i = -1;
                         verif = 1;
@@ -85,7 +83,6 @@ passport.use(
                         }
                     }
                     username = username + numberVerif;
-                    console.log(username);
                 }
             })
             .then(() => {

@@ -33,6 +33,7 @@ router.get('/google/redirect', passport.authenticate('google'), function (req, r
 		lastname: req.user.lastname,
 		username: req.user.username,
 		birthday: req.user.birthday,
+		notif: req.user.notif,
 		age: mod.dateDiff(anniversaire, today)
 	};
 	req.session.connect = true;
@@ -103,6 +104,7 @@ router.post('/login_validation', mod.sanitizeInputForXSS, function(req, res) {
 						lastname: result[0].lastname,
 						username: result[0].username,
 						birthday: result[0].birthday,
+						notif: result[0].notif,
 						age: mod.dateDiff(anniversaire, today)
 					};
 					req.session.connect = true;
@@ -177,18 +179,18 @@ router.get('/confirm-acc', function (req, res) {
 				if (result[0].confirm == 1) {
 					conn.end();
 					return res.render('index', {
-					popupTitle: "Account",
-					popupMsg: "Your account is already confirmed",
-					popup: true
+						popupTitle: "Account",
+						popupMsg: "Your account is already confirmed",
+						popup: true
 					});
 				} else {
 					conn.query("UPDATE users SET confirm = 1 WHERE id_usr = ?", [id_usr]);
 					conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
 					conn.end();
 					return res.render('login', {
-					popupTitle: "Account",
-					popupMsg: "Your account has been confirmed",
-					popup: true
+						popupTitle: "Account",
+						popupMsg: "Your account has been confirmed",
+						popup: true
 					});
 				}
 			}

@@ -59,7 +59,6 @@ router.get('/:id_usr', function (req, res) {
 							});
 						});
 					} else {
-						console.log("no match with this user");
 						conn.end();
 						return res.redirect('/');
 					}

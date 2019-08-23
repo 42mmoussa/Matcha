@@ -31,6 +31,13 @@ router.get('/', function(req, res) {
 							else {
 								blocked_user = user_block[0].blocked_user;
 							}
+							if (rows[0].blocked_user != null) {
+								getBlocked = rows[0].blocked_user.split(',');
+								getBlocked.pop();
+								amIBlocked = getBlocked.includes(req.session.user.id.toString()); // true if the user blocked me, else false
+							} else {
+								amIBlocked = false;
+							}
 							conn.end();
 							return res.render('profile', {
 								firstname: rows[0].firstname.charAt(0).toUpperCase() + rows[0].firstname.slice(1),
@@ -51,7 +58,8 @@ router.get('/', function(req, res) {
 								},
 								city: rows[0].city,
 								key: keys.google.key,
-								blocked_user: blocked_user
+								blocked_user: blocked_user,
+								amIBlocked: amIBlocked
 							});
 						})
 					})

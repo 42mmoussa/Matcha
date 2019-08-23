@@ -69,9 +69,13 @@ $(document).ready(function () {
 	$('.userChoice').on('click', function () {
 		let value = this.text;
 		let id = this.id;
-    $('title').html(value);
+    	$('title').html(value);
 		$('#userImage').remove();
-		$('#userinfo').prepend("<img id='userImage' src='/img/" + id + "/profile.jpg'/>");
+		if (id <= 1000) {
+			$('#userinfo').prepend("<img id='userImage' src='/img/default.png'/>");
+		} else {
+			$('#userinfo').prepend("<img id='userImage' src='/img/" + id + "/profile.jpg'/>");
+		}
 		$('#username').html(value);
   });
 

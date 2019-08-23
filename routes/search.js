@@ -14,7 +14,7 @@ router.get('/', function (req, res) {
 });
 
 
-router.get('/:page', mod.sanitizeInputForXSS, function (req, res) {
+router.get('/:page', function (req, res) {
 	let results = {};
 
 	if (req.session.connect) {
