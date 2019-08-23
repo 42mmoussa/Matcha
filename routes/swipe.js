@@ -32,7 +32,7 @@ router.get('/', mod.sanitizeInputForXSS, function(req, res) {
 			let search = "SELECT * FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, bio, "+
 						distCalc + " As Dist"+
 						" FROM profiles) as res" +
-						" WHERE res.id_usr != ? AND res.id_usr"+
+						" WHERE res.id_usr != ? AND res.pictures > 0 AND res.id_usr"+
 						" NOT IN (SELECT id_liked FROM likes WHERE id_usr = ?"+
 						" UNION SELECT id_disliked FROM dislikes WHERE id_usr = ?"+
 						" UNION SELECT id_favorited FROM favorites WHERE id_usr = ?)"+
@@ -195,6 +195,9 @@ router.post('/like', mod.sanitizeInputForXSS, function(req, res) {
 									throw "You can't like this user";
 								}
 							}
+							if (row[0].pictures == 0) {
+								throw "You can't like this user";
+							}
 							return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id]);
 						})
 						.then((row) => {
@@ -219,6 +222,7 @@ router.post('/like', mod.sanitizeInputForXSS, function(req, res) {
 									res.send('liked');
 								}
 						}).catch(err => {
+							console.log(err);
 							conn.end();
 							res.send(err);
 						});

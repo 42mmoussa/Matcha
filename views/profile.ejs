@@ -78,7 +78,7 @@
 	<% } %>
 	<div class="info">
 		<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-					<% if (locals.id != locals.session.user.id && !locals.amIBlocked) {
+					<% if (locals.id != locals.session.user.id && !locals.amIBlocked && locals.pic > 0) {
 						var j = 0;
 						if (locals.blocked_user != null) {
 						for (var i = 0; i < locals.blocked_user.length; i++) {
@@ -150,13 +150,27 @@
 		</div>
 		<div class="user-profile">
 				<fieldset>
-					<form method="post" action="/profile/modify" id="form-profile">
+					<div class="row">
+						<img src="/img/flame.png" style="width: 80px;"/>
+						<div class="col-sm-10" id="pop-score">
+							<span class="text-left"><%= locals.pop %></span>
+						</div>
+					</div>
+					<% if (locals.id != locals.session.user.id && locals.id != undefined && locals.loved == "1") { %>
 						<div class="row">
-							<img src="/img/flame.png" style="width: 80px;"/>
-							<div class="col-sm-10" id="pop-score">
-								<span class="text-left"><%= locals.pop %></span>
+							<div class="col-sm-10" id="loved">
+								<i class="glyphicon glyphicon-heart-empty"></i><span class="text-left"> This user liked you !</span>
 							</div>
 						</div>
+					<% } %>
+					<% if (locals.id != locals.session.user.id && locals.id != undefined && locals.loved == "2") { %>
+						<div class="row">
+							<div class="col-sm-10" id="loved">
+								<i class="glyphicon glyphicon-heart"></i><span class="text-left"> You've matched with this user !</span>
+							</div>
+						</div>
+					<% } %>
+					<form method="post" action="/profile/modify" id="form-profile">
 						<div class="row">
 							<label for="staticName" class="col-sm-3 col-form-label"><b>Name</b></label>
 							<div class="col-sm-10">
@@ -437,12 +451,25 @@
 					editProfile.remove();
 					staticName.replaceWith('<input type="text" class="form-control" id="lname" name="lname" placeholder="Nom de famille" value="<%= locals.lastname %>" onkeyup="validator(this)"><input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" value="<%= locals.firstname %>">');
 					username.replaceWith('<input type="text" class="form-control" id="uname" name="uname" value="<%= locals.username %>" placeholder="<%= locals.username %>" aria-describedby="validationTooltipUsernamePrepend" required>');
+					<% if (locals.orientation == "Heterosexual") { %>
 					orientation.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
-							<option value="" selected>Choose...</option>
-							<option value="Heterosexual">Heterosexual</option>
+							<option value="Heterosexual" selected>Heterosexual</option>
 							<option value="Homosexual">Homosexual</option>
 							<option value="Bisexual">Bisexual</option>
 							</select>`);
+					<% } else if (locals.orientation == "Homosexual") { %>
+					orientation.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
+							<option value="Heterosexual">Heterosexual</option>
+							<option value="Homosexual" selected>Homosexual</option>
+							<option value="Bisexual">Bisexual</option>
+							</select>`);
+					<% } else if (locals.orientation == "Bisexual") { %>
+					orientation.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
+							<option value="Heterosexual">Heterosexual</option>
+							<option value="Homosexual">Homosexual</option>
+							<option value="Bisexual" selected>Bisexual</option>
+							</select>`);
+					<% } %>
 					bio.replaceWith(`<textarea class="form-control" id="bio" name="bio" rows="3" maxlength="500"><%= locals.bio %></textarea>`);
 					city.replaceWith('<input type="text" class="form-control" id="city" name="city" value="<%= locals.city %>" placeholder="<%= locals.city %>" aria-describedby="validationTooltipUsernamePrepend">');
 					tags.replaceWith('<div class="tags-input" data-name="tags" id="tags"></div>');

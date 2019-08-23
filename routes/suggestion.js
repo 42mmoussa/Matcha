@@ -45,7 +45,7 @@ router.get('/:page', function(req, res) {
 					let search = "SELECT COUNT(*) OVER () as count, id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, pop, Dist FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, pop, "+
 								distCalc + " As Dist"+
 								" FROM profiles) as res" +
-								" WHERE res.id_usr != ?"+
+								" WHERE res.id_usr != ? AND res.pictures > 0"+
 								" AND (";
 					let searchData = [];
 					let searchCol = [];
