@@ -159,15 +159,15 @@ router.get('/:page', function(req, res) {
 						searchData.push(maxdist);
 						searchCol.push("filterDistance");
 					}
-          if (profile[0].blocked_user != null) {
-            blockedUsers = profile[0].blocked_user.split(',');
-            blockedUsers.pop();
-            blockedUsers.forEach(function(element) {
-              search += " AND (res.id_usr != ?)";
-              searchData.push(element);
-  						searchCol.push("BlockedUser");
-            });
-          }
+					if (profile[0].blocked_user != null) {
+						blockedUsers = profile[0].blocked_user.split(',');
+						blockedUsers.pop();
+						blockedUsers.forEach(function(element) {
+						search += " AND (res.id_usr != ?)";
+						searchData.push(element);
+									searchCol.push("BlockedUser");
+						});
+					}
 
 					let first = 0;
 
@@ -185,7 +185,7 @@ router.get('/:page', function(req, res) {
 							search += " ORDER BY res.Dist ASC";
 						} else if (order === "popularity") {
 							search += " ORDER BY res.pop DESC";
-						} else if (order === "tags") {
+						} else if (order === "tags" && typeof tabTags !== 'undefined') {
 							i = 0;
 							tabTags.forEach(function (element) {
 								if (i === 0) {

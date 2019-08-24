@@ -19,7 +19,7 @@ router.get('/', function (req, res) {
 		mod.pool.getConnection()
 		.then(conn => {
 
-		conn.query("USE matcha")
+			conn.query("USE matcha")
 			.then(() => {
 				if (req.query.confirmkey) {
 					return conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ? AND confirmkey = ?", [id_usr, crypto.SHA512(confirmkey).toString()]);
@@ -42,6 +42,13 @@ router.get('/', function (req, res) {
 				conn.end();
 				return res.render('change-password');
 			})
+			.catch(err => {
+				conn.end();
+				console.log(err);					
+			})
+		})
+		.catch(err => {
+			console.log(err);					
 		})
 	} else {
 		return res.render('index', {
@@ -77,11 +84,18 @@ router.post('/confirm', mod.sanitizeInputForXSS, function (req, res) {
 			conn.query("UPDATE users SET pwd = ? WHERE id_usr = ?", [pwdHash, id_usr]);
 			conn.end();
 		})
+		.catch(err => {
+			conn.end();
+			console.log(err);					
+		})
 		return res.render('login', {
 			popupTitle: 'Password',
 			popupMsg: 'Your password has been changed with success',
 			popup: true
 		});
+	})
+	.catch(err => {
+		console.log(err);					
 	});
 });
 

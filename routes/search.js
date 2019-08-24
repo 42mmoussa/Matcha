@@ -38,6 +38,32 @@ router.get('/:page', function (req, res) {
       		let searchData = [];
 			let searchCol = [];
 
+			mod.pool.getConnection()
+			.then(conn => {
+				conn.query("USE matcha")
+				.then(() => {
+					return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+				})
+				.then((profile) => {
+					if (profile[0].blocked_user != null) {
+						blockedUsers = profile[0].blocked_user.split(',');
+						blockedUsers.pop();
+						blockedUsers.forEach(function(element) {
+							search += " AND (res.id_usr != ?)";
+							searchData.push(element);
+							searchCol.push("BlockedUser");
+						});
+					}
+				})
+				.catch(err => {
+					conn.end();
+					console.log(err);
+				});
+			})
+			.catch(err => {
+				console.log(err);
+			});
+
       		let i = 0;
 
 			let tags = req.query.tags;
@@ -179,7 +205,7 @@ router.get('/:page', function (req, res) {
 							searchData.push(searchData[first]);
 							first++;
 							searchData.push(searchData[first]);
-						} else {
+						} else if (element === 'tags') {
 							search += " ORDER BY ( IF (res.tags LIKE ? , 1, 0)";
 							searchData.push(searchData[first]);
 						}
@@ -197,7 +223,7 @@ router.get('/:page', function (req, res) {
 							searchData.push(searchData[first]);
 							first++;
 							searchData.push(searchData[first]);
-						} else {
+						} else if (element === 'tags') {
 							search += " + IF (res.tags LIKE ? , 1, 0)";
 							searchData.push(searchData[first]);
 						}

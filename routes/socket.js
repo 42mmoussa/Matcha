@@ -35,6 +35,9 @@ module.exports = function (server) {
 					conn.end();
 					console.log(err);					
 				})
+			})
+			.catch(err => {
+				console.log(err);
 			});
         	if (data.type === 'visit') {
 				mod.pool.getConnection()
@@ -56,6 +59,9 @@ module.exports = function (server) {
 						conn.end();
 					});
 				})
+				.catch(err => {
+					console.log(err);
+				})
         	} else if (data.type === 'unmatch') {				
 				mod.pool.getConnection()
 				.then(conn => {
@@ -73,6 +79,9 @@ module.exports = function (server) {
 						console.log(err);
 						conn.end();
 					});
+				})
+				.catch(err => {
+					console.log(err);
 				})
         	}
     	});
@@ -107,6 +116,9 @@ module.exports = function (server) {
 					console.log(err);
 					conn.end();
 				});
+			})
+			.catch(err => {
+				console.log(err);
 			});
 			socket.in(key).emit('message', {pseudo: from.username, message: message});
 
@@ -131,6 +143,9 @@ module.exports = function (server) {
 					conn.end();
 					console.log(err);					
 				})
+			})
+			.catch(err => {
+				console.log(err);
 			});
 		});
 

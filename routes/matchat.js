@@ -10,7 +10,7 @@ router.get('/', function (req, res) {
   		iframe = req.query.iframe;
   		if (isNaN(iframe))
   			iframe = 0;
-  		mod.pool.getConnection()
+  			mod.pool.getConnection()
 			.then(conn => {
 				conn.query("USE matcha")
 				.then(() => {
@@ -26,6 +26,13 @@ router.get('/', function (req, res) {
 						iframe: iframe
 					});
 				})
+				.catch(err => {
+					conn.end();
+					console.log(err);					
+				})
+			})
+			.catch(err => {
+				console.log(err);					
 			});
     } else {
         return res.redirect('/login');
@@ -56,13 +63,28 @@ router.get('/:id_usr', function (req, res) {
 									msg: row3,
 									nb_msg: row3.length
 								});
+							})
+							.catch(err => {
+								conn.end();
+								console.log(err);					
 							});
+						})
+						.catch(err => {
+							conn.end();
+							console.log(err);					
 						});
 					} else {
 						conn.end();
 						return res.redirect('/');
 					}
 				})
+				.catch(err => {
+					conn.end();
+					console.log(err);					
+				})
+			})
+			.catch(err => {
+				console.log(err);					
 			});
     } else {
         return res.redirect('/login');
@@ -89,11 +111,19 @@ router.post('/loadmore', function (req, res) {
 							[key, nbscroll]));
 				})
 				.then (row => {
-  					res.send({
+					conn.end();
+  					return res.send({
   						nb: row.length,
   						msg: row
-            });
+            		});
 				})
+				.catch(err => {
+					conn.end();
+					console.log(err);					
+				})
+			})
+			.catch(err => {
+				console.log(err);					
 			});
     } else {
         return res.redirect('/login');

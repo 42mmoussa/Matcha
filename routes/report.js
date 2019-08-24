@@ -43,19 +43,19 @@ router.post('/confirm_report', mod.sanitizeInputForXSS, function (req, res) {
 				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
 				.then(rows => {
 					if (rows.length !== 0) {
-						already_blocked = rows[0].blocked_user.split(',');
-						if (already_blocked != null) {
+						if (rows[0].blocked_user != null) {
+							already_blocked = rows[0].blocked_user.split(',');
 							for (var i = 0; i < already_blocked.length; i++) {
-								if (already_blocked[i] == id_blocked) {
+								if (already_blocked[i] == req.query.id) {
 									conn.end();
-									res.render("settings", {
+									return res.render("settings", {
 										popup: true,
 										popupTitle: "ERROR",
 										popupMsg: "This user was already blocked"
 									});
 								}
 							}
-							already_blocked = already_blocked.join(',') + ',';
+							already_blocked = already_blocked.join(',');
 							new_blocked = already_blocked + req.query.id + ',';
 						}
 						else {
@@ -85,7 +85,7 @@ router.post('/confirm_report', mod.sanitizeInputForXSS, function (req, res) {
 								console.log('Email sent: ' + info.response);
 							}
 						});
-						res.render('settings', {
+						return res.render('settings', {
 							popup: true,
 							popupTitle: "User Reported",
 							popupMsg: "User reported with success"
@@ -96,7 +96,7 @@ router.post('/confirm_report', mod.sanitizeInputForXSS, function (req, res) {
 		})
 	}
 	else
-		res.redirect('/index');
+		return res.redirect('/index');
 })
 
 module.exports = router;

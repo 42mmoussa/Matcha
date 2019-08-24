@@ -172,7 +172,7 @@
 							type: 'POST',
 							url: '/matchat/loadmore',
 							dataType: 'json',
-							data: {nbscroll: nbscroll, room: key}
+							data: {nbscroll: parseInt(nbscroll), room: key}
 						}).done(function(data) {
 							i = -1;
 							beforeHeight = document.getElementById('zone_chat').scrollHeight;

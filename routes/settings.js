@@ -68,7 +68,7 @@ router.post('/delete', mod.sanitizeInputForXSS, function(req, res) {
 			})
 			.then((rows) => {
 				if (rows[0]) {
-					conn.query("DELETE FROM messages WHERE key LIKE (SELECT key FROM matchat WHERE id_usr1 = ? OR id_usr2 = ?)", [req.session.user.id, req.session.user.id]);
+					conn.query("DELETE FROM messages WHERE `key` LIKE (SELECT `key` FROM matchat WHERE id_usr1 = ? OR id_usr2 = ?)", [req.session.user.id, req.session.user.id]);
 					conn.query("DELETE FROM matchat WHERE id_usr1 = ? OR id_usr2 = ?", [req.session.user.id, req.session.user.id]);
 					conn.query("DELETE FROM users WHERE id_usr = ?", [req.session.user.id])
 					.then(() => {
@@ -126,7 +126,7 @@ router.post('/change-gender/confirm', mod.sanitizeInputForXSS, function(req, res
 						conn.query("DELETE FROM dislikes WHERE id_disliked = ?", [req.session.user.id]);
 						conn.query("DELETE FROM dislikes WHERE id_usr = ?", [req.session.user.id]);
 						conn.query("DELETE FROM messages WHERE id_usr = ?", [req.session.user.id]);
-						conn.query("DELETE FROM messages WHERE key LIKE (SELECT key FROM matchat where id_usr1 = ? OR id_usr2 = ?)", [req.session.user.id, req.session.user.id]);
+						conn.query("DELETE FROM messages WHERE `key` LIKE (SELECT `key` FROM matchat where id_usr1 = ? OR id_usr2 = ?)", [req.session.user.id, req.session.user.id]);
 						conn.query("DELETE FROM favorites WHERE id_usr = ?", [req.session.user.id]);
 						conn.query("DELETE FROM favorites WHERE id_favorited = ?", [req.session.user.id]);
 						conn.query("DELETE FROM matchat WHERE id_usr1 = ?", [req.session.user.id]);

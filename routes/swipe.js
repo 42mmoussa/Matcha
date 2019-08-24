@@ -10,85 +10,86 @@ router.get('/', mod.sanitizeInputForXSS, function(req, res) {
 		}
 		mod.pool.getConnection()
 		.then(conn => {
-		conn.query("USE matcha")
-		.then(() => {
-			return conn.query("SELECT * FROM profiles WHERE id_usr=?", [req.session.user.id]);
-		}).then((profile) => {
-			if (profile.length === 0) {
-				conn.end();
-				return res.redirect("/profile/create-profile");
-			} else if (profile[0].pictures == 0) {
-				throw "needpic";
-			}
-			let b = 0;
-
-			let distCalc = "111.111 *"+
-						"DEGREES(ACOS(LEAST(COS(RADIANS(lat))"+
-						" * COS(RADIANS(?))"+
-						" * COS(RADIANS(lng - ?))"+
-						" + SIN(RADIANS(lat))"+
-						" * SIN(RADIANS(?)), 1.0)))";
-
-			let search = "SELECT * FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, bio, "+
-						distCalc + " As Dist"+
-						" FROM profiles) as res" +
-						" WHERE res.id_usr != ? AND res.pictures > 0 AND res.id_usr"+
-						" NOT IN (SELECT id_liked FROM likes WHERE id_usr = ?"+
-						" UNION SELECT id_disliked FROM dislikes WHERE id_usr = ?"+
-						" UNION SELECT id_favorited FROM favorites WHERE id_usr = ?)"+
-						" AND (";
-			let searchData = [];
-			let searchCol = [];
-
-			if (/Heterosexual/.test(profile[0].orientation)) {
-				search += " (res.orientation LIKE ?"+
-				" AND res.gender = ?)";
-				if (profile[0].gender === 'man') {
-					searchData.push("%Heterosexual%");
-					searchData.push("woman");
-					searchCol.push("heterosexual");
-				} else {
-					searchData.push("%Heterosexual%");
-					searchData.push("man");
-					searchCol.push("heterosexual");
+			conn.query("USE matcha")
+			.then(() => {
+				return conn.query("SELECT * FROM profiles WHERE id_usr=?", [req.session.user.id]);
+			})
+			.then((profile) => {
+				if (profile.length === 0) {
+					conn.end();
+					return res.redirect("/profile/create-profile");
+				} else if (profile[0].pictures == 0) {
+					throw "needpic";
 				}
-			}
-			else if (/Homosexual/.test(profile[0].orientation))
-			{
-				search += " (res.orientation LIKE ?"+
-				" AND res.gender = ?)";
-				if (profile[0].gender === 'man') {
-					searchData.push("%Homosexual%");
+				let b = 0;
+
+				let distCalc = "111.111 *"+
+							"DEGREES(ACOS(LEAST(COS(RADIANS(lat))"+
+							" * COS(RADIANS(?))"+
+							" * COS(RADIANS(lng - ?))"+
+							" + SIN(RADIANS(lat))"+
+							" * SIN(RADIANS(?)), 1.0)))";
+
+				let search = "SELECT * FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, bio, "+
+							distCalc + " As Dist"+
+							" FROM profiles) as res" +
+							" WHERE res.id_usr != ? AND res.pictures > 0 AND res.id_usr"+
+							" NOT IN (SELECT id_liked FROM likes WHERE id_usr = ?"+
+							" UNION SELECT id_disliked FROM dislikes WHERE id_usr = ?"+
+							" UNION SELECT id_favorited FROM favorites WHERE id_usr = ?)"+
+							" AND (";
+				let searchData = [];
+				let searchCol = [];
+
+				if (/Heterosexual/.test(profile[0].orientation)) {
+					search += " (res.orientation LIKE ?"+
+					" AND res.gender = ?)";
+					if (profile[0].gender === 'man') {
+						searchData.push("%Heterosexual%");
+						searchData.push("woman");
+						searchCol.push("heterosexual");
+					} else {
+						searchData.push("%Heterosexual%");
+						searchData.push("man");
+						searchCol.push("heterosexual");
+					}
+				}
+				else if (/Homosexual/.test(profile[0].orientation))
+				{
+					search += " (res.orientation LIKE ?"+
+					" AND res.gender = ?)";
+					if (profile[0].gender === 'man') {
+						searchData.push("%Homosexual%");
+						searchData.push("man");
+						searchCol.push("homosexual");
+					}
+					else {
+						searchData.push("%Homosexual%");
+						searchData.push("woman");
+						searchCol.push("homosexual");
+					}
+				}
+				else if (/Bisexual/.test(profile[0].orientation))
+				{
+					search += " (res.orientation LIKE ?"+
+						" AND (res.gender = ? OR res.gender = ?))";
+					searchData.push("%Bisexual%");
+					searchData.push("woman");
 					searchData.push("man");
 					searchCol.push("homosexual");
 				}
-				else {
-					searchData.push("%Homosexual%");
-					searchData.push("woman");
-					searchCol.push("homosexual");
+
+				search += ")";
+
+				if (profile[0].blocked_user != null) {
+					blockedUsers = profile[0].blocked_user.split(',');
+					blockedUsers.pop();
+					blockedUsers.forEach(function(element) {
+						search += " AND (res.id_usr != ?)";
+						searchData.push(element);
+						searchCol.push("BlockedUser");
+					});
 				}
-			}
-			else if (/Bisexual/.test(profile[0].orientation))
-			{
-				search += " (res.orientation LIKE ?"+
-					" AND (res.gender = ? OR res.gender = ?))";
-				searchData.push("%Bisexual%");
-				searchData.push("woman");
-				searchData.push("man");
-				searchCol.push("homosexual");
-			}
-
-			search += ")";
-
-			if (profile[0].blocked_user != null) {
-				blockedUsers = profile[0].blocked_user.split(',');
-				blockedUsers.pop();
-				blockedUsers.forEach(function(element) {
-					search += " AND (res.id_usr != ?)";
-					searchData.push(element);
-					searchCol.push("BlockedUser");
-				});
-			}
 
 			let first = 0;
 			if (searchCol.length > 0) {
@@ -132,43 +133,45 @@ router.get('/', mod.sanitizeInputForXSS, function(req, res) {
 			}
 			searchData.unshift(profile[0].lat, profile[0].lng, profile[0].lat, profile[0].id_usr, profile[0].id_usr, profile[0].id_usr, profile[0].id_usr);
 			return conn.query(search, searchData);
-		}).then((row) => {
-			if (row.length === 0) {
+			})
+			.then((row) => {
+				if (row.length === 0) {
+					conn.end();
+					return res.render('settings', {
+						nb_usr: 0,
+						users: null,
+						popupTitle: 'Swipe',
+						popupMsg: 'We\'ve found no one, you are unique !',
+						popup: true
+					});
+				}
+				let i = -1;
+				let today = new Date();
+				while (++i < row.length) {
+					let bday = new Date(row[i].birthday);
+					row[i].age = mod.dateDiff(bday, today);
+					if (row[i].tags != null) {
+						row[i].tags = row[i].tags.replace(/,/g, ' ');
+					}
+				}
 				conn.end();
 				return res.render('swipe', {
-					nb_usr: 0,
-					users: null,
-					popupTitle: 'Swipe',
-					popupMsg: 'We\'ve found no one, you are unique !',
-					popup: true
+					nb_usr: row.length,
+					users: row
 				});
-			}
-			let i = -1;
-			let today = new Date();
-			while (++i < row.length) {
-				let bday = new Date(row[i].birthday);
-				row[i].age = mod.dateDiff(bday, today);
-				if (row[i].tags != null) {
-					row[i].tags = row[i].tags.replace(/,/g, ' ');
+			})
+			.catch(err => {
+				console.log(err);
+				conn.end();
+				if (err = "needpic") {
+					return res.redirect("/change-picture?error=needpic");
 				}
-			}
-			conn.end();
-			return res.render('swipe', {
-				nb_usr: row.length,
-				users: row
+				return res.redirect("/");
 			});
 		})
 		.catch(err => {
-			console.log(err);
-			conn.end();
-			if (err = "needpic") {
-				return res.redirect("/change-picture?error=needpic");
-			}
-			return res.redirect("/");
+			//not connected
 		});
-	}).catch(err => {
-		//not connected
-	});
 	} else {
 		return res.redirect('/');
 	}
@@ -181,8 +184,8 @@ router.post('/like', mod.sanitizeInputForXSS, function(req, res) {
 				if (id == req.session.user.id) {
 						return res.send(false);
 				}
-				mod.pool.getConnection(
-				).then(conn => {
+				mod.pool.getConnection()
+				.then(conn => {
 						conn.query("USE matcha")
 						.then(() => {
 							return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [id]);
@@ -207,9 +210,11 @@ router.post('/like', mod.sanitizeInputForXSS, function(req, res) {
 							conn.query("DELETE FROM dislikes WHERE id_usr = ? AND id_disliked = ?", [req.session.user.id, id]);
 							conn.query("UPDATE profiles SET pop = pop + (20 / (1 + POW(10, (pop - ?) /20))) where id_usr = ?", [row[0].pop, id]);
 							return conn.query("INSERT INTO likes(id_usr, id_liked) VALUES(?, ?)", [req.session.user.id, id]);
-						}).then((row) => {
+						})
+						.then((row) => {
 							return conn.query("SELECT COUNT(*) as `count` FROM likes WHERE id_usr = ? AND id_liked = ?", [id, req.session.user.id])
-						}).then((row) => {
+						})
+						.then((row) => {
 								if (row[0].count > 0) {
 									conn.query("INSERT INTO matchat(`id_usr1`, `id_usr2`, `key`) VALUES(?, ?, ?)", [req.session.user.id, id, uniqid()]);
 									conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)", [id, req.session.user.id, req.session.user.username, "/matchat/" + req.session.user.id, "You just matched !", "Match with: "]);
@@ -226,7 +231,8 @@ router.post('/like', mod.sanitizeInputForXSS, function(req, res) {
 							conn.end();
 							res.send(err);
 						});
-				}).catch(err => {
+				})
+				.catch(err => {
 					console.log(err);
 					res.send(false);
 				});

@@ -249,7 +249,7 @@
 										</div>
 									</form>
 								</div>
-							<% }}} if (j == 0){%>
+							<% break ; }}} if (j == 0){%>
 								<button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModalCenter">Block This User</button>
 								<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 									<form method="post" action="/profile/block_user?id=<%= locals.id %>">
@@ -413,58 +413,60 @@
 			});
 	<% } %>
 
-	<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
 
 	$(document).ready(function(){
-			editProfile = $("#edit-profile");
-			staticName = $("#staticName");
-			username = $("#staticUsername");
-			orientation = $("#orientation");
-			bio = $("#bio");
-			tags = $("#tags");
-			tagsSplit =	"<%= locals.tags %>".split(',');
-			userProfile = $("#user-profile");
-			city = $("#city");
-			save = $("#save");
+	
+		editProfile = $("#edit-profile");
+		tags = $("#tags");
+		tagsSplit =	"<%= locals.tags %>".split(',');
+		for(var i = 0; i < tagsSplit.length; i++) {
+			if (tagsSplit[i] == "") {
+				tagsSplit.splice(i, 1);
+				i--;
+			}
+		}
+
+		<% if (locals.tags != null) { %>
 			for(var i = 0; i < tagsSplit.length; i++) {
-				if (tagsSplit[i] == "") {
-					tagsSplit.splice(i, 1);
-					i--;
+				if (i < tagsSplit.length - 1) {
+					tags.append('<a class="tag" href="#">' + tagsSplit[i] + '</a> &nbsp');
+					save.append('<p class="save" style="display:none;">' + tagsSplit[i] + '</p>')
+				}
+				else {
+					tags.append('<a class="tag" href="#">' + tagsSplit[i] + '</a>');
+					save.append('<p class="save" style="display:none;">' + tagsSplit[i] + '</p>')
 				}
 			}
+		<% } %>
 
-			<% if (locals.tags != null) { %>
-				for(var i = 0; i < tagsSplit.length; i++) {
-					if (i < tagsSplit.length - 1) {
-						tags.append('<a class="tag" href="#">' + tagsSplit[i] + '</a> &nbsp');
-						save.append('<p class="save" style="display:none;">' + tagsSplit[i] + '</p>')
-					}
-					else {
-						tags.append('<a class="tag" href="#">' + tagsSplit[i] + '</a>');
-						save.append('<p class="save" style="display:none;">' + tagsSplit[i] + '</p>')
-					}
-				}
-			<% } %>
-
+		<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
 
 			editProfile.click(function () {
+					staticName = $("#staticName");
+					username = $("#staticUsername");
+					orientations = $("#orientation");					
+					tags = $("#tags");
+					bio = $("#bio");
+					userProfile = $("#user-profile");
+					city = $("#city");
+					save = $("#save");
 					editProfile.remove();
 					staticName.replaceWith('<input type="text" class="form-control" id="lname" name="lname" placeholder="Nom de famille" value="<%= locals.lastname %>" onkeyup="validator(this)"><input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" value="<%= locals.firstname %>">');
 					username.replaceWith('<input type="text" class="form-control" id="uname" name="uname" value="<%= locals.username %>" placeholder="<%= locals.username %>" aria-describedby="validationTooltipUsernamePrepend" required>');
 					<% if (locals.orientation == "Heterosexual") { %>
-					orientation.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
+					orientations.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
 							<option value="Heterosexual" selected>Heterosexual</option>
 							<option value="Homosexual">Homosexual</option>
 							<option value="Bisexual">Bisexual</option>
 							</select>`);
 					<% } else if (locals.orientation == "Homosexual") { %>
-					orientation.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
+					orientations.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
 							<option value="Heterosexual">Heterosexual</option>
 							<option value="Homosexual" selected>Homosexual</option>
 							<option value="Bisexual">Bisexual</option>
 							</select>`);
 					<% } else if (locals.orientation == "Bisexual") { %>
-					orientation.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
+					orientations.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
 							<option value="Heterosexual">Heterosexual</option>
 							<option value="Homosexual">Homosexual</option>
 							<option value="Bisexual" selected>Bisexual</option>
@@ -486,8 +488,8 @@
 						</div>
 					</div>`)
 			});
-		})
 	<% } %>
+		})
 
 	$(document).ready(function() {
 			if ("<%- locals.coords.lat %>" !== "" && "<%- locals.city %>" == "") {
