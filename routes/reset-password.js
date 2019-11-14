@@ -1,6 +1,5 @@
 const express    = require('express');
 const router     = express.Router();
-const session    = require('express-session');
 const mod        = require('./mod');
 const crypto     = require('crypto-js');
 const nodemailer = require('nodemailer');
@@ -10,8 +9,8 @@ router.get('/', function (req, res) {
   });
 });
 
-router.post('/reset', function(req, res) {
-	var username		= req.body.uname;
+router.post('/reset', mod.sanitizeInputForXSS, function(req, res) {
+	var username		= mod.sanitize(req.body.uname);
 	var confirmKey		= mod.randomString(50, '0123456789abcdefABCDEF');
 
 	if (username == "") {

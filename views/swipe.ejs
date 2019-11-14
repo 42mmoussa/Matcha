@@ -298,7 +298,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
     function match(type) {
       var id = matchUser[iUser].id_usr;
 	  var username = matchUser[iUser].username;
-	  console.log(username);
       $.ajax({
         type: 'POST',
         url: '/swipe/'+type,
@@ -306,7 +305,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
         data: {id: id, username: username}
       }).done(function(data) {
 		if (data === 'match') {
-			console.log("You matched (+notif to match person)");
 			data = {
 				link: "/matchat/",
 				msg: "You just matched !",
@@ -329,7 +327,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			};
           	socket.emit("send_notif", data);
         } else if (data === 'liked') {
-		    console.log("You liked (+notif to liked person)");
 		    socket.emit("send_notif",
 			{
 				id: id,

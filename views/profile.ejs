@@ -16,45 +16,51 @@
             var data = JSON.parse(request.responseText);
             var address = data.results[0];
             var arrAddress = address.address_components;
-			var itemRoute='';
-			var itemLocality='';
-			var itemCountry='';
-			var itemPc='';
-			var itemSnumber='';
+						var itemRoute='';
+						var itemLocality='';
+						var itemCountry='';
+						var itemPc='';
+						var itemSnumber='';
 
-			// iterate through address_component array
-			$.each(arrAddress, function (i, address_component) {
+						// iterate through address_component array
+						$.each(arrAddress, function (i, address_component) {
 
-				if (address_component.types[0] == "route"){
-					itemRoute = address_component.long_name;
-				}
+							if (address_component.types[0] == "route"){
+								itemRoute = address_component.long_name;
+							}
 
-				if (address_component.types[0] == "locality"){
-					itemLocality = address_component.long_name;
-				}
+							if (address_component.types[0] == "locality"){
+								itemLocality = address_component.long_name;
+							}
 
-				if (address_component.types[0] == "country"){
-					itemCountry = address_component.long_name;
-				}
+							if (address_component.types[0] == "country"){
+								itemCountry = address_component.long_name;
+							}
 
-				if (address_component.types[0] == "postal_code_prefix"){
-					itemPc = address_component.long_name;
-				}
+							if (address_component.types[0] == "postal_code_prefix"){
+								itemPc = address_component.long_name;
+							}
 
-				if (address_component.types[0] == "street_number"){
-					itemSnumber = address_component.long_name;
-				}
-			});
-			$("#city").html(itemLocality + ", " + itemCountry);
+							if (address_component.types[0] == "street_number"){
+								itemSnumber = address_component.long_name;
+							}
+						});
+						$("#city").html(itemLocality + ", " + itemCountry);
+						$.ajax({
+							type: 'POST',
+							url: '/maps/city-location',
+							dataType: 'text',
+							data: {city: itemLocality + ", " + itemCountry}
+						})
           }
         };
-        request.send();
+        request.send(1);
     };
 
 </script>
 
 <section class="container">
-	<h3>Your Profile <% if (locals.id != locals.session.user.id) { %><button id="status" class="offline"></button> <span id="last-con"><span><% } %> <a href="#" id="edit-profile"><% if (locals.id == locals.session.user.id || locals.id == undefined) { %><span class="glyphicon glyphicon-edit"></span><% } %></a></h3>
+	<h3><%= locals.lastname %> <%= locals.firstname %> <% if (locals.id != locals.session.user.id) { %><button id="status" class="offline"></button> <span id="last-con"><span><% } %> <a href="#" id="edit-profile"><% if (locals.id == locals.session.user.id || locals.id == undefined) { %><span class="glyphicon glyphicon-edit"></span><% } %></a></h3>
 	<% if (locals.warning) { %>
 		<div class="alert alert-warning" role="alert">
 			<%= warning %>
@@ -72,6 +78,17 @@
 	<% } %>
 	<div class="info">
 		<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+					<% if (locals.id != locals.session.user.id && !locals.amIBlocked && locals.pic > 0) {
+						var j = 0;
+						if (locals.blocked_user != null) {
+						for (var i = 0; i < locals.blocked_user.length; i++) {
+							if (locals.blocked_user[i] == locals.id) {
+								j = 1;
+							}}} if (j == 0) {%>
+							<div id="like">
+								<button id="likeButton" class="like <%= locals.like %>"> <% if (locals.like == "green") { %> Unlike <% } else { %> Like <% } %> </button>
+							</div>
+					<% }} %>
 					<ol class="carousel-indicators">
 						<% if (locals.pic >= 10) { %>
 							<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -86,15 +103,15 @@
 					  </ol>
 					  <div class="carousel-inner">
 					  <% if (locals.id < 1001) { %>
-						<div class="carousel-item active profile-pic">	
-						<img class="d-block w-100" src="/img/default.png" alt="First slide">
+						<div class="carousel-item active profile-pic">
+						<img class="d-block w-100 image_profile" src="/img/default.png" alt="First slide">
 						<% if (locals.id != locals.session.user.id && locals.id != undefined) { %>
 							<div class="report"><a href="/report?id=<%= locals.id %>"><i class="glyphicon glyphicon-trash"></i></a></div>
 						<% } %>
 						</div>
 					  <% } else if (locals.pic >= 10 ) {%>
 						<div class="carousel-item active profile-pic">
-						<img class="d-block w-100" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
+						<img class="d-block w-100 image_profile" src="/img/<%= locals.id %>/profile.jpg" alt="First slide">
 						<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
 							<div class="edit"><a href="/change-picture"><i class="glyphicon glyphicon-pencil"></i></a></div>
 						<% } else { %>
@@ -133,13 +150,27 @@
 		</div>
 		<div class="user-profile">
 				<fieldset>
-					<form method="post" action="/profile/modify" id="form-profile">
+					<div class="row">
+						<img src="/img/flame.png" style="width: 80px;"/>
+						<div class="col-sm-10" id="pop-score">
+							<span class="text-left"><%= locals.pop %></span>
+						</div>
+					</div>
+					<% if (locals.id != locals.session.user.id && locals.id != undefined && locals.loved == "1") { %>
 						<div class="row">
-							<img src="/img/flame.png" style="width: 80px;"/>
-							<div class="col-sm-10" id="pop-score">
-								<span class="text-left"><%= locals.pop %></span>
+							<div class="col-sm-10" id="loved">
+								<i class="glyphicon glyphicon-heart-empty"></i><span class="text-left"> This user liked you !</span>
 							</div>
 						</div>
+					<% } %>
+					<% if (locals.id != locals.session.user.id && locals.id != undefined && locals.loved == "2") { %>
+						<div class="row">
+							<div class="col-sm-10" id="loved">
+								<i class="glyphicon glyphicon-heart"></i><span class="text-left"> You've matched with this user !</span>
+							</div>
+						</div>
+					<% } %>
+					<form method="post" action="/profile/modify" id="form-profile">
 						<div class="row">
 							<label for="staticName" class="col-sm-3 col-form-label"><b>Name</b></label>
 							<div class="col-sm-10">
@@ -190,29 +221,58 @@
 						</div>
 						<span style="display: none;" id="save"></span>
 					</form>
-					<% if (locals.id != locals.session.user.id && locals.id != undefined) { %>
-						<button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModalCenter">Block This User</button>
-						<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-							<form method="post" action="/profile/block_user?id=<%= locals.id %>">
-							<div class="modal-dialog modal-dialog-centered" role="document">
-							  <div class="modal-content">
-								<div class="modal-header">
-								  <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
-								  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								  </button>
+					<% if (locals.id != locals.session.user.id && locals.id != undefined) {
+						var j = 0;
+						if (locals.blocked_user != null) {
+						for (var i = 0; i < locals.blocked_user.length; i++) {
+							if (locals.blocked_user[i] == locals.id) {
+								j = 1;%>
+								<button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#exampleModalCenter">Unblock This User</button>
+								<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+									<form method="post" action="/settings/unblock?id=<%= locals.id %>">
+										<div class="modal-dialog modal-dialog-centered" role="document">
+											<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="exampleModalCenterTitle">Unblock This User</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body">
+											Are you sure you want to unblock <b><%= locals.lastname %> <%= locals.firstname %></b> ?
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+												<button type="submit" class="btn btn-outline-warning">Unblock It</button>
+											</div>
+											</div>
+										</div>
+									</form>
 								</div>
-								<div class="modal-body">  
-								Are you sure you want to block <b><%= locals.lastname %> <%= locals.firstname %></b> ?
+							<% break ; }}} if (j == 0){%>
+								<button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#exampleModalCenter">Block This User</button>
+								<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+									<form method="post" action="/profile/block_user?id=<%= locals.id %>">
+										<div class="modal-dialog modal-dialog-centered" role="document">
+											<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="exampleModalCenterTitle">Block This User</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body">
+											Are you sure you want to block <b><%= locals.lastname %> <%= locals.firstname %></b> ?
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+												<button type="submit" class="btn btn-outline-danger">Block It</button>
+											</div>
+											</div>
+										</div>
+									</form>
 								</div>
-								<div class="modal-footer">
-								  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-								  <button type="submit" class="btn btn-outline-danger">Block It</button>
-								</div>
-							  </div>
-							</div>
-						</form>
-						  </div>
+							<% } %>
 					<% } %>
 				</fieldset>
 		</div>
@@ -257,22 +317,116 @@
 					}
 				}
 			});
-			
+
+		var likeVal = "<%- locals.like %>" == "green" ? "unlike" : "like";
+		$("#likeButton").click(function () {
+				var id = "<%- locals.id %>";
+				var username = "<%- locals.username %>";
+				if (likeVal == "unlike") {
+					likeVal = "like";
+					$("#likeButton").removeClass("green");
+					$("#likeButton").addClass("red");
+					$("#likeButton").html("Like");
+					$.ajax({
+						type: 'POST',
+						url: '/swipe/dislike',
+						dataType: 'text',
+						data: {id: id, username: username}
+					}).done(function(data) {
+						if (data === 'stopedMatch') {
+							data = {
+								link: "/matchat/",
+								msg: "You stoped matching.",
+								title: "With: ",
+								from: {
+									username: username,
+									id: id
+								},
+								type: "unmatch"
+							};
+							insertnotif(data);
+							data = {
+								id: id,
+								username: username,
+								link: "/matchat/",
+								msg: "You stoped matching.",
+								title: "With: ",
+								from: {
+									username: "<%- locals.session.user.username %>",
+									id: "<%- locals.session.user.id %>"
+								},
+								type: "unmatch"
+							};
+							socket.emit("send_notif", data);
+						}
+					});
+				} else {
+					likeVal = "unlike";
+					$("#likeButton").removeClass("red");
+					$("#likeButton").addClass("green");
+					$("#likeButton").html("Unlike");
+					$.ajax({
+						type: 'POST',
+						url: '/swipe/like',
+						dataType: 'text',
+						data: {id: id, username: username}
+					}).done(function(data) {
+						if (data === 'match') {
+							data = {
+								link: "/matchat/",
+								msg: "You just matched !",
+								title: "Match with: ",
+								from: {
+									username: username,
+									id: id
+								}
+							};
+							insertnotif(data);
+							data = {
+								id: id,
+								link: "/matchat/",
+								msg: "You just matched !",
+								title: "Match with: ",
+								from: {
+									username: "<%- locals.session.user.username %>",
+									id: "<%- locals.session.user.id %>"
+								}
+							};
+							socket.emit("send_notif", data);
+						} else if (data === 'liked') {
+							socket.emit("send_notif",
+							{
+								id: id,
+								link: "/profile?id=",
+								msg: "This user liked you",
+								title: "Like from: ",
+								from: {
+									username: "<%- locals.session.user.username %>",
+									id: "<%- locals.session.user.id %>"
+								}
+							});
+						} else if (data === 'needpic') {
+							window.location.replace("/change-picture");
+						}
+					});
+				}
+			});
 	<% } %>
 
-	<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
 
 	$(document).ready(function(){
-			editProfile = $("#edit-profile");
-			staticName = $("#staticName");
-			username = $("#staticUsername");
-			orientation = $("#orientation");
-			bio = $("#bio");
-			tags = $("#tags");
-			tagsSplit =	"<%= locals.tags %>".split(',');
-			userProfile = $("#user-profile");
-			save = $("#save");
+	
+		editProfile = $("#edit-profile");
+		tags = $("#tags");
+		tagsSplit =	"<%= locals.tags %>".split(',');
+		for(var i = 0; i < tagsSplit.length; i++) {
+			if (tagsSplit[i] == "") {
+				tagsSplit.splice(i, 1);
+				i--;
+			}
+		}
 
+		<% if (locals.tags != null) { %>
 			for(var i = 0; i < tagsSplit.length; i++) {
 				if (i < tagsSplit.length - 1) {
 					tags.append('<a class="tag" href="#">' + tagsSplit[i] + '</a> &nbsp');
@@ -283,40 +437,68 @@
 					save.append('<p class="save" style="display:none;">' + tagsSplit[i] + '</p>')
 				}
 			}
+		<% } %>
 
-			
+		<% if (locals.id == locals.session.user.id || locals.id == undefined) { %>
+
 			editProfile.click(function () {
+					staticName = $("#staticName");
+					username = $("#staticUsername");
+					orientations = $("#orientation");					
+					tags = $("#tags");
+					bio = $("#bio");
+					userProfile = $("#user-profile");
+					city = $("#city");
+					save = $("#save");
 					editProfile.remove();
-					staticName.replaceWith('<input type="text" class="form-control" id="lname" name="lname" placeholder="Nom de famille" value="<%= locals.lastname %>" onkeyup="validator(this)"><input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" value="<%= locals.firstname %>" onkeyup="validator(this)">');
-					username.replaceWith('<input type="text" class="form-control" id="uname" name="uname" value="<%= locals.username %>" placeholder="<%= locals.username %>" aria-describedby="validationTooltipUsernamePrepend" onkeyup="validator(this)" required>');
-					orientation.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
-							<option value="" selected>Choose...</option>
-							<option value="Heterosexual">Heterosexual</option>
+					staticName.replaceWith('<input type="text" class="form-control" id="lname" name="lname" placeholder="Nom de famille" value="<%= locals.lastname %>" onkeyup="validator(this)"><input type="text" class="form-control" id="fname" name="fname" placeholder="Prénom" value="<%= locals.firstname %>">');
+					username.replaceWith('<input type="text" class="form-control" id="uname" name="uname" value="<%= locals.username %>" placeholder="<%= locals.username %>" aria-describedby="validationTooltipUsernamePrepend" required>');
+					<% if (locals.orientation == "Heterosexual") { %>
+					orientations.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
+							<option value="Heterosexual" selected>Heterosexual</option>
 							<option value="Homosexual">Homosexual</option>
 							<option value="Bisexual">Bisexual</option>
 							</select>`);
+					<% } else if (locals.orientation == "Homosexual") { %>
+					orientations.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
+							<option value="Heterosexual">Heterosexual</option>
+							<option value="Homosexual" selected>Homosexual</option>
+							<option value="Bisexual">Bisexual</option>
+							</select>`);
+					<% } else if (locals.orientation == "Bisexual") { %>
+					orientations.replaceWith(`<select class="custom-select mr-sm-2" id="orientation" name="orientation">
+							<option value="Heterosexual">Heterosexual</option>
+							<option value="Homosexual">Homosexual</option>
+							<option value="Bisexual" selected>Bisexual</option>
+							</select>`);
+					<% } %>
 					bio.replaceWith(`<textarea class="form-control" id="bio" name="bio" rows="3" maxlength="500"><%= locals.bio %></textarea>`);
+					city.replaceWith('<input type="text" class="form-control" id="city" name="city" value="<%= locals.city %>" placeholder="<%= locals.city %>" aria-describedby="validationTooltipUsernamePrepend">');
 					tags.replaceWith('<div class="tags-input" data-name="tags" id="tags"></div>');
 					tags = $("#tags");
 					$.getScript("/js/tag.js");
-					for(var i = 0; i < tagsSplit.length; i++) {
-						tags.append('<span class="tag">' + tagsSplit[i] +'</span>');
-					}
+					<% if (locals.tags != null) { %>
+						for(var i = 0; i < tagsSplit.length; i++) {
+								tags.append('<span class="tag">' + tagsSplit[i] +'</span>');
+						}
+					<% } %>
 					$('#form-profile').append(`<div class="row">
 						<div class="col-sm-3 col-form-label">
 							<button type="submit" class="btn btn-outline-success">Modify</button>
 						</div>
 					</div>`)
 			});
-		})
 	<% } %>
+		})
 
 	$(document).ready(function() {
-			if ("<%- locals.coords.lat %>" !== "") {
+			if ("<%- locals.coords.lat %>" !== "" && "<%- locals.city %>" == "") {
 				displayLocation("<%- locals.coords.lat %>", "<%- locals.coords.lng %>");
+			} else if ("<%- locals.city %>" != "") {
+				$("#city").html("<%- locals.city %>");
 			}
 
-			var rgbToHex = function (rgb) { 
+			var rgbToHex = function (rgb) {
 				var hex = Number(rgb).toString(16);
 				if (hex.length < 2) {
 					hex = "0" + hex;

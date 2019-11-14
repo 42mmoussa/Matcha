@@ -1,16 +1,23 @@
 const express = require('express');
 const mod = require('./mod');
-const crypto = require('crypto-js');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 
 var router = express.Router();
 
-
 router.get('/', function(req, res) {
 	if (req.session.connect) {
 		id = req.query.id;
+		error = req.query.error;
+		popup = false;
+		popupMsg = "Please, add an image to your profile if you want to match";
+		popupTitle = "Profile not completed";
+		if (typeof error !== "string") {
+			error = undefined;
+		} else {
+			popup = true;
+		}
 		if (id === undefined)
 			id = req.session.user.id;
 		mod.pool.getConnection()
@@ -20,8 +27,8 @@ router.get('/', function(req, res) {
 				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", id)
 			})
 			.then((rows) => {
+				conn.end();
 				if (rows[0]) {
-					conn.end();
 					return res.render('change-picture', {
 						firstname: rows[0].firstname,
 						lastname: rows[0].lastname,
@@ -32,10 +39,12 @@ router.get('/', function(req, res) {
 						gender: rows[0].gender.charAt(0).toUpperCase() + rows[0].gender.slice(1),
 						bio: rows[0].bio,
 						pic: rows[0].pictures,
-						tags: rows[0].tags
+						tags: rows[0].tags,
+						popup: popup,
+						popupMsg: popupMsg,
+						popupTitle: popupTitle
 					});
 				} else {
-					conn.end();
 					return res.render('profile', {
 						popup: true,
 						popupMsg: "This user did not create a profile",
@@ -81,8 +90,8 @@ router.post('/upload', function (req, res) {
 			// Check mime
 			const mimetype = filetypes.test(file.mimetype);
 		
-			if(mimetype && extname){
-			return cb(null,true);
+			if(mimetype && extname) {
+				return cb(null,true);
 			} else {
 				if (!fs.existsSync("img/" + req.session.user.id)) {
 					deleteFolderRecursive("img/" + req.session.user.id);

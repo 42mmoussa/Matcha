@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Simple Map</title>
+    <title>Map'tcha</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <style>
@@ -25,20 +25,18 @@
 	// GET LOCATION
 	let myLoc = undefined;
 	if (navigator.geolocation) { //check if geolocation is available
-		navigator.geolocation.getCurrentPosition(function(position){
-			myLoc = position;
-			$.ajax({
-				type: 'POST',
-				url: '/maps/update-location',
-				dataType: 'json',
-				data: {
-					lat: myLoc.coords.latitude,
-					lng: myLoc.coords.longitude
-				}
-			});
-		});
-	} else {
-		console.log("Using approximate location");
+  		navigator.geolocation.getCurrentPosition(function(position){
+    			myLoc = position;
+      			$.ajax({
+        				type: 'POST',
+        				url: '/maps/update-location',
+        				dataType: 'json',
+        				data: {
+        					lat: myLoc.coords.latitude,
+        					lng: myLoc.coords.longitude
+      				}
+    			});
+  		});
 	}
 
 
@@ -46,7 +44,7 @@
     var map;
     function initMap() {
         lat = "<%= locals.location.latitude %>";
-        if ( lat == "") {
+        if (lat == "") {
             lat = 0;
             lng = 0;
             zoom = 2;
@@ -55,15 +53,15 @@
             lng = parseFloat("<%= locals.location.longitude %>");
             zoom = 12;
         }
-		myLatLng = {
-			lat: lat,
-			lng: lng
-		};		
+    		myLatLng = {
+    			lat: lat,
+    			lng: lng
+    		};
 
         map = new google.maps.Map(document.getElementById('map'), {
             center: myLatLng,
-			zoom: zoom,
-			streetViewControl: false,
+      			zoom: zoom,
+      			streetViewControl: false,
             styles: [
             {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
             {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
@@ -148,58 +146,61 @@
 
         let users = <%- JSON.stringify(locals.users) %> || undefined;
         if (users != undefined) {
-			var infowindow = new google.maps.InfoWindow();
+            var infowindow = new google.maps.InfoWindow();
             for (i = 0; i < users.length; i++) {
                 myLatLng = {
                     lat:  users[i].lat,
                     lng:  users[i].lng
-				};
-				let markers = [];
-				
-                if ((typeof myLatLng.lat == "number" && users[i].pictures > 0) || (users[i].id_usr === <%- locals.session.user.id %> && myLoc !== undefined)) {
+    		        };
+                let markers = [];
+                if ((users[i].pictures > 0 || users[i].id_usr === <%- locals.session.user.id %>) && myLatLng.lat != null && myLatLng.lng != null) {
                     icon= "/img/loc.png";
                     if (users[i].id_usr === <%- locals.session.user.id %>) {
-						icon= "/img/myloc.png";
-						
-						if (myLoc !== undefined) {
-							myLatLng = {
-								lat:  myLoc.coords.latitude,
-								lng:  myLoc.coords.longitude
-							};
-						}
-					}
+                        icon= "/img/myloc.png";
+
+            						if (myLoc !== undefined) {
+              							myLatLng = {
+                								lat:  myLoc.coords.latitude,
+                								lng:  myLoc.coords.longitude
+              							};
+            						}
+      					     }
 
                     var marker = new google.maps.Marker({
                         position: myLatLng,
                         icon: icon,
                         map: map,
                         title: users[i].lastname + " " + users[i].firstname
-					});
+    			          });
 
-					infoUsr = '<div id="content">'+
-						'<div id="siteNotice">'+
-						'</div>' +
-						'<a href="/profile?id=' + users[i].id_usr + '">'+
-						'<h1 id="firstHeading" class="firstHeading">' +  users[i].lastname + " " + users[i].firstname + '</h1>'+
-						'</a>'+
-						'<div id="bodyContent">'+
-						'<p>' + users[i].bio + '</p>'+
-						'<img src="/img/' + users[i].id_usr + '/profile.jpg" style="max-width: 150px;"/>'+
-						'</div>'+
-						'</div>';
-					
-					makeInfoWindowEvent(map, infowindow, infoUsr, marker);
+          					infoUsr = '<div id="content">'+
+          						'<div id="siteNotice">'+
+          						'</div>' +
+          						'<a href="/profile?id=' + users[i].id_usr + '">'+
+          						'<h1 id="firstHeading" class="firstHeading">' +  users[i].lastname + " " + users[i].firstname + '</h1>'+
+          						'</a>'+
+          						'<div id="bodyContent">'+
+          						'<p>' + users[i].bio + '</p>';
+                      if (users[i].id_usr <= 1000) {
+                          infoUsr += '<img src="/img/default.png" style="max-width: 150px;"/>';
+                      } else {
+                          infoUsr += '<img src="/img/' + users[i].id_usr + '/profile.jpg" style="max-width: 150px;"/>';
+                      }
+          						infoUsr += '</div>';
+          						infoUsr += '</div>';
 
-    				markers.push(marker);
+    					      makeInfoWindowEvent(map, infowindow, infoUsr, marker);
+
+        				    markers.push(marker);
                 }
             }
-		}
-		function makeInfoWindowEvent(map, infowindow, contentString, marker) {
-			google.maps.event.addListener(marker, 'click', function() {
-				infowindow.setContent(contentString);
-				infowindow.open(map, marker);
-			});
-		}
+		    }
+    		function makeInfoWindowEvent(map, infowindow, contentString, marker) {
+      			google.maps.event.addListener(marker, 'click', function() {
+        				infowindow.setContent(contentString);
+        				infowindow.open(map, marker);
+      			});
+    		}
     }
 </script>
 <div id="googleMaps" style="height: 50%; width:50%;">

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mod = require('./mod');
 
-router.get('/', function (req, res) {
+router.get('/', mod.sanitizeInputForXSS, function (req, res) {
     if (req.session.connect) {
       if (req.session.user.age < 18) {
         return res.redirect("/settings/change-birthdate");
@@ -45,7 +45,7 @@ router.get('/:page', function(req, res) {
 					let search = "SELECT COUNT(*) OVER () as count, id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, pop, Dist FROM (SELECT id_usr, firstname, lastname, username, gender, birthday, orientation, pictures, tags, lat, lng, pop, "+
 								distCalc + " As Dist"+
 								" FROM profiles) as res" +
-								" WHERE res.id_usr != ?"+
+								" WHERE res.id_usr != ? AND res.pictures > 0"+
 								" AND (";
 					let searchData = [];
 					let searchCol = [];
@@ -89,15 +89,17 @@ router.get('/:page', function(req, res) {
 
 					search += " OR res.Dist < 10";
 
-					let tabTags = profile[0].tags.split(",");
-					tabTags.pop();
+					if (profile[0].tags != null) {
+							let tabTags = profile[0].tags.split(",");
+							tabTags.pop();
 
-					if (tabTags.length > 0) {
-						tabTags.forEach(function (element) {
-							search += " OR res.tags LIKE ?";
-							searchData.push("%" + element + ",%");
-							searchCol.push("tags");
-						});
+						if (tabTags.length > 0) {
+							tabTags.forEach(function (element) {
+								search += " OR res.tags LIKE ?";
+								searchData.push("%" + element + ",%");
+								searchCol.push("tags");
+							});
+						}
 					}
 
 					search += " OR res.pop BETWEEN ? - 100 AND ? + 100";
@@ -157,6 +159,15 @@ router.get('/:page', function(req, res) {
 						searchData.push(maxdist);
 						searchCol.push("filterDistance");
 					}
+					if (profile[0].blocked_user != null) {
+						blockedUsers = profile[0].blocked_user.split(',');
+						blockedUsers.pop();
+						blockedUsers.forEach(function(element) {
+						search += " AND (res.id_usr != ?)";
+						searchData.push(element);
+									searchCol.push("BlockedUser");
+						});
+					}
 
 					let first = 0;
 
@@ -174,7 +185,7 @@ router.get('/:page', function(req, res) {
 							search += " ORDER BY res.Dist ASC";
 						} else if (order === "popularity") {
 							search += " ORDER BY res.pop DESC";
-						} else if (order === "tags") {
+						} else if (order === "tags" && typeof tabTags !== 'undefined') {
 							i = 0;
 							tabTags.forEach(function (element) {
 								if (i === 0) {

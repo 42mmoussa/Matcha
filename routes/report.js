@@ -1,6 +1,5 @@
 const express = require('express');
 const mod = require('./mod');
-const crypto = require('crypto-js');
 const nodemailer = require('nodemailer');
 
 var router = express.Router();
@@ -33,7 +32,7 @@ router.get('/', function (req, res) {
 	}
 });
 
-router.post('/confirm_report', function (req, res) {
+router.post('/confirm_report', mod.sanitizeInputForXSS, function (req, res) {
 	if (!req.session.connect)
 		return res.render("index");
 	if (req.query.id){
@@ -41,9 +40,28 @@ router.post('/confirm_report', function (req, res) {
 		.then(conn => {
 			conn.query("USE matcha")
 			.then(() => {
-				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.query.id])
+				return conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
 				.then(rows => {
-					if (rows[0]) {
+					if (rows.length !== 0) {
+						if (rows[0].blocked_user != null) {
+							already_blocked = rows[0].blocked_user.split(',');
+							for (var i = 0; i < already_blocked.length; i++) {
+								if (already_blocked[i] == req.query.id) {
+									conn.end();
+									return res.render("settings", {
+										popup: true,
+										popupTitle: "ERROR",
+										popupMsg: "This user was already blocked"
+									});
+								}
+							}
+							already_blocked = already_blocked.join(',');
+							new_blocked = already_blocked + req.query.id + ',';
+						}
+						else {
+							new_blocked = req.query.id + ',';
+						}
+						conn.query("UPDATE profiles SET blocked_user = ? WHERE id_usr = ?", [new_blocked, req.session.user.id]);
 						conn.end();
 						var transporter = nodemailer.createTransport({
 							service: 'gmail',
@@ -67,7 +85,7 @@ router.post('/confirm_report', function (req, res) {
 								console.log('Email sent: ' + info.response);
 							}
 						});
-						res.render('settings', {
+						return res.render('settings', {
 							popup: true,
 							popupTitle: "User Reported",
 							popupMsg: "User reported with success"
@@ -78,7 +96,7 @@ router.post('/confirm_report', function (req, res) {
 		})
 	}
 	else
-		res.redirect('/index');
+		return res.redirect('/index');
 })
 
 module.exports = router;

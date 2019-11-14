@@ -19,9 +19,26 @@ module.exports = function (server) {
 		});
 
     	socket.on('send_notif', (data) => {
-
-    		socket.in(data.id).emit('notifMsg', data);
-
+			mod.pool.getConnection()
+			.then (conn => {
+				conn.query("USE matcha")
+				.then(() => {
+					return conn.query("SELECT * FROM users WHERE id_usr = ?", [data.id]);
+				})
+				.then(row => {
+					conn.end();
+					if (row[0].notif) {
+						socket.in(data.id).emit('notifMsg', data);
+					}
+				})
+				.catch(err => {
+					conn.end();
+					console.log(err);					
+				})
+			})
+			.catch(err => {
+				console.log(err);
+			});
         	if (data.type === 'visit') {
 				mod.pool.getConnection()
 				.then(conn => {
@@ -41,6 +58,30 @@ module.exports = function (server) {
 						console.log(err);
 						conn.end();
 					});
+				})
+				.catch(err => {
+					console.log(err);
+				})
+        	} else if (data.type === 'unmatch') {				
+				mod.pool.getConnection()
+				.then(conn => {
+					conn.query("USE matcha")
+					.then(() => {
+						conn.query("UPDATE profiles SET `read` = 0 WHERE id_usr = ?", [data.id]);
+						conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)",
+						[data.id, data.from.id, data.from.username, "/profile?id=" + data.from.id, "You stopped matching", "User: "]);
+						conn.query("UPDATE profiles SET `read` = 0 WHERE id_usr = ?", [data.from.id]);
+						conn.query("INSERT INTO notifications(`id_usr`, `id`, `username`, `link`, `msg`, `title`) VALUES(?, ?, ?, ?, ?, ?)",
+						[data.from.id, data.id, data.username, "/profile?id=" + data.id, "You stopped matching", "User: "]);
+						conn.end();
+					})
+					.catch(err => {
+						console.log(err);
+						conn.end();
+					});
+				})
+				.catch(err => {
+					console.log(err);
 				})
         	}
     	});
@@ -75,13 +116,36 @@ module.exports = function (server) {
 					console.log(err);
 					conn.end();
 				});
+			})
+			.catch(err => {
+				console.log(err);
 			});
 			socket.in(key).emit('message', {pseudo: from.username, message: message});
-			socket.in(to).emit('notifMsg', {
-				from: from,
-				msg: message,
-				link: "/matchat/",
-				title: "Message from: "
+
+			mod.pool.getConnection()
+			.then (conn => {
+				conn.query("USE matcha")
+				.then(() => {
+					return conn.query("SELECT * FROM users WHERE id_usr = ?", [to]);
+				})
+				.then(row => {
+					conn.end();
+					if (row[0].notif) {
+						socket.in(to).emit('notifMsg', {
+							from: from,
+							msg: message,
+							link: "/matchat/",
+							title: "Message from: "
+						});
+					}
+				})
+				.catch(err => {
+					conn.end();
+					console.log(err);					
+				})
+			})
+			.catch(err => {
+				console.log(err);
 			});
 		});
 

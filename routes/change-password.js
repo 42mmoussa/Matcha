@@ -1,6 +1,5 @@
 const express	= require('express');
 const router	= express.Router();
-const session	= require('express-session');
 const mod		= require('./mod');
 const crypto	= require('crypto-js');
 let id_usr;
@@ -20,33 +19,36 @@ router.get('/', function (req, res) {
 		mod.pool.getConnection()
 		.then(conn => {
 
-		conn.query("USE matcha")
+			conn.query("USE matcha")
 			.then(() => {
 				if (req.query.confirmkey) {
 					return conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ? AND confirmkey = ?", [id_usr, crypto.SHA512(confirmkey).toString()]);
 				}
-				else {
-					return conn.query("SELECT COUNT(*) as nb FROM users where id_usr = ?", [req.session.user.id]);
-				}
+				return conn.query("SELECT COUNT(*) as nb FROM users where id_usr = ?", [req.session.user.id]);
 			})
 			.then((row) => {
 				if (row[0].nb === 1) {
 					return conn.query("SELECT * FROM users WHERE id_usr = ?", [id_usr]);
-				} else {
-					conn.end();
-					return res.render('index', {
-						popupTitle: "Request",
-						popupMsg: "Your request expired",
-						popup: true
-					});
 				}
+				conn.end();
+				return res.render('index', {
+					popupTitle: "Request",
+					popupMsg: "Your request expired",
+					popup: true
+				});
 			})
 			.then((result) => {
 				conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
 				conn.end();
-				return res.render('change-password', {
-				});
+				return res.render('change-password');
 			})
+			.catch(err => {
+				conn.end();
+				console.log(err);					
+			})
+		})
+		.catch(err => {
+			console.log(err);					
 		})
 	} else {
 		return res.render('index', {
@@ -57,9 +59,9 @@ router.get('/', function (req, res) {
 	}
 });
 
-router.post('/confirm', function (req, res) {
-	var pwd			= req.body.pwd;
-	var pwdConf		= req.body.pwdConf;
+router.post('/confirm', mod.sanitizeInputForXSS, function (req, res) {
+	var pwd			= mod.sanitize(req.body.pwd);
+	var pwdConf		= mod.sanitize(req.body.pwdConf);
 
 	if (pwd === "" || pwdConf === "") {
 		return res.render('change-password', {
@@ -82,11 +84,18 @@ router.post('/confirm', function (req, res) {
 			conn.query("UPDATE users SET pwd = ? WHERE id_usr = ?", [pwdHash, id_usr]);
 			conn.end();
 		})
+		.catch(err => {
+			conn.end();
+			console.log(err);					
+		})
 		return res.render('login', {
 			popupTitle: 'Password',
 			popupMsg: 'Your password has been changed with success',
 			popup: true
 		});
+	})
+	.catch(err => {
+		console.log(err);					
 	});
 });
 

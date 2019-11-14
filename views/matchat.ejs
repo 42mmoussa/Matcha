@@ -9,6 +9,7 @@
 	<script type="text/javascript" src='/bootstrap/dist/js/bootstrap.js'></script>
 	<script type="module" src="https://unpkg.com/ionicons@4.5.9-1/dist/ionicons/ionicons.esm.js"></script>
 	<script nomodule="" src="https://unpkg.com/ionicons@4.5.9-1/dist/ionicons/ionicons.js"></script>
+  <title><%= locals.user.username %></title>
   </head>
   <body>
 	<section id="chat">
@@ -25,7 +26,7 @@
 					<%}%>
 					<%if (locals.msg[i].id_usr == locals.idToChat) {%>
 						<li class="d-flex justify-content-between mb-4">
-							<img src='/img/<%= locals.msg[i].id_usr %>/profile.jpg' alt="avatar" class="avatar rounded-circle mr-2 ml-lg-3 ml-0 z-depth-1">
+							<img src='<% if (locals.msg[i].id_usr <= 1000) { %> /img/default.png <% } else { %> /img/<%= locals.msg[i].id_usr %>/profile.jpg <% } %>' alt="avatar" class="avatar rounded-circle mr-2 ml-lg-3 ml-0 z-depth-1">
 							<div class="chat-body left white p-3 ml-2 shadow-sm">
 								<div class="header">
 								<strong class="primary-font"><%= locals.user.username %></strong>
@@ -45,11 +46,11 @@
 								<hr class="w-100">
 								<p class="wordwrap mb-0 right"><%= locals.msg[i].message %></p>
 							</div>
-							<img src='/img/<%= locals.msg[i].id_usr %>/profile.jpg' alt="avatar" class="avatar rounded-circle mr-0 ml-3 z-depth-1">
+							<img src='<% if (locals.msg[i].id_usr <= 1000) { %> /img/default.png <% } else { %> /img/<%= locals.msg[i].id_usr %>/profile.jpg <% } %>' alt="avatar" class="avatar rounded-circle mr-0 ml-3 z-depth-1">
 						</li>
 					<%}%>
 				<%}%>
-					</ul>
+				</ul>
         </section>
 
         <form action="" method="get" onSubmit="return formulaire_chat()" id="formmsg" class="input-group mb-3">
@@ -100,7 +101,7 @@
 				nbscroll += 0.02;
 				$('#zone_chat').append(
 					'<li class="d-flex justify-content-between mb-4">\
-							<img src="/img/' + <%= locals.idToChat %> + '/profile.jpg" alt="avatar" class="avatar rounded-circle mr-2 ml-lg-3 ml-0 z-depth-1">\
+							<img src="<% if (locals.idToChat <= 1000) { %> /img/default.png <% } else { %> /img/<%= locals.idToChat %>/profile.jpg <% } %>" alt="avatar" class="avatar rounded-circle mr-2 ml-lg-3 ml-0 z-depth-1">\
 							<div class="chat-body left white p-3 ml-2 shadow-sm">\
 								<div class="header">\
 								<strong class="primary-font">' + pseudo + '</strong>\
@@ -171,7 +172,7 @@
 							type: 'POST',
 							url: '/matchat/loadmore',
 							dataType: 'json',
-							data: {nbscroll: nbscroll, room: key}
+							data: {nbscroll: parseInt(nbscroll), room: key}
 						}).done(function(data) {
 							i = -1;
 							beforeHeight = document.getElementById('zone_chat').scrollHeight;

@@ -4,7 +4,7 @@ const crypto			= require('crypto-js');
 const mod				= require('./mod');
 var today				= new Date();
 const passport			= require('passport');
-const passportSetup		= require('./oauth');
+require('./oauth');
 
 router.get('/', function (req, res) {
 	if (req.session.connect) {
@@ -33,6 +33,7 @@ router.get('/google/redirect', passport.authenticate('google'), function (req, r
 		lastname: req.user.lastname,
 		username: req.user.username,
 		birthday: req.user.birthday,
+		notif: req.user.notif,
 		age: mod.dateDiff(anniversaire, today)
 	};
 	req.session.connect = true;
@@ -51,7 +52,7 @@ router.get('/google/redirect', passport.authenticate('google'), function (req, r
 			})
 			.then(row => {
 				conn.end();
-				req.session.notif = 0;
+				req.session.notif = 1;
 				if (row.length === 0)
 					return res.redirect("/profile/create-profile");
 				req.session.notif = row[0].read;
@@ -71,9 +72,10 @@ router.get('/google/redirect', passport.authenticate('google'), function (req, r
 	})
 });
 
-router.post('/login_validation', function(req, res) {
-	var login		= req.body.uname.trim();
-	var pwd			= crypto.SHA512(req.body.pwd).toString();
+router.post('/login_validation', mod.sanitizeInputForXSS, function(req, res) {
+	const ent       = require("ent");
+	var login		= mod.sanitize(req.body.uname.trim());
+	var pwd			= crypto.SHA512(mod.sanitize(req.body.pwd)).toString();
 
 	if (login === "" || pwd === "") {
 		return res.render('login', {
@@ -102,6 +104,7 @@ router.post('/login_validation', function(req, res) {
 						lastname: result[0].lastname,
 						username: result[0].username,
 						birthday: result[0].birthday,
+						notif: result[0].notif,
 						age: mod.dateDiff(anniversaire, today)
 					};
 					req.session.connect = true;
@@ -159,7 +162,6 @@ router.get('/confirm-acc', function (req, res) {
 		return conn.query("SELECT COUNT(*) as nb FROM confirm WHERE id_usr = ? AND confirmkey = ?", [id_usr, crypto.SHA512(confirmkey).toString()]);
 		})
 		.then((row) => {
-		console.log(row[0]);
 		if (row[0].nb === 1) {
 			return conn.query("SELECT * FROM users WHERE id_usr = ?", [id_usr]);
 		} else {
@@ -177,18 +179,18 @@ router.get('/confirm-acc', function (req, res) {
 				if (result[0].confirm == 1) {
 					conn.end();
 					return res.render('index', {
-					popupTitle: "Account",
-					popupMsg: "Your account is already confirmed",
-					popup: true
+						popupTitle: "Account",
+						popupMsg: "Your account is already confirmed",
+						popup: true
 					});
 				} else {
 					conn.query("UPDATE users SET confirm = 1 WHERE id_usr = ?", [id_usr]);
 					conn.query("DELETE FROM confirm WHERE id_usr = ?", [id_usr]);
 					conn.end();
 					return res.render('login', {
-					popupTitle: "Account",
-					popupMsg: "Your account has been confirmed",
-					popup: true
+						popupTitle: "Account",
+						popupMsg: "Your account has been confirmed",
+						popup: true
 					});
 				}
 			}

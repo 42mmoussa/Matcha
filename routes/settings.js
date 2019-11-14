@@ -1,10 +1,10 @@
-var express = require('express');
-var router = express.Router();
+const express    = require('express');
+const router 	 = express.Router();
 const mod        = require('./mod');
 const crypto     = require('crypto-js');
 const nodemailer = require('nodemailer');
 
-router.get('/', function (req, res, next) {
+router.get('/', mod.sanitizeInputForXSS, function (req, res, next) {
 	if (req.session.connect) {
 		mod.pool.getConnection()
 		  .then((conn) => {
@@ -44,7 +44,7 @@ router.get('/confirm-password', function (req, res) {
 	}
 });
 
-router.get('/change-gender', function (req, res) {
+router.get('/change-gender', mod.sanitizeInputForXSS, function (req, res) {
 	if (req.session.connect) {
 		return res.render('change-gender', {
 		});
@@ -58,7 +58,7 @@ router.get('/change-gender', function (req, res) {
 	}
 });
 
-router.post('/delete', function(req, res) {
+router.post('/delete', mod.sanitizeInputForXSS, function(req, res) {
 	if (req.session.connect) {
 		mod.pool.getConnection()
 		  .then((conn) => {
@@ -68,7 +68,7 @@ router.post('/delete', function(req, res) {
 			})
 			.then((rows) => {
 				if (rows[0]) {
-					conn.query("DELETE FROM messages WHERE key LIKE (SELECT key FROM matchat WHERE id_usr1 = ? OR id_usr2 = ?)", [req.session.user.id, req.session.user.id]);
+					conn.query("DELETE FROM messages WHERE `key` LIKE (SELECT `key` FROM matchat WHERE id_usr1 = ? OR id_usr2 = ?)", [req.session.user.id, req.session.user.id]);
 					conn.query("DELETE FROM matchat WHERE id_usr1 = ? OR id_usr2 = ?", [req.session.user.id, req.session.user.id]);
 					conn.query("DELETE FROM users WHERE id_usr = ?", [req.session.user.id])
 					.then(() => {
@@ -105,7 +105,7 @@ router.post('/delete', function(req, res) {
 	}
 });
 
-router.post('/change-gender/confirm', function(req, res) {
+router.post('/change-gender/confirm', mod.sanitizeInputForXSS, function(req, res) {
 	if ((req.body.gender != "man" && req.body.gender != "woman") || req.body.gender == undefined) {
 		return res.render('change-gender', {
 			warning: "Veuillez rentrer un genre valide"
@@ -126,7 +126,7 @@ router.post('/change-gender/confirm', function(req, res) {
 						conn.query("DELETE FROM dislikes WHERE id_disliked = ?", [req.session.user.id]);
 						conn.query("DELETE FROM dislikes WHERE id_usr = ?", [req.session.user.id]);
 						conn.query("DELETE FROM messages WHERE id_usr = ?", [req.session.user.id]);
-						conn.query("DELETE FROM messages WHERE key LIKE (SELECT key FROM matchat where id_usr1 = ? OR id_usr2 = ?)", [req.session.user.id, req.session.user.id]);
+						conn.query("DELETE FROM messages WHERE `key` LIKE (SELECT `key` FROM matchat where id_usr1 = ? OR id_usr2 = ?)", [req.session.user.id, req.session.user.id]);
 						conn.query("DELETE FROM favorites WHERE id_usr = ?", [req.session.user.id]);
 						conn.query("DELETE FROM favorites WHERE id_favorited = ?", [req.session.user.id]);
 						conn.query("DELETE FROM matchat WHERE id_usr1 = ?", [req.session.user.id]);
@@ -178,7 +178,7 @@ router.get('/change-mail', function(req,res) {
 	}
 })
 
-router.post('/change-mail/confirm', function(req, res) {
+router.post('/change-mail/confirm', mod.sanitizeInputForXSS, function(req, res) {
 	if (!req.session.connect) {
 		return res.render('login', {
 			popupTitle: "Login",
@@ -260,7 +260,7 @@ router.post('/change-mail/confirm', function(req, res) {
 	}
 });
 
-router.get('/change-birthdate', function(req,res) {
+router.get('/change-birthdate', mod.sanitizeInputForXSS, function(req,res) {
 	if (req.session.connect) {
 		return res.render('change-birthdate', {
 		});
@@ -274,7 +274,7 @@ router.get('/change-birthdate', function(req,res) {
 	}
 })
 
-router.post('/change-birthdate/confirm', function(req, res) {
+router.post('/change-birthdate/confirm', mod.sanitizeInputForXSS, function(req, res) {
 	if (!req.session.connect) {
 		return res.render('login', {
 			popupTitle: "Login",
@@ -283,7 +283,7 @@ router.post('/change-birthdate/confirm', function(req, res) {
 		});
 	}
 	else {
-		var birthday       = new Date(req.body.date.trim());
+		var birthday       = new Date(mod.sanitize(req.body.date.trim()));
 		var today          = new Date();
 
 		if (mod.dateDiff(birthday, today) < 18 || mod.dateDiff(birthday, today) > 90) {
@@ -310,6 +310,194 @@ router.post('/change-birthdate/confirm', function(req, res) {
 			})
 		}
 	}
-})
+});
+
+router.get('/blocked-users', mod.sanitizeInputForXSS, function(req, res) {
+	if (req.session.connect) {
+		var blocked_users;
+		mod.pool.getConnection()
+		.then(conn => {
+			conn.query("USE matcha;")
+			.then(() => {
+				conn.query("SELECT * from profiles where id_usr = ?", [req.session.user.id])
+				.then(rows => {
+					if (rows.length !== 0) {
+						blocked_users = rows[0].blocked_user
+						if (blocked_users != null) {
+							blocked_users = blocked_users.split(',');
+							for(var i = 0; i < blocked_users.length; i++) {
+								if (blocked_users[i] == '') {
+									blocked_users.splice(i, 1);
+									i--;
+								}
+							}
+						}
+						if (blocked_users == null) {
+							return res.render('blocked-users', {
+								blocked_users: blocked_users
+							});
+						}
+						search = "SELECT * FROM profiles WHERE";
+						searchData = [];
+						j = 0;
+						for(var i = 0; i < blocked_users.length; i++) {
+							if (j == 0)
+								search += " id_usr = ?";
+							else
+								search += " OR id_usr = ?";
+							searchData.push(blocked_users[i]);
+							j = 1;
+						}
+						conn.query(search, searchData)
+						.then((result) => {
+							conn.end();
+							return res.render('blocked-users', {
+								blocked_users: result
+							});
+						})
+					}
+					else {
+						conn.query("SELECT * FROM users WHERE id_usr = ?", req.session.user.id)
+						.then((info) => {
+							let birthday = new Date(info[0].birthday);
+							conn.end();
+							var today = new Date();
+							return res.render('create-profile', {
+								age: mod.dateDiff(birthday, today),
+								popup: true,
+								popupMsg: "Please create a profile",
+								popupTitle: "ERROR"
+							});
+						});
+					}
+				})
+			})
+		})
+	}
+	else {
+		return res.render('login', {
+			popupTitle: "Login",
+			popupMsg: "Please login",
+			popup: true
+		});
+	}
+});
+
+router.post('/unblock', function(req, res) {
+	if (req.session.connect) {
+		if (req.query.id == req.session.user.id || req.query == undefined) {
+			return res.render('settings', {
+				popup: true,
+				popupTitle: "ERROR",
+				popupMsg: "You can't unblock this user"
+			});
+		}
+		else {
+			mod.pool.getConnection()
+			.then(conn => {
+				conn.query("USE MATCHA;")
+				.then(() => {
+					conn.query("SELECT * FROM profiles WHERE id_usr = ?", [req.session.user.id])
+					.then(rows => {
+						if (rows.length == 0) {
+							conn.query("SELECT * FROM users WHERE id_usr = ?", req.session.user.id)
+							.then((info) => {
+								let birthday = new Date(info[0].birthday);
+								conn.end();
+								var today = new Date();
+								return res.render('create-profile', {
+									age: mod.dateDiff(birthday, today),
+									popup: true,
+									popupMsg: "You need to complete your profile first",
+									popupTitle: "ERROR"
+								});
+							});
+						}
+						else {
+							user_blocked = rows[0].blocked_user.split(',');
+							for(var i = 0; i < user_blocked.length; i++) {
+								if (user_blocked[i] == '' || user_blocked[i] == req.query.id) {
+									user_blocked.splice(i, 1);
+									i--;
+								}
+							}
+							if (user_blocked[0] != undefined) {
+								user_blocked = user_blocked.join(',') + ',';
+							}
+							else {
+								user_blocked = null;
+							}
+
+							conn.query("UPDATE profiles SET blocked_user = ? WHERE id_usr = ?", [user_blocked, req.session.user.id]);
+							conn.end();
+							if (user_blocked != null) {
+								user_blocked = user_blocked.split(',');
+							}
+							if (user_blocked == null) {
+								return res.render('blocked-users', {
+									blocked_users: user_blocked,
+									popup: true,
+									popupTitle: "SUCCESS",
+									popupMsg: "This user has been unblocked with success"
+								});
+							}
+							search = "SELECT * FROM profiles WHERE";
+							searchData = [];
+							j = 0;
+							for(var i = 0; i < user_blocked.length; i++) {
+								if (j == 0)
+									search += " id_usr = ?";
+								else
+									search += " OR id_usr = ?";
+								searchData.push(user_blocked[i]);
+								j = 1;
+							}
+							conn.query(search, searchData)
+							.then((result) => {
+								conn.end();
+								return res.render('blocked-users', {
+									blocked_users: result,
+									popup: true,
+									popupTitle: "SUCCESS",
+									popupMsg: "This user has been unblocked with success"
+								});
+							});
+						}
+					})
+				})
+			})
+		}
+	}
+	else {
+		return res.render('login', {
+			popupTitle: "Login",
+			popupMsg: "Please login",
+			popup: true
+		});
+	}
+});
+
+router.get('/switch-notif', function(req, res) {
+	if (req.session.connect) {
+		mod.pool.getConnection()
+			.then(conn => {
+				conn.query("USE matcha;")
+				.then(() => {
+					conn.query("UPDATE users SET notif = IF ( notif = 1, 0, 1) WHERE id_usr = ?;", [req.session.user.id]);
+					req.session.user.notif = req.session.user.notif == 0 ? 1 : 0;
+					conn.end();
+					return res.redirect("/settings");
+				})
+			})
+	}
+	else {
+		return res.render('login', {
+			popupTitle: "Login",
+			popupMsg: "Please login",
+			popup: true
+		});
+	}
+});
+
 
 module.exports = router;

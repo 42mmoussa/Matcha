@@ -1,6 +1,5 @@
 const express    = require('express');
 const router     = express.Router();
-const session    = require('express-session');
 const mod        = require('./mod');
 let data;
 
@@ -55,7 +54,10 @@ router.get('/:page', function (req, res) {
 					conn.end();
 					res.redirect('/');
 				});
-      		});
+      		})
+			.catch(err => {
+				console.log(err);					
+			});
         } else {
             return res.redirect('/notifications');
         }
@@ -75,6 +77,13 @@ router.post('/new', function (req, res) {
 				req.session.notif = 0;
 				res.send(true);
 			})
+			.catch(err => {
+				conn.end();
+				console.log(err);					
+			})
+		})
+		.catch(err => {
+			console.log(err);					
 		});
     } else {
         return res.redirect('/login');

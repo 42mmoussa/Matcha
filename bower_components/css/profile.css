@@ -7,6 +7,7 @@
 
 .info .carousel.slide {
   max-width: 500px;
+  position: relative;
 }
 
 @media screen and (min-width:992px) {
@@ -106,8 +107,34 @@
 	color: rgba(65, 65, 65, 0.6);
 }
 
+.like {
+  position: absolute !important;
+  bottom: 5px !important;
+  right: 5px !important;
+  z-index: 3 !important;
+  width: 60px;
+  height: 30px;
+  border: none;
+}
+
+.red {
+  background-color: red;
+}
+
+.green {
+  background-color: green;
+}
+
 #pop-score {
 	display: contents;
     font-weight: 800;
     font-size: xx-large;
+}
+
+#bio {
+  word-break: break-all;
+}
+
+.image_profile {
+  max-width: 500px;
 }

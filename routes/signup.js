@@ -1,25 +1,23 @@
 const express    = require('express');
 const router     = express.Router();
-const session    = require('express-session');
 const mod        = require('./mod');
 const crypto     = require('crypto-js');
 const nodemailer = require('nodemailer');
-const dateFormat = require('dateformat');
 
 router.get('/', function (req, res) {
 	return res.render('signup', {
 	});
 });
 
-router.post('/signup_validation', function (req, res) {
+router.post('/signup_validation', mod.sanitizeInputForXSS, function (req, res) {
 
-	var lastname       = req.body.lname.trim();
-	var firstname      = req.body.fname.trim();
-	var username       = req.body.uname.trim();
-	var pwd            = req.body.pwd.trim();
-	var pwdConf        = req.body.confpwd.trim();
-	var email          = req.body.email.trim();
-	var birthday       = new Date(req.body.date.trim());
+	var lastname       = mod.sanitize(req.body.lname.trim());
+	var firstname      = mod.sanitize(req.body.fname.trim());
+	var username       = mod.sanitize(req.body.uname.trim());
+	var pwd            = mod.sanitize(req.body.pwd.trim());
+	var pwdConf        = mod.sanitize(req.body.confpwd.trim());
+	var email          = mod.sanitize(req.body.email.trim());
+	var birthday       = new Date(mod.sanitize(req.body.date.trim()));
 	var today          = new Date();
 	var confirm        = 0;
 	var confirmKey     = mod.randomString(50, '0123456789abcdefABCDEF');
@@ -48,7 +46,7 @@ router.post('/signup_validation', function (req, res) {
 		return res.render('signup', {
 			error: "Votre mot de passe doit contenir au munimum 8 lettres contenant une majuscule, une minuscule et un chiffre"
 		});
-	} else if (!mod.checkdate(req.body.date)) {
+	} else if (!mod.checkdate(mod.sanitize(req.body.date))) {
 		return res.render('signup', {
 			error: "You must enter a valid date"
 		});
@@ -106,8 +104,6 @@ router.post('/signup_validation', function (req, res) {
 					transporter.sendMail(mailOptions, function(error, info){
 						if (error) {
 							console.log(error);
-						} else {
-							console.log('Email sent: ' + info.response);
 						}
 					});
 				conn.end();
@@ -132,10 +128,10 @@ router.post('/signup_validation', function (req, res) {
 
 });
 
-router.post('/check', function (req, res) {
+router.post('/check', mod.sanitizeInputForXSS, function (req, res) {
 
-	const item = req.body.item;
-	const type  = req.body.type;
+	const item = mod.sanitize(req.body.item);
+	const type  = mod.sanitize(req.body.type);
 
 	if (type === 'email') {
 		mod.pool.getConnection()
